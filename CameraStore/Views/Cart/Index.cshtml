@@ -1,0 +1,42 @@
+﻿@model IEnumerable<Cart>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="card">
+            <h5 class="card-header">Cart Table</h5>
+            <div class="table-responsive text-nowrap">
+                <table class="table">
+                    <thead>
+                        <tr class="text-nowrap">
+                            <th>#</th>
+                            <th>User</th>
+                            <th>Product</th>
+                            <th>Quantity Total</th>
+                            <th>Price Total</th>
+                            <th>Time Stamp</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Table cell</td>
+                            <td>Table cell</td>
+                            <td>Table cell</td>
+                            <td>Table cell</td>
+                            <td>Table cell</td>
+                            <th> 
+                                <a asp-controller="CartDetail" asp-action="Index" 
+                                class="btn btn-primary">View Order Detail</a>
+                             </th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Camera Store">
+    <meta name="keywords" content="Male_Fashion, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Camera Store</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
+          rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="../cameraStoreLayout/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="../cameraStoreLayout/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="../cameraStoreLayout/css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="../cameraStoreLayout/css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="../cameraStoreLayout/css/nice-select.css" type="text/css">
+    <link rel="stylesheet" href="../cameraStoreLayout/css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="../cameraStoreLayout/css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="../cameraStoreLayout/css/style.css" type="text/css">
+</head>
+
+<body>
+    <header>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-1 col-md-1">
+                <div class="header__logo">
+                    <a href="./index.html"><img src="../Image/logo1.png" alt=""></a>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6">
+                <nav class="header__menu mobile-menu">
+                    <ul>
+                            <li><a class="menu-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                            <li>
+                                <a class="menu-link" asp-area="" asp-controller="Product" asp-action="Store">Shop</a>
+                                <ul class="dropdown">
+                                    <li><a href="./about.html">Product new</a></li>
+                                    <li><a href="./shop-details.html">Product old</a></li>
+                                    <li><a href="./shopping-cart.html">Accessory</a></li>
+                                    <li><a href="./checkout.html">Sale</a></li>
+                                </ul>
+                         </li>
+                            <li><a href="./blog.html">Blog</a></li>
+                            <li><a href="./blog.html">About us</a></li>
+                            <li><a href="./contact.html">Contacts</a></li>
+                    </ul>
+                </nav>
+            </div>
+                <div class="col-lg-4 col-md-4">
+                    <div class="header__nav__option">
+                        <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                    </div>
+
+                </div>
+                <div class="col-lg-1 col-md-1">
+                <div class="header__nav__option">
+                    <a href="#"><img src="../cameraStoreLayout/img/icon/cart1.png" alt="" style="width:18px;height:20px;"></a>
+                    <a href="#"><img src="../cameraStoreLayout/img/icon/user.png" alt="" style="width:18px;height:20px;"></a>
+                </div>
+            </div>
+        </div>
+        <div class="canvas__open"><i class="fa fa-bars"></i></div>
+    </div>
+    </header>
+       @RenderBody()
+    <!-- Footer Section Begin -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-5 col-sm-5">
+                    <div class="footer__widget">
+                        <h6>CAMERA STORE</h6>
+                        <p>Camera Store is a place specializing in providing quality cameras and accessories from used to new products. Our products have been carefully inspected before being delivered to your hands. Our store's motto is "Customer satisfaction is our success".</p>                        <a href="#"><img src="../cameraStoreLayout/img/payment.png" alt=""></a>
+                        <ul class="footer-links">
+                            <li><a href="#"><i class="fa fa-map-marker"></i>Ninh Kieu District, Can Tho City </a></li>
+                            <li><a href="#"><i class="fa fa-phone"></i>+84-123-321-123</a></li>
+                            <li><a href="#"><i class="fa fa-envelope-o"></i>tuyendtgcc200226@fpt.edu.vn</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
+                    <div class="footer__widget">
+                        <h6>Shopping</h6>
+                        <ul>
+                            <li><a href="#">Clothing Store</a></li>
+                            <li><a href="#">Trending Shoes</a></li>
+                            <li><a href="#">Accessories</a></li>
+                            <li><a href="#">Sale</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-6">
+                    <div class="footer__widget">
+                        <h6>Shopping</h6>
+                        <ul>
+                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="#">Payment Methods</a></li>
+                            <li><a href="#">Delivary</a></li>
+                            <li><a href="#">Return & Exchanges</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-2 offset-lg-1 col-md-6 col-sm-6">
+                    <div class="footer__widget">
+                        <h6>NewLetter</h6>
+                        <div class="footer__newslatter">
+                            <p>Be the first to know about new arrivals, look books, sales & promos!</p>
+                            <form action="#">
+                                <input type="text" placeholder="Your email">
+                                <button type="submit"><span class="icon_mail_alt"></span></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Footer Section End -->
+    <!-- Search End -->
+    <!-- Js Plugins -->
+    <script src="../cameraStoreLayout/js/jquery-3.3.1.min.js"></script>
+    <script src="../cameraStoreLayout/js/bootstrap.min.js"></script>
+    <script src="../cameraStoreLayout/js/jquery.nice-select.min.js"></script>
+    <script src="../cameraStoreLayout/js/jquery.nicescroll.min.js"></script>
+    <script src="../cameraStoreLayout/js/jquery.magnific-popup.min.js"></script>
+    <script src="../cameraStoreLayout/js/jquery.countdown.min.js"></script>
+    <script src="../cameraStoreLayout/js/jquery.slicknav.js"></script>
+    <script src="../cameraStoreLayout/js/mixitup.min.js"></script>
+    <script src="../cameraStoreLayout/js/owl.carousel.min.js"></script>
+    <script src="../cameraStoreLayout/js/main.js"></script>
+</body>
+
+</html>
