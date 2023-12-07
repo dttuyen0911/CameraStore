@@ -15,13 +15,18 @@ namespace CameraStore.Models
         [Required(ErrorMessage = "Description of product is not null")]
         public string proDescription { get; set; }
         [NotMapped]
-        public IFormFile? Image { get; set; }
-        public string? proImage { get; set; }
+        public IFormFile? proImage { get; set; }
+        [Required(ErrorMessage = "Please select a image")]
+        public string? proUrlImage { get; set; }
+        [Required(ErrorMessage = "Please select a date")]
         public DateTime proDate { get; set; }
         public int? proQuantity { get; set; }
+        [Required(ErrorMessage = "Please select a sale")]
         public decimal? proSale { get; set; }
-		public string? proStatus { get; set; }
-		public string? proPercent { get; set; }
+        [Required(ErrorMessage = "Please select a status")]
+        public string? proStatus { get; set; }
+        [Required(ErrorMessage = "Please select a percent")]
+        public string? proPercent { get; set; }
 		public decimal? proPrice { get; set; }
         [ForeignKey("Supplier")]
         public int supID { get; set; }

@@ -1,7 +1,7 @@
-﻿@model IEnumerable<Category>
+﻿@model CameraStore.Models.Category
 
 @{
-    ViewData["Title"] = "Update category";
+    ViewData["Title"] = "Update";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
@@ -12,37 +12,57 @@
         <div class="col-md-12">
             <div class="card mb-4">
                 <h4 class="card-header" style="text-align:center">UPDATE CATEGORY</h4>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label for="exampleFormControlReadOnlyInput1" class="form-label">ID</label>
-                        <input
-                        class="form-control"
-                        type="text"
-                        id="exampleFormControlReadOnlyInput1"
-                        placeholder="ID"
-                        readonly/>
+                <form asp-controller="Category" asp-action="Update" asp-route-id="@Model.cateID" asp-route-img="@Model.cateUrlImage" enctype="multipart/form-data" method="post">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <span asp-validation-for="cateID"></span>
+                            <label asp-for="cateID" for="exampleFormControlReadOnlyInput1" class="form-label">ID</label>
+                            <input class="form-control"
+                                   type="text"
+                                   asp-for="cateID"
+                                   id="updateCateID"
+                                   placeholder="ID"
+                                   readonly />
+                        </div>
+                        <div class="mb-3">
+                            <span asp-validation-for="cateName"></span>
+                            <label asp-for="cateName" for="exampleFormControlInput1" class="form-label">Name</label>
+                            <input type="text"
+                                   class="form-control"
+                                   asp-for="cateName"
+                                   id="updateCateName"
+                                   placeholder="Enter name of category" />
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="cateImage" class="control-label"></label>
+                            <input asp-for="cateImage" type="file" onchange="chooseFile(this)" accept="image/gif, image/jpeg, image/png" style="width: 100%" class="form-control" />
+                            <div> <img style="height:200px;width:250px" id="image" /></div>
+                            <span asp-validation-for="cateImage" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <span asp-validation-for="cateDescription"></span>
+                            <label asp-for="cateDescription" for="exampleFormControlTextarea1" class="form-label">Enter description of category</label>
+                            <textarea asp-for="cateDescription" class="form-control" id="updateCateDes" rows="3"></textarea>
+                        </div>
+                        <div class="col-sm-10">
+                            <a asp-controller="Category" asp-action="Index" class="btn btn-primary">Back to list</a>
+                            <button type="submit" class="btn btn-primary">Update</button>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Name</label>
-                        <input type="text"
-                               class="form-control"
-                               id="exampleFormControlInput1"
-                               placeholder="Enter name of category" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="formFile" class="form-label">Image</label>
-                        <input class="form-control" type="file" id="formFile" />
-                    </div>
-                    <div class = "mb-3">
-                        <label for="exampleFormControlTextarea1" class="form-label">Enter description of category</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                    </div>
-                    <div class="col-sm-10">
-                        <a asp-controller="Category" asp-action="Index" class="btn btn-primary">Back to list</a>
-                        <button type="submit" class="btn btn-primary">Update</button>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
+<script>
+    function chooseFile(fileInput) {
+        if (fileInput.files && fileInput.files[0]) {
+            var render = new FileReader();
+
+            render.onload = function (e) {
+                $('#image').attr('src', e.target.result);
+            }
+            render.readAsDataURL(fileInput.files[0]);
+        }
+    }
+</script>

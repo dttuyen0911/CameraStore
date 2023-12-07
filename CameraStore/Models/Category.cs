@@ -15,7 +15,9 @@ namespace CameraStore.Models
         [Required(ErrorMessage = "Description of category is not null")]
         [StringLength(255, ErrorMessage = "String length no more than 255 characters")]
         public string cateDescription { get; set; }
-        public string? cateImage { get; set; }
+        [NotMapped]
+        public IFormFile? cateImage { get; set; }
+        public string? cateUrlImage { get; set; }
         public virtual ICollection<Product>? Products { get; set; }
     }
 }

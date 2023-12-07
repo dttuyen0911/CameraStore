@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Product>
+﻿@model CameraStore.Models.Product
+
 @{
     ViewData["Title"] = "Add new product";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -7,97 +8,116 @@
 <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Forms /</span> Basic Inputs</h4>
     <div class="row">
-        <!-- Form controls -->
         <div class="col-md-12">
             <div class="card mb-4">
                 <h4 class="card-header" style="text-align:center">ADD NEW PRODUCT</h4>
+                <form asp-controller="Product" asp-action="Create" enctype="multipart/form-data" method="post">
                 <div class="card-body">
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Name</label>
+                        <span asp-validation-for="proName"></span>
+                        <label asp-for="proName" for="exampleFormControlInput1" class="form-label">Name</label>
                         <input type="text"
+                               asp-for="proName"
                                class="form-control"
-                               id="exampleFormControlInput1"
+                               id="uploadProName"
+                               aria-required="true"
                                placeholder="Enter name of product" />
                     </div>
                     <div class="mb-3">
-                        <label for="formFile" class="form-label">Image</label>
-                        <input class="form-control" type="file" id="formFile" />
+                        <span asp-validation-for="proImage"></span>
+                        <label asp-for="proImage" for="formFile" class="form-label">Image</label>
+                        <input asp-for="proImage" onchange ="chooseFile(this)"
+                        accept="image/gif, image/jpeg, image/png" style="width:100%"
+                        class="form-control" type="file" id="uploadProImage" />
                     </div>
                     <div>
-                        <label for="exampleFormControlTextarea1" class="form-label">Enter description of product</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                        <span asp-validation-for="proDescription"></span>
+                        <label asp-for="proDescription"for="exampleFormControlTextarea1" class="form-label">Enter description of product</label>
+                        <textarea class="form-control" asp-for ="proDescription" id="uploadProDes" rows="3"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Price</label>
+                        <span asp-validation-for="proPrice"></span>
+                        <label asp-for = "proPrice" for="exampleFormControlInput1" class="form-label">Price</label>
                         <input type="text"
+                               asp-for="proPrice"
                                class="form-control"
-                               id="exampleFormControlInput1"
+                               id="uploadProPrice"
                                placeholder="Enter price of product" />
                     </div>
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Status</label>
+                        <span asp-validation-for="proStatus"></span>
+                        <label asp-for="proStatus" for="exampleFormControlInput1" class="form-label">Status</label>
                         <div class="form-check form-check-inline mt-3">
                             <input class="form-check-input"
                                    type="radio"
                                    name="inlineRadioOptions"
-                                   id="inlineRadio1"
-                                   value="option1" />
+                                   asp-for="proStatus"
+                                   id="uploadProStaNew"
+                                   value="New" />
                             <label class="form-check-label" for="inlineRadio1">New</label>
                         </div>
                         <div class="form-check form-check-inline mt-3">
                             <input class="form-check-input"
                                    type="radio"
                                    name="inlineRadioOptions"
-                                   id="inlineRadio1"
-                                   value="option1" />
+                                   asp-for="proStatus"
+                                   id="uploadProStaOld"
+                                   value="Old" />
                             <label class="form-check-label" for="inlineRadio1">Old</label>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="exampleFormControlSelect1" class="form-label">Sale</label>
-                        <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
+                        <span asp-validation-for="proSale"></span>
+                        <label asp-for ="proSale" for="exampleFormControlSelect1" class="form-label">Sale</label>
+                            <select class="form-select" asp-for="proSale" id="uploadProSale" aria-label="Default select example">
                             <option selected>Choose the sale level</option>
                             <option value="1">No</option>
                             <option value="2">Sale 30%</option>
                             <option value="3">Sale 50%</option>
-                            <option value="3">Sale 70%</option>
+                            <option value="4">Sale 70%</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Quantity</label>
+                        <span asp-validation-for="proQuantity"></span>
+                        <label asp-for="proQuantity" for="exampleFormControlInput1" class="form-label" min="1">Quantity</label>
                         <input type="number"
+                               asp-for="proQuantity"
                                class="form-control"
-                               id="exampleFormControlInput1"
+                               id="uploadProQuantity"
                                placeholder="Enter quantity of product" />
                     </div>
                     <div class="mb-3">
-                        <label for="exampleFormControlSelect1" class="form-label">Category</label>
-                        <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
-                            <option selected>Choose the category of product</option>
-                            <option value="1">No</option>
-                            <option value="2">Sale 30%</option>
-                            <option value="3">Sale 50%</option>
-                            <option value="3">Sale 70%</option>
+                        <label asp-for="Category" class="form-label">Category</label>
+                        <select asp-for = "cateID" asp-items="ViewBag.cateID" class="form-select" id="uploadProCate" aria-label="Default select example">
+                            <option>Choose the category of product</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="exampleFormControlSelect1" class="form-label">Supplier</label>
-                        <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
-                            <option selected>Choose the supplier of product</option>
-                            <option value="1">No</option>
-                            <option value="2">Sale 30%</option>
-                            <option value="3">Sale 50%</option>
-                            <option value="3">Sale 70%</option>
-                        </select>
+                            <label asp-for="Supplier" class="form-label">Category</label>
+                            <select asp-for="supID" asp-items="ViewBag.supID" class="form-select" id="uploadProSup" aria-label="Default select example">
+                                <option>Choose the supplier of product</option>
+                            </select>
                     </div>
-
                     <div class="col-sm-10">
                         <a asp-controller="Product" asp-action="Index" class="btn btn-primary">Back to list</a>
                         <button type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
+<script>
+    function chooseFile(fileInput) {
+        if (fileInput.files && fileInput.files[0]) {
+            var render = new FileReader();
+
+            render.onload = function (e) {
+                $('#image').attr('src', e.target.result);
+            }
+            render.readAsDataURL(fileInput.files[0]);
+        }
+    }
+</script>
 
