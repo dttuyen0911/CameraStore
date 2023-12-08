@@ -22,62 +22,61 @@ namespace CameraStore.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(Category obj)
+        public IActionResult Create(Category cate)
         {
             if (ModelState.IsValid)
             {
-                string fileName = cateUploadImage(obj);
-                obj.cateUrlImage = fileName;
+                string fileName = cateUploadImage(cate);
+                cate.cateUrlImage = fileName;
 
-                _dbContext.Categories.Add(obj);
+                _dbContext.Categories.Add(cate);
                 _dbContext.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(obj);
+            return View(cate);
         }
-        public string cateUploadImage(Category obj)
+        public string cateUploadImage(Category cate)
         {
             string uniqueFileName = null;
-            if (obj.cateImage != null)
+            if (cate.cateImage != null)
             {
                 string uploadsFoder = Path.Combine("wwwroot", "image");
-                uniqueFileName = Guid.NewGuid().ToString() + obj.cateID + obj.cateImage.FileName;
+                uniqueFileName = Guid.NewGuid().ToString() + cate.cateID + cate.cateImage.FileName;
                 string filePath = Path.Combine(uploadsFoder, uniqueFileName);
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
-                    obj.cateImage.CopyTo(fileStream);
+                    cate.cateImage.CopyTo(fileStream);
                 }
             }
             return uniqueFileName;
         }
-        public IActionResult Update(int id, string img)
+        public IActionResult Edit(int id, string img)
         {
-            Category obj = _dbContext.Categories.Find(id);
-            if (obj == null)
+            Category cate = _dbContext.Categories.Find(id);
+            if (cate == null)
             {
                 return RedirectToAction("Index");
             }
-                IEnumerable<Category> categories = _dbContext.Categories.ToList();
-            return View(obj);
+            return View(cate);
         }
         [HttpPost]
-        public IActionResult Update(int id, Category obj, string img)
+        public IActionResult Edit(int id, Category cate, string img)
         {
             if (ModelState.IsValid)
             {
-                if (obj.cateImage == null)
+                if (cate.cateImage == null)
                 {
-                    obj.cateID = id;
-                    obj.cateUrlImage = img;
-                    _dbContext.Categories.Update(obj);
+                    cate.cateID = id;
+                    cate.cateUrlImage = img;
+                    _dbContext.Categories.Update(cate);
                     _dbContext.SaveChanges();
                 }
                 else
                 {
-                    obj.cateID = id;
-                    string uniqueFileName = cateUploadImage(obj);
-                    obj.cateUrlImage = uniqueFileName;
-                    _dbContext.Categories.Update(obj);
+                    cate.cateID = id;
+                    string uniqueFileName = cateUploadImage(cate);
+                    cate.cateUrlImage = uniqueFileName;
+                    _dbContext.Categories.Update(cate);
                     _dbContext.SaveChanges();
                     img = Path.Combine("wwwroot", "image", img);
                     FileInfo infor = new FileInfo(img);
@@ -89,18 +88,18 @@ namespace CameraStore.Controllers
                 }
                 return RedirectToAction("Index");
             }
-            return View(obj);
+            return View(cate);
         }
         public IActionResult Delete(int id, string img)
         {
-            Category obj = _dbContext.Categories.Find(id);
-            if (obj == null)
+            Category cate = _dbContext.Categories.Find(id);
+            if (cate == null)
             {
                 return RedirectToAction("Index");
             }
             else
             {
-                if (obj.cateUrlImage != null)
+                if (cate.cateUrlImage != null)
                 {
                     img = Path.Combine("wwwroot", "uploads", img);
                     FileInfo infor = new FileInfo(img);
@@ -111,10 +110,8 @@ namespace CameraStore.Controllers
                     }
                 }
 
-                _dbContext.Categories.Remove(obj);
+                _dbContext.Categories.Remove(cate);
                 _dbContext.SaveChanges();
-
-
                 return RedirectToAction("Index");
             }
         }

@@ -1,0 +1,76 @@
+﻿@model CameraStore.Models.Supplier
+
+@{
+    ViewData["Title"] = "View detail supplier";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Forms /</span> Basic Inputs</h4>
+    <div class="row">
+        <!-- Form controls -->
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <h4 class="card-header" style="text-align:center">VIEW DETAIL SUPPLIER</h4>
+                <form asp-controller="Supplier" asp-action="detailSup" asp-route-id="@Model.supID" enctype="multipart/form-data" method="post">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <span asp-validation-for="supID"></span>
+                            <label asp-for="supID" for="exampleFormControlReadOnlyInput1" class="form-label">ID</label>
+                            <input class="form-control"
+                                   type="text"
+                                   asp-for="supID"
+                                   id="supDetailID"
+                                   placeholder="ID"
+                                   readonly />
+                        </div>
+                        <div class="mb-3">
+                            <span asp-validation-for="supName"></span>
+                            <label asp-for="supName" for="exampleFormControlReadOnlyInput1" class="form-label">Name</label>
+                            <input class="form-control"
+                                   type="text"
+                                   asp-for="supName"
+                                   id="supDetailName"
+                                   placeholder="Name"
+                                   readonly />
+                        </div>
+                        <div class="mb-3">
+                            <span asp-validation-for="supDescription"></span>
+                            <label asp-for="supDescription" for="exampleFormControlReadOnlyInput1" class="form-label">Description</label>
+                            <input class="form-control"
+                                   type="text"
+                                   asp-for="supDescription"
+                                   id="supDetailDescription"
+                                   placeholder="Description"
+                                   readonly />
+                        </div>
+                        <div class="mb-3">
+                            <span asp-validation-for="supTelephone"></span>
+                            <label asp-for="supTelephone" for="exampleFormControlReadOnlyInput1" class="form-label">Telephone</label>
+                            <input class="form-control"
+                                   type="text"
+                                   asp-for="supTelephone"
+                                   id="supDetailTelephone"
+                                   placeholder="Telephone"
+                                   readonly />
+                        </div>
+                        <div class="mb-3">
+                            <span asp-validation-for="supAddress"></span>
+                            <label asp-for="supAddress" for="exampleFormControlReadOnlyInput1" class="form-label">Address</label>
+                            <input class="form-control"
+                                   type="text"
+                                   asp-for="supAddress"
+                                   id="supDetailAddress"
+                                   placeholder="Address"
+                                   readonly />
+                        </div>
+                        <div class="col-sm-10">
+                            <a asp-controller="Supplier" asp-action="Index" class="btn btn-primary">Back to list</a>
+                            <button type="submit" asp-controller="Supplier" asp-action="Edit" asp-route-id="@Model.supID" class="btn btn-primary">Update</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

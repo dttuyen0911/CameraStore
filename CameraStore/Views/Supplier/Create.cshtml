@@ -1,7 +1,7 @@
-﻿@model IEnumerable<Supplier>
+﻿@model CameraStore.Models.Supplier
 
 @{
-    ViewData["Title"] = "Add new supplier";
+    ViewData["Title"] = "Create supplier";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
@@ -12,30 +12,38 @@
         <div class="col-md-12">
             <div class="card mb-4">
                 <h4 class="card-header" style="text-align:center">ADD NEW SUPPLIER</h4>
+                <form asp-controller="Supplier" asp-action="Create" enctype="multipart/form-data" method="post">
                 <div class="card-body">
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Name</label>
+                        <span asp-validation-for="supName"></span>
+                        <label asp-for="supName" for="exampleFormControlInput1" class="form-label">Name</label>
                         <input type="text"
                                class="form-control"
-                               id="exampleFormControlInput1"
+                               asp-for="supName"
+                               id="supUploadName"
                                placeholder="Enter name of supplier" />
                     </div>
                     <div>
-                        <label for="exampleFormControlTextarea1" class="form-label">Enter description of suplier</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                        <span asp-validation-for="supDescription"></span>
+                        <label asp-for="supDescription" for="exampleFormControlTextarea1" class="form-label">Enter description of suplier</label>
+                        <textarea asp-for="supDescription"class="form-control" id="supUploadDescription" rows="3"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Telephone</label>
+                        <span asp-validation-for="supTelephone"></span>
+                        <label asp-for="supTelephone" for="exampleFormControlInput1" class="form-label">Telephone</label>
                         <input type="text"
+                                asp-for="supTelephone"
                                class="form-control"
-                               id="exampleFormControlInput1"
+                               id="supUploadTelephone"
                                placeholder="Enter telephone of supplier" />
                     </div>
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Address</label>
+                        <span asp-validation-for="supAddress"></span>
+                        <label asp-for="supAddress" for="exampleFormControlInput1" class="form-label">Address</label>
                         <input type="text"
+                               asp-for="supAddress"
                                class="form-control"
-                               id="exampleFormControlInput1"
+                               id="supUploadAddress"
                                placeholder="Enter address of supplier" />
                     </div>
                     <div class="col-sm-10">
@@ -43,6 +51,7 @@
                         <button type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </div>
+                </form>
             </div>
         </div>
     </div>

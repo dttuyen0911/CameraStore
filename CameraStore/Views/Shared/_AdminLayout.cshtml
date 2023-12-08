@@ -15,7 +15,7 @@
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="../AdminLayout/img/favicon/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="~/AdminLayout/img/favicon/favicon.ico" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -24,25 +24,25 @@
           rel="stylesheet" />
 
     <!-- Icons. Uncomment required icon fonts -->
-    <link rel="stylesheet" href="../AdminLayout/vendor/fonts/boxicons.css" />
+    <link rel="stylesheet" href="~/AdminLayout/vendor/fonts/boxicons.css" />
 
     <!-- Core CSS -->
-    <link rel="stylesheet" href="../AdminLayout/vendor/css/core.css" class="template-customizer-core-css" />
-    <link rel="stylesheet" href="../AdminLayout/vendor/css/theme-default.css" class="template-customizer-theme-css" />
-    <link rel="stylesheet" href="../AdminLayout/css/demo.css" />
+    <link rel="stylesheet" href="~/AdminLayout/vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="~/AdminLayout/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="~/AdminLayout/css/demo.css" />
 
     <!-- Vendors CSS -->
-    <link rel="stylesheet" href="../AdminLayout/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    <link rel="stylesheet" href="~/AdminLayout/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 
-    <link rel="stylesheet" href="../AdminLayout/vendor/libs/apex-charts/apex-charts.css" />
+    <link rel="stylesheet" href="~/AdminLayout/vendor/libs/apex-charts/apex-charts.css" />
 
     <!-- Page CSS -->
     <!-- Helpers -->
-    <script src="../AdminLayout/vendor/js/helpers.js"></script>
+    <script src="~/AdminLayout/vendor/js/helpers.js"></script>
 
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
-    <script src="../AdminLayout/js/config.js"></script>
+    <script src="~/AdminLayout/js/config.js"></script>
 
 </head>
 
@@ -109,6 +109,12 @@
                             <div data-i18n="Boxicons">Account</div>
                         </a>
                     </li>
+                    <li class="menu-item">
+                        <a class="menu-link" asp-area="" asp-controller="Role" asp-action="Index">
+                            <i class="menu-icon tf-icons bx bx-user-circle"></i>
+                            <div data-i18n="Boxicons">Role</div>
+                        </a>
+                    </li>
                 </ul>
             </aside>
             <!-- / Menu -->
@@ -143,21 +149,21 @@
 
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
-    <script src="../AdminLayout/vendor/libs/jquery/jquery.js"></script>
-    <script src="../AdminLayout/vendor/libs/popper/popper.js"></script>
-    <script src="../AdminLayout/vendor/js/bootstrap.js"></script>
-    <script src="../AdminLayout/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="~/AdminLayout/vendor/libs/jquery/jquery.js"></script>
+    <script src="~/AdminLayout/vendor/libs/popper/popper.js"></script>
+    <script src="~/AdminLayout/vendor/js/bootstrap.js"></script>
+    <script src="~/AdminLayout/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 
-    <script src="../AdminLayout/vendor/js/menu.js"></script>
+    <script src="~/AdminLayout/vendor/js/menu.js"></script>
     <!-- endbuild -->
     <!-- Vendors JS -->
-    <script src="../AdminLayout/vendor/libs/apex-charts/apexcharts.js"></script>
+    <script src="~/AdminLayout/vendor/libs/apex-charts/apexcharts.js"></script>
 
     <!-- Main JS -->
-    <script src="../AdminLayout/js/main.js"></script>
+    <script src="~/AdminLayout/js/main.js"></script>
 
     <!-- Page JS -->
-    <script src="../AdminLayout/js/dashboards-analytics.js"></script>
+    <script src="~/AdminLayout/js/dashboards-analytics.js"></script>
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>

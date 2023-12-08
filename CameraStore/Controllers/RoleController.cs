@@ -16,15 +16,54 @@ namespace CameraStore.Controllers
             IEnumerable<Role> roles = _dbContext.Roles.ToList();
             return View(roles);
         }
-        public IActionResult Create(int id)
+        public IActionResult Create()
         {
-            IEnumerable<Role> roles = _dbContext.Roles.ToList();
-            return View(roles);
+            return View();
         }
-        public IActionResult Update(int id)
+        [HttpPost]
+        public IActionResult Create(Role obj)
         {
-            IEnumerable<Role> roles = _dbContext.Roles.ToList();
-            return View(roles);
+            if (ModelState.IsValid)
+            {
+                _dbContext.Roles.Add(obj);
+                _dbContext.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(obj);
+        }
+
+        public IActionResult Edit(int id)
+        {
+            Role obj = _dbContext.Roles.Find(id);
+            if (obj == null)
+            {
+                return RedirectToAction("Index");
+            }
+            return View(obj);
+        }     
+        [HttpPost]
+        public IActionResult Edit(int id, Role obj)
+        {
+            if (ModelState.IsValid)
+            {
+                obj.roleID = id;
+                _dbContext.Roles.Update(obj);
+                _dbContext.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(obj);
+        }
+
+        public ActionResult Delete(int id)
+        {
+            var obj = _dbContext.Roles.Find(id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            _dbContext.Roles.Remove(obj);
+            _dbContext.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 }

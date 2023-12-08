@@ -21,7 +21,7 @@ namespace CameraStore.Controllers
             IEnumerable<Customer> customers = _dbContext.Customers.ToList();
             return View(customers);
         }
-        public IActionResult Update(int id)
+        public IActionResult Edit(int id)
         {
             IEnumerable<Customer> customers = _dbContext.Customers.ToList();
             return View(customers);

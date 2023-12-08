@@ -1,0 +1,69 @@
+﻿﻿@using CameraStore.Models
+
+@model Supplier
+@{
+    ViewData["Title"] = "Update supplier";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Forms /</span> Basic Inputs</h4>
+    <div class="row">
+        <!-- Form controls -->
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <h4 class="card-header" style="text-align:center">UPDATE SUPPLIER</h4>
+                <form asp-controller="Supplier" asp-action="Edit" asp-route-id="@Model.supID" enctype="multipart/form-data" method="post">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <span asp-validation-for="supID"></span>
+                            <label asp-for="supID" for="exampleFormControlReadOnlyInput1" class="form-label">ID</label>
+                            <input class="form-control"
+                                   type="text"
+                                   asp-for="supID"
+                                   id="supUpdateID"
+                                   placeholder="ID"
+                                   readonly />
+                        </div>
+                        <div class="mb-3">
+                            <span asp-validation-for="supName"></span>
+                            <label asp-for="supName" for="exampleFormControlInput1" class="form-label">Name</label>
+                            <input type="text"
+                                   class="form-control"
+                                   asp-for="supName"
+                                   id="supUpdateName"
+                                   placeholder="Enter name of supplier" />
+                        </div>
+                        <div>
+                            <span asp-validation-for="supDescription"></span>
+                            <label asp-for="supDescription" for="exampleFormControlTextarea1" class="form-label">Enter description of suplier</label>
+                            <textarea asp-for="supDescription" class="form-control" id="supUpdateDescription" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <span asp-validation-for="supTelephone"></span>
+                            <label asp-for="supTelephone" for="exampleFormControlInput1" class="form-label">Telephone</label>
+                            <input type="text"
+                                   asp-for="supTelephone"
+                                   class="form-control"
+                                   id="supUpdateTelephone"
+                                   placeholder="Enter telephone of supplier" />
+                        </div>
+                        <div class="mb-3">
+                            <span asp-validation-for="supAddress"></span>
+                            <label asp-for="supAddress" for="exampleFormControlInput1" class="form-label">Address</label>
+                            <input type="text"
+                                   asp-for="supAddress"
+                                   class="form-control"
+                                   id="supUpdateAddress"
+                                   placeholder="Enter address of supplier" />
+                        </div>
+                        <div class="col-sm-10">
+                            <a asp-controller="Supplier" asp-action="Index" class="btn btn-primary">Back to list</a>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

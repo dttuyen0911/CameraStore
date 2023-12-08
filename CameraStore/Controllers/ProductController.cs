@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CameraStore.Controllers
 {
@@ -35,6 +36,8 @@ namespace CameraStore.Controllers
             ViewData["cateID"] = new SelectList(_dbContext.Categories.ToList(), "cateID", "cateName");
             return View();
         }
+        
+        [HttpPost]
         public IActionResult Create(Product obj)
         {
             if (ModelState.IsValid)
@@ -55,7 +58,7 @@ namespace CameraStore.Controllers
             string uniqueFileName = null;
             if (obj.proImage != null)
             {
-                string uploadsFoder = Path.Combine("wwwroot", "Image");
+                string uploadsFoder = Path.Combine("wwwroot", "image");
                 uniqueFileName = Guid.NewGuid().ToString() + obj.proID + obj.proImage.FileName;
                 string filePath = Path.Combine(uploadsFoder, uniqueFileName);
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
@@ -65,7 +68,7 @@ namespace CameraStore.Controllers
             }
             return uniqueFileName;
         }
-        public IActionResult Update(int id)
+        public IActionResult Edit(int id)
         {
             IEnumerable<Product> products = _dbContext.Products.ToList();
             return View(products);

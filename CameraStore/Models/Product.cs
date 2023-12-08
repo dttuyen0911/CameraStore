@@ -24,7 +24,7 @@ namespace CameraStore.Models
         [Required(ErrorMessage = "Please select a sale")]
         public decimal? proSale { get; set; }
         [Required(ErrorMessage = "Please select a status")]
-        public string? proStatus { get; set; }
+        public Boolean proStatus { get; set; }
         [Required(ErrorMessage = "Please select a percent")]
         public string? proPercent { get; set; }
 		public decimal? proPrice { get; set; }

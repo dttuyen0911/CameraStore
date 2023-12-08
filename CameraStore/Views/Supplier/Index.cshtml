@@ -21,24 +21,30 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach(var supplier in Model){
                         <tr>
-                            <th scope="row">1</th>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
+                            <th scope="row">@supplier.supID</th>
+                            <td>@supplier.supName</td>
+                            <td>@supplier.supDescription</td>
+                            <td>@supplier.supTelephone</td>
+                            <td>@supplier.supAddress</td>
                             <td>
                                 <div class="dropdown">
                                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
                                         <i class="bx bx-dots-vertical-rounded"></i>
                                     </button>
                                     <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Edit</a>
-                                        <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i> Delete</a>
-                                    </div>
+                                            <a class="dropdown-item" asp-controller="Supplier" asp-action="detailSup" asp-route-id="@supplier.supID"><i class="bx bx-book-alt me-1"></i> View Detail</a>
+
+                                            <a class="dropdown-item" asp-controller="Supplier" asp-action="Edit" asp-route-id="@supplier.supID"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                                            <a class="dropdown-item" asp-action="Delete" asp-route-id="@supplier.supID" onclick="return confirm('Are you sure?');">
+                                                <i class="bx bx-trash me-1"></i> Delete
+                                            </a>
+                                        </div>
                                 </div>
                             </td>
                         </tr>
+                        }
                     </tbody>
                 </table>
             </div>

@@ -25,29 +25,30 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach(var product in Model){
                         <tr>
-                            <th scope="row">1</th>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
+                            <th scope="row">@product.proID</th>
+                            <td>@product.proName</td>
+                            <td><img src="~/Image/@product.proImage" style="width: 100px; height: 100px" /></td>
+                            <td>@product.proDescription</td>
+                            <td>@product.proPrice</td>
+                            <td>@product.proSale</td>
+                            <td>@product.proStatus</td>
+                            <td>@product.supID</td>
+                            <td>@product.cateID</td>
                             <td>
                                 <div class="dropdown">
                                     <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
                                         <i class="bx bx-dots-vertical-rounded"></i>
                                     </button>
                                     <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                                        <a class="dropdown-item" asp-controller="Product" asp-action="Edit"><i class="bx bx-edit-alt me-1"></i> Update</a>
                                         <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i> Delete</a>
                                     </div>
                                 </div>
                             </td>
                         </tr>
+                        }
                     </tbody>
                 </table>
             </div>

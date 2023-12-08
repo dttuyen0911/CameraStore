@@ -21,7 +21,7 @@ namespace CameraStore.Controllers
             IEnumerable<Feedback> feedbacks = _dbContext.Feedbacks.ToList();
             return View(feedbacks);
         }
-        public IActionResult Update(int id)
+        public IActionResult Edit(int id)
         {
             IEnumerable<Feedback> feedbacks = _dbContext.Feedbacks.ToList();
             return View(feedbacks);
