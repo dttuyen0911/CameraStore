@@ -1,0 +1,142 @@
+﻿@model CameraStore.Models.Product
+
+@{
+    ViewData["Title"] = "View detail product";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Forms /</span> Basic Inputs</h4>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4">
+                <h4 class="card-header" style="text-align:center">VIEW DETAIL PRODUCT</h4>
+                <form asp-controller="Product" asp-action="detailPro" enctype="multipart/form-data" method="post">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <span asp-validation-for="proID"></span>
+                            <label asp-for="proID" for="exampleFormControlReadOnlyInput1" class="form-label">ID</label>
+                            <input class="form-control"
+                                   type="text"
+                                   asp-for="proID"
+                                   id="detailProName"
+                                   placeholder="ID"
+                                   readonly />
+                        </div>
+                        <div class="mb-3">
+                            <span asp-validation-for="proName"></span>
+                            <label asp-for="proName" for="exampleFormControlReadOnlyInput1" class="form-label">Name</label>
+                            <input class="form-control"
+                                   type="text"
+                                   asp-for="proName"
+                                   id="detailProName"
+                                   placeholder="name"
+                                   readonly />
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="proImage" class="control-label">Image</label>
+                            <div> <img src="~/Image/@Model.proUrlImage" style="width: 100px; height: 100px" /></div>
+                            <span asp-validation-for="proImage" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                        <div>
+                            <span asp-validation-for="proDescription"></span>
+                            <label asp-for="proDescription" for="exampleFormControlTextarea1" class="form-label">Enter description of product</label>
+                            <textarea readonly class="form-control" asp-for="proDescription" id="uploadProDes" rows="3"></textarea>
+                        </div>
+                        </div>
+                        <div class="mb-3">
+                            <span asp-validation-for="proStatus"></span>
+                            <label asp-for="proStatus" for="exampleFormControlReadOnlyInput1" class="form-label">Status</label>
+                            <input class="form-control"
+                                   type="text"
+                                   asp-for="proStatus"
+                                   id="detailProSta"
+                                   placeholder="status"
+                                   readonly />
+                        </div>
+                        <div class="mb-3">
+                            <span asp-validation-for="proPrice"></span>
+                            <label asp-for="proPrice" for="exampleFormControlInput1" class="form-label">Price</label>
+                            <input type="text"
+                                   asp-for="proPrice"
+                                   readonly
+                                   class="form-control"
+                                   id="detailProPrice"
+                                   placeholder="Enter price of product" />
+                        </div>
+
+                        <div class="mb-3">
+                            <span asp-validation-for="proPercent"></span>
+                            <label asp-for="proPercent" for="exampleFormControlInput1" class="form-label">Price</label>
+                            <input type="text"
+                                   asp-for="proPercent"
+                                   class="form-control"
+                                   readonly
+                                   id="detailProSale"
+                                   placeholder="Enter percent sale of product" />
+                        </div>
+                        <div class="mb-3">
+                            <span asp-validation-for="proSale"></span>
+                            <label asp-for="proSale" for="exampleFormControlInput1" class="form-label">Price</label>
+                            <input type="text"
+                                   asp-for="proSale"
+                                   class="form-control"
+                                   readonly
+                                   id="detailProPrice"
+                                   placeholder="Enter price sale of product" />
+                        </div>
+                        <div class="mb-3">
+                            <span asp-validation-for="proQuantity"></span>
+                            <label asp-for="proQuantity" for="exampleFormControlInput1" class="form-label" min="1">Quantity</label>
+                            <input type="number"
+                                   asp-for="proQuantity"
+                                   readonly
+                                   class="form-control"
+                                   id="detailProQuantity"
+                                   placeholder="Enter quantity of product" />
+                        </div>
+
+                        <div class="mb-3">
+                            <span asp-validation-for="Category"></span>
+                            <label asp-for="cateID" for="exampleFormControlInput1" class="form-label">Category</label>
+                            <input type="text"
+                                   asp-for="cateID"
+                                   readonly
+                                   class="form-control"
+                                   id="detailProCate" />
+                        </div>
+                        <div class="mb-3">
+                            <span asp-validation-for="Supplier"></span>
+                            <label asp-for="supID" for="exampleFormControlInput1" class="form-label">Category</label>
+                            <input type="text"
+                                   asp-for="supID"
+                                   readonly
+                                   class="form-control"
+                                   id="detailProSup" />
+                        </div>
+
+                        <div class="col-sm-10">
+                            <a asp-controller="Product" asp-action="Index" class="btn btn-primary">Back to list</a>
+                            <a asp-controller="Product" asp-action="Edit" asp-route-id="@Model.proID" asp-route-img="@Model.proImage"
+                               class="btn btn-primary">Update</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function chooseFile(fileInput) {
+        if (fileInput.files && fileInput.files[0]) {
+            var render = new FileReader();
+
+            render.onload = function (e) {
+                $('#image').attr('src', e.target.result);
+            }
+            render.readAsDataURL(fileInput.files[0]);
+        }
+    }
+</script>
+

@@ -104,8 +104,19 @@ namespace CameraStore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("customerID"));
 
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("birthday")
                         .IsRequired()
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("confirmPassword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("createAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("email")
@@ -125,7 +136,6 @@ namespace CameraStore.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("telephone")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("customerID");
@@ -269,11 +279,11 @@ namespace CameraStore.Migrations
                         .IsRequired()
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<bool>("proStatus")
-                        .HasColumnType("bit");
+                    b.Property<string>("proStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("proUrlImage")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("supID")

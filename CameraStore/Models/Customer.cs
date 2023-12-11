@@ -20,6 +20,7 @@ namespace CameraStore.Models
         public string? telephone { get; set; }
         [Required(ErrorMessage = "Address of account is not null")]
         public DateTime? birthday { get; set; }
+        public DateTime? createAt { get; set; }
         [Required]
         [ForeignKey("Role")]
         public int roleID { get; set; }
@@ -27,5 +28,10 @@ namespace CameraStore.Models
         public virtual ICollection<Feedback>? Feedbacks { get; set; }
         public virtual ICollection<Cart>? Carts { get; set; }
         public virtual ICollection<Order>? Orders { get; set; }
+        public Customer()
+        {
+            createAt = DateTime.Now;
+        }
+
     }
 }

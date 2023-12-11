@@ -1,5 +1,4 @@
-﻿@model IEnumerable<Customer>
-
+﻿@model CameraStore.Models.Customer
 @{
     ViewData["Title"] = "Add new customer";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -11,49 +10,55 @@
         <div class="col-md-12">
             <div class="card mb-4">
                 <h4 class="card-header" style="text-align:center">ADD NEW ACCOUNT</h4>
+                <form asp-controller="Customer" asp-action="Create" enctype="multipart/form-data" method="post">
                 <div class="card-body">
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Full name</label>
+                        <span asp-validation-for="fullname"></span>
+                            <label asp-for="fullname" for="exampleFormControlInput1" class="form-label">Full name</label>
                         <input type="text"
                                class="form-control"
-                               id="exampleFormControlInput1"
+                               asp-for="fullname"
+                               id="uploadCusName"
                                placeholder="Enter full name of customer" />
                     </div>
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Email</label>
+                        <span asp-validation-for="email"></span>
+                        <label asp-for="email"for="exampleFormControlInput1" class="form-label">Email</label>
                         <input type="email"
+                               asp-for="email"
                                class="form-control"
-                               id="exampleFormControlInput1"
+                               id="uploadCusEmail"
                                placeholder="Enter email of customer" />
                     </div>
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Password</label>
+                         <span asp-validation-for="password"></span>
+                        <label asp-for="password"for="exampleFormControlInput1" class="form-label">Password</label>
                         <input type="password"
+                               asp-for="password"
                                class="form-control"
-                               id="exampleFormControlInput1"
+                               id="uploadCusPass"
                                placeholder="Enter password of customer" />
                     </div>
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Telephone</label>
+                        <span asp-validation-for="telephone"></span>
+                        <label asp-for = "telephone" for="exampleFormControlInput1" class="form-label">Telephone</label>
                         <input type="text"
+                               asp-for="telephone"
                                class="form-control"
-                               id="exampleFormControlInput1"
+                               id="uploadCusTele"
                                placeholder="Enter telephone of customer" />
                     </div>
                     <div class="mb-3">
-                        <label for="html5-date-input" class="col-md-2 col-form-label">Birthday</label>
+                        <span asp-validation-for="birthday"></span>
+                        <label asp-for = "birthday" for="html5-date-input" class="col-md-2 col-form-label">Birthday</label>
                         <div class="col-md-12">
-                            <input class="form-control" type="date" value="YYYY-MM-DD" id="html5-date-input" />
+                            <input class="form-control" asp-for = "birthday"type="date" id="uploadCusBirthday" />
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="exampleFormControlSelect1" class="form-label">Role</label>
-                        <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
-                            <option selected>Choose the role</option>
-                            <option value="1">Customer</option>
-                            <option value="2">Employee</option>
-                            <option value="3">Owner</option>
-                            <option value="3">Admin</option>
+                        <label asp-for="Role" class="form-label">Role</label>
+                        <select asp-for = "roleID" asp-items="ViewBag.roleID" class="form-select" id="uploadCusRole" aria-label="Default select example">
+                            <option>Choose the role of customer</option>
                         </select>
                     </div>
                     <div class="col-sm-10">
@@ -61,6 +66,7 @@
                         <button type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </div>
+                </form>
             </div>
         </div>
     </div>

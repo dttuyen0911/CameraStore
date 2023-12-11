@@ -24,7 +24,7 @@
                                placeholder="Enter name of category" />
                     </div>
                     <div class="mb-3">
-                            <label asp-for="cateImage" class="control-label"></label>
+                            <label asp-for="cateImage" class="control-label">Image</label>
                             <input asp-for="cateImage" type="file" onchange="chooseFile(this)" accept="image/gif, image/jpeg, image/png" style="width: 100%" class="form-control" />
                             <div> <img style="height:200px;width:250px" id="image" /></div>
                             <span asp-validation-for="cateImage" class="text-danger"></span>

@@ -1,4 +1,4 @@
-﻿@model List<CameraStore.Models.Feedback>
+﻿@model CameraStore.Models.Feedback
 
 @{
     ViewData["Title"] = "Update feedback";
@@ -11,46 +11,31 @@
         <div class="col-md-12">
             <div class="card mb-4">
                 <h4 class="card-header" style="text-align:center">UPDATE FEEBACK</h4>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label for="exampleFormControlReadOnlyInput1" class="form-label">ID</label>
-                        <input
-                        class="form-control"
-                        type="text"
-                        id="exampleFormControlReadOnlyInput1"
-                        placeholder="ID"
-                        readonly
-                        />
+                <form asp-controller="Feedback" asp-action="Edit" enctype="multipart/form-data" method="post">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label asp-for="customerID" class="form-label">Customer</label>
+                            <select asp-for="customerID" asp-items="ViewBag.customerID" class="form-select" id="updateFeedCus" aria-label="Default select example">
+                                <option>Choose the customer of feedback</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="proID" class="form-label">Product</label>
+                            <select asp-for="proID" asp-items="ViewBag.proID" class="form-select" id="updateFeedPro" aria-label="Default select example">
+                                <option>Choose the product of feedback</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <span asp-validation-for="feedDescription"></span>
+                            <label asp-for="feedDescription" for="exampleFormControlTextarea1" class="form-label">Enter comment of feedback</label>
+                            <textarea asp-for="feedDescription" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                        </div>
+                        <div class="col-sm-10">
+                            <a asp-controller="Customer" asp-action="Index" class="btn btn-primary">Back to list</a>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="exampleFormControlSelect1" class="form-label">User</label>
-                        <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
-                            <option selected>Choose the role</option>
-                            <option value="1">Customer</option>
-                            <option value="2">Employee</option>
-                            <option value="3">Owner</option>
-                            <option value="3">Admin</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="exampleFormControlSelect1" class="form-label">Product</label>
-                        <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
-                            <option selected>Choose the role</option>
-                            <option value="1">Customer</option>
-                            <option value="2">Employee</option>
-                            <option value="3">Owner</option>
-                            <option value="3">Admin</option>
-                        </select>
-                    </div>
-                    <div class ="mb-3">
-                        <label for="exampleFormControlTextarea1" class="form-label">Enter comment of feedback</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                    </div>
-                    <div class="col-sm-10">
-                        <a asp-controller="Customer" asp-action="Index" class="btn btn-primary">Back to list</a>
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>

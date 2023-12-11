@@ -24,16 +24,25 @@
                                placeholder="Enter name of product" />
                     </div>
                     <div class="mb-3">
-                        <span asp-validation-for="proImage"></span>
-                        <label asp-for="proImage" for="formFile" class="form-label">Image</label>
-                        <input asp-for="proImage" onchange ="chooseFile(this)"
-                        accept="image/gif, image/jpeg, image/png" style="width:100%"
-                        class="form-control" type="file" id="uploadProImage" />
+                            <label asp-for="proImage" class="control-label">Image</label>
+                            <input asp-for="proImage" type="file" onchange="chooseFile(this)" accept="image/gif, image/jpeg, image/png" style="width: 100%" class="form-control" />
+                            <div> <img style="height:200px;width:250px" id="image" /></div>
+                            <span asp-validation-for="proImage" class="text-danger"></span>
                     </div>
                     <div>
                         <span asp-validation-for="proDescription"></span>
                         <label asp-for="proDescription"for="exampleFormControlTextarea1" class="form-label">Enter description of product</label>
                         <textarea class="form-control" asp-for ="proDescription" id="uploadProDes" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <span asp-validation-for="proStatus"></span>
+                        <label asp-for="proStatus" for="exampleFormControlInput1" class="form-label">Status</label>
+                        <input type="text"
+                               asp-for="proStatus"
+                               class="form-control"
+                               id="uploadProSta"
+                               aria-required="true"
+                               placeholder="Enter status of product" />
                     </div>
                     <div class="mb-3">
                         <span asp-validation-for="proPrice"></span>
@@ -44,38 +53,24 @@
                                id="uploadProPrice"
                                placeholder="Enter price of product" />
                     </div>
+                    
                     <div class="mb-3">
-                        <span asp-validation-for="proStatus"></span>
-                        <label asp-for="proStatus" for="exampleFormControlInput1" class="form-label">Status</label>
-                        <div class="form-check form-check-inline mt-3">
-                            <input class="form-check-input"
-                                   type="radio"
-                                   name="inlineRadioOptions"
-                                   asp-for="proStatus"
-                                   id="uploadProStaNew"
-                                   value="New" />
-                            <label class="form-check-label" for="inlineRadio1">New</label>
-                        </div>
-                        <div class="form-check form-check-inline mt-3">
-                            <input class="form-check-input"
-                                   type="radio"
-                                   name="inlineRadioOptions"
-                                   asp-for="proStatus"
-                                   id="uploadProStaOld"
-                                   value="Old" />
-                            <label class="form-check-label" for="inlineRadio1">Old</label>
-                        </div>
+                        <span asp-validation-for="proPercent"></span>
+                        <label asp-for = "proPercent" for="exampleFormControlInput1" class="form-label">Price</label>
+                        <input type="text"
+                               asp-for="proPercent"
+                               class="form-control"
+                               id="uploadProSale"
+                               placeholder="Enter percent sale of product" />
                     </div>
                     <div class="mb-3">
                         <span asp-validation-for="proSale"></span>
-                        <label asp-for ="proSale" for="exampleFormControlSelect1" class="form-label">Sale</label>
-                            <select class="form-select" asp-for="proSale" id="uploadProSale" aria-label="Default select example">
-                            <option selected>Choose the sale level</option>
-                            <option value="1">No</option>
-                            <option value="2">Sale 30%</option>
-                            <option value="3">Sale 50%</option>
-                            <option value="4">Sale 70%</option>
-                        </select>
+                            <label asp-for="proSale" for="exampleFormControlInput1" class="form-label">Price</label>
+                        <input type="text"
+                                   asp-for="proSale"
+                               class="form-control"
+                               id="uploadProPrice"
+                               placeholder="Enter price sale of product" />
                     </div>
                     <div class="mb-3">
                         <span asp-validation-for="proQuantity"></span>
@@ -93,7 +88,7 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                            <label asp-for="Supplier" class="form-label">Category</label>
+                            <label asp-for="Supplier" class="form-label">Supplier</label>
                             <select asp-for="supID" asp-items="ViewBag.supID" class="form-select" id="uploadProSup" aria-label="Default select example">
                                 <option>Choose the supplier of product</option>
                             </select>

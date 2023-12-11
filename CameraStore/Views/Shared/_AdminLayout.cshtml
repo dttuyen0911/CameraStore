@@ -30,6 +30,7 @@
     <link rel="stylesheet" href="~/AdminLayout/vendor/css/core.css" class="template-customizer-core-css" />
     <link rel="stylesheet" href="~/AdminLayout/vendor/css/theme-default.css" class="template-customizer-theme-css" />
     <link rel="stylesheet" href="~/AdminLayout/css/demo.css" />
+    <link rel="stylesheet" href="~/Plusgin/tables/css/datatable/dataTables.bootstrap4.min.css" />
 
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="~/AdminLayout/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
@@ -111,7 +112,7 @@
                     </li>
                     <li class="menu-item">
                         <a class="menu-link" asp-area="" asp-controller="Role" asp-action="Index">
-                            <i class="menu-icon tf-icons bx bx-user-circle"></i>
+                            <i class="menu-icon tf-icons bx bx-layer"></i>
                             <div data-i18n="Boxicons">Role</div>
                         </a>
                     </li>
@@ -138,7 +139,7 @@
                         <!-- /Search -->
                     </div>
                 </nav>
-                   
+ 
                         @RenderBody()
                
                     <!-- / Layout page -->
@@ -153,7 +154,9 @@
     <script src="~/AdminLayout/vendor/libs/popper/popper.js"></script>
     <script src="~/AdminLayout/vendor/js/bootstrap.js"></script>
     <script src="~/AdminLayout/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
-
+        <script src="~/Plusgin/tables/js/jquery.dataTables.min.js"></script>
+        <script src="~/Plusgin/tables/js/datatable/dataTables.bootstrap4.min.js"></script>
+        <script src="~/Plusgin/tables/js/datatable-init/datatable-basic.min.js"></script>
     <script src="~/AdminLayout/vendor/js/menu.js"></script>
     <!-- endbuild -->
     <!-- Vendors JS -->

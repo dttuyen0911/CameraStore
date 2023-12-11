@@ -1,5 +1,6 @@
 ﻿using CameraStore.Data;
 using CameraStore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -68,10 +69,95 @@ namespace CameraStore.Controllers
             }
             return uniqueFileName;
         }
-        public IActionResult Edit(int id)
+        public IActionResult Edit(int id, string img)
         {
-            IEnumerable<Product> products = _dbContext.Products.ToList();
-            return View(products);
+            ViewData["supID"] = new SelectList(_dbContext.Suppliers, "supID", "supName");
+            ViewData["cateID"] = new SelectList(_dbContext.Categories.ToList(), "cateID", "cateName");
+            Product obj = _dbContext.Products.Find(id);
+            if (obj == null)
+            {
+                return RedirectToAction("Index");
+            }
+            return View(obj);
+        }
+        [HttpPost]
+        public IActionResult Edit(int id, Product obj, string img)
+        {
+            if (ModelState.IsValid)
+            {
+                if (obj.proImage == null)
+                {
+                    obj.proID = id;
+                    obj.proUrlImage = img;
+                    _dbContext.Products.Update(obj);
+                    _dbContext.SaveChanges();
+                }
+                else
+                {
+                    obj.proID = id;
+                    string uniqueFileName = proUploadImage(obj);
+                    obj.proUrlImage = uniqueFileName;
+                    _dbContext.Products.Update(obj);
+                    _dbContext.SaveChanges();
+                    img = Path.Combine("wwwroot", "image", img);
+                    FileInfo infor = new FileInfo(img);
+                    if (infor != null)
+                    {
+                        System.IO.File.Delete(img);
+                        infor.Delete();
+                    }
+                }
+                return RedirectToAction("Index");
+            }
+            ViewData["supID"] = new SelectList(_dbContext.Suppliers, "supID", "supName");
+            ViewData["cateID"] = new SelectList(_dbContext.Categories.ToList(), "cateID", "cateName");
+            return View(obj);
+        }
+        public IActionResult Delete(int id, string img)
+        {
+            Product obj = _dbContext.Products.Find(id);
+            if (obj == null)
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                if (obj.proUrlImage == null)
+                {
+                    _dbContext.Products.Remove(obj);
+                    _dbContext.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    img = Path.Combine("wwwroot", "uploads", img);
+                    FileInfo infor = new FileInfo(img);
+                    if (infor != null)
+                    {
+                        System.IO.File.Delete(img);
+                        infor.Delete();
+                    }
+                    _dbContext.Products.Remove(obj);
+                    _dbContext.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+            }
+        }
+        public IActionResult detailPro(int? id, string img)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var product = _dbContext.Products.Find(id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
         }
     }
 }

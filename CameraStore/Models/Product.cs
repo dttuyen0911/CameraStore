@@ -16,7 +16,6 @@ namespace CameraStore.Models
         public string proDescription { get; set; }
         [NotMapped]
         public IFormFile? proImage { get; set; }
-        [Required(ErrorMessage = "Please select a image")]
         public string? proUrlImage { get; set; }
         [Required(ErrorMessage = "Please select a date")]
         public DateTime proDate { get; set; }
@@ -24,7 +23,7 @@ namespace CameraStore.Models
         [Required(ErrorMessage = "Please select a sale")]
         public decimal? proSale { get; set; }
         [Required(ErrorMessage = "Please select a status")]
-        public Boolean proStatus { get; set; }
+        public string? proStatus { get; set; }
         [Required(ErrorMessage = "Please select a percent")]
         public string? proPercent { get; set; }
 		public decimal? proPrice { get; set; }

@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Product>
+﻿@model CameraStore.Models.Product
+
 @{
     ViewData["Title"] = "Update product";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -7,107 +8,121 @@
 <div class="container-xxl flex-grow-1 container-p-y">
     <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">Forms /</span> Basic Inputs</h4>
     <div class="row">
-        <!-- Form controls -->
         <div class="col-md-12">
             <div class="card mb-4">
                 <h4 class="card-header" style="text-align:center">UPDATE PRODUCT</h4>
+                <form asp-controller="Product" asp-route-id="@Model.proID" asp-route-img="@Model.proUrlImage" asp-action="Edit" enctype="multipart/form-data" method="post">
                 <div class="card-body">
                     <div class="mb-3">
-                        <label for="exampleFormControlReadOnlyInput1" class="form-label">ID</label>
-                        <input
-                          class="form-control"
-                          type="text"
-                          id="exampleFormControlReadOnlyInput1"
-                          placeholder="ID"
-                          readonly
-                        />
-                      </div>
+                        <span asp-validation-for="proID"></span>
+                        <label asp-for="proID" for="exampleFormControlReadOnlyInput1" class="form-label">ID</label>
+                        <input class="form-control"
+                               type="text"
+                               asp-for="proID"
+                               id="updateProName"
+                               placeholder="ID"
+                               readonly />
+                    </div>
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Name</label>
+                        <span asp-validation-for="proName"></span>
+                        <label asp-for="proName" for="exampleFormControlInput1" class="form-label">Name</label>
                         <input type="text"
+                               asp-for="proName"
                                class="form-control"
-                               id="exampleFormControlInput1"
+                               id="updateProName"
+                               aria-required="true"
                                placeholder="Enter name of product" />
                     </div>
                     <div class="mb-3">
-                        <label for="formFile" class="form-label">Image</label>
-                        <input class="form-control" type="file" id="formFile" />
+                            <label asp-for="proImage" class="control-label">Image</label>
+                            <input asp-for="proImage" type="file" onchange="chooseFile(this)" accept="image/gif, image/jpeg, image/png" style="width: 100%" class="form-control" />
+                            <div> <img src="~/Image/@Model.proUrlImage" style="height:200px;width:250px" id="image" /></div>
+                            <span asp-validation-for="proImage" class="text-danger"></span>
                     </div>
                     <div>
-                        <label for="exampleFormControlTextarea1" class="form-label">Enter description of product</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                        <span asp-validation-for="proDescription"></span>
+                        <label asp-for="proDescription"for="exampleFormControlTextarea1" class="form-label">Enter description of product</label>
+                        <textarea class="form-control" asp-for ="proDescription" id="updateProDes" rows="3"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Price</label>
+                        <span asp-validation-for="proStatus"></span>
+                        <label asp-for="proStatus" for="exampleFormControlInput1" class="form-label">Status</label>
                         <input type="text"
+                               asp-for="proStatus"
                                class="form-control"
-                               id="exampleFormControlInput1"
+                               id="updateProSta"
+                               aria-required="true"
+                               placeholder="Enter status of product" />
+                    </div>
+                    <div class="mb-3">
+                        <span asp-validation-for="proPrice"></span>
+                        <label asp-for = "proPrice" for="exampleFormControlInput1" class="form-label">Price</label>
+                        <input type="text"
+                               asp-for="proPrice"
+                               class="form-control"
+                               id="updateProPrice"
                                placeholder="Enter price of product" />
                     </div>
+                    
                     <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Status</label>
-                        <div class="form-check form-check-inline mt-3">
-                            <input class="form-check-input"
-                                   type="radio"
-                                   name="inlineRadioOptions"
-                                   id="inlineRadio1"
-                                   value="option1" />
-                            <label class="form-check-label" for="inlineRadio1">New</label>
-                        </div>
-                        <div class="form-check form-check-inline mt-3">
-                            <input class="form-check-input"
-                                   type="radio"
-                                   name="inlineRadioOptions"
-                                   id="inlineRadio1"
-                                   value="option1" />
-                            <label class="form-check-label" for="inlineRadio1">Old</label>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="exampleFormControlSelect1" class="form-label">Sale</label>
-                        <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
-                            <option selected>Choose the sale level</option>
-                            <option value="1">No</option>
-                            <option value="2">Sale 30%</option>
-                            <option value="3">Sale 50%</option>
-                            <option value="3">Sale 70%</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="exampleFormControlInput1" class="form-label">Quantity</label>
-                        <input type="number"
+                        <span asp-validation-for="proPercent"></span>
+                        <label asp-for = "proPercent" for="exampleFormControlInput1" class="form-label">Price</label>
+                        <input type="text"
+                               asp-for="proPercent"
                                class="form-control"
-                               id="exampleFormControlInput1"
+                               id="updateProSale"
+                               placeholder="Enter percent sale of product" />
+                    </div>
+                    <div class="mb-3">
+                        <span asp-validation-for="proSale"></span>
+                            <label asp-for="proSale" for="exampleFormControlInput1" class="form-label">Price</label>
+                        <input type="text"
+                                   asp-for="proSale"
+                               class="form-control"
+                               id="updateProPrice"
+                               placeholder="Enter price sale of product" />
+                    </div>
+                    <div class="mb-3">
+                        <span asp-validation-for="proQuantity"></span>
+                        <label asp-for="proQuantity" for="exampleFormControlInput1" class="form-label" min="1">Quantity</label>
+                        <input type="number"
+                               asp-for="proQuantity"
+                               class="form-control"
+                               id="updateProQuantity"
                                placeholder="Enter quantity of product" />
                     </div>
                     <div class="mb-3">
-                        <label for="exampleFormControlSelect1" class="form-label">Category</label>
-                        <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
-                            <option selected>Choose the category of product</option>
-                            <option value="1">No</option>
-                            <option value="2">Sale 30%</option>
-                            <option value="3">Sale 50%</option>
-                            <option value="3">Sale 70%</option>
+                        <label asp-for="Category" class="form-label">Category</label>
+                        <select asp-for = "cateID" asp-items="ViewBag.cateID" class="form-select" id="updateProCate" aria-label="Default select example">
+                            <option>Choose the category of product</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="exampleFormControlSelect1" class="form-label">Supplier</label>
-                        <select class="form-select" id="exampleFormControlSelect1" aria-label="Default select example">
-                            <option selected>Choose the supplier of product</option>
-                            <option value="1">No</option>
-                            <option value="2">Sale 30%</option>
-                            <option value="3">Sale 50%</option>
-                            <option value="3">Sale 70%</option>
-                        </select>
+                            <label asp-for="Supplier" class="form-label">Supplier</label>
+                            <select asp-for="supID" asp-items="ViewBag.supID" class="form-select" id="updateProSup" aria-label="Default select example">
+                                <option>Choose the supplier of product</option>
+                            </select>
                     </div>
-
                     <div class="col-sm-10">
                         <a asp-controller="Product" asp-action="Index" class="btn btn-primary">Back to list</a>
                         <button type="submit" class="btn btn-primary">Update</button>
                     </div>
                 </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
+<script>
+    function chooseFile(fileInput) {
+        if (fileInput.files && fileInput.files[0]) {
+            var render = new FileReader();
+
+            render.onload = function (e) {
+                $('#image').attr('src', e.target.result);
+            }
+            render.readAsDataURL(fileInput.files[0]);
+        }
+    }
+</script>
 

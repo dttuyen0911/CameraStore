@@ -115,6 +115,21 @@ namespace CameraStore.Controllers
                 return RedirectToAction("Index");
             }
         }
+        public IActionResult detailCate(int? id, string img)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
+            var category = _dbContext.Categories.Find(id);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            return View(category);
+        }
     }
 }

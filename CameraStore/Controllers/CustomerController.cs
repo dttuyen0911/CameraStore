@@ -1,7 +1,10 @@
 ﻿using CameraStore.Data;
 using CameraStore.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace CameraStore.Controllers
 {
@@ -14,17 +17,108 @@ namespace CameraStore.Controllers
         }
         public IActionResult Index()
         {
-            return View();
-        }
-        public IActionResult Create(int id)
-        {
             IEnumerable<Customer> customers = _dbContext.Customers.ToList();
             return View(customers);
+        }
+        public IActionResult Create()
+        {
+            ViewData["roleID"] = new SelectList(_dbContext.Roles.ToList(), "roleID", "name");
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Create(Customer obj)
+        {
+            if (ModelState.IsValid)
+            {
+                obj.password = GetMD5(obj.password);
+                _dbContext.Customers.Add(obj);
+                _dbContext.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            ViewData["roleID"] = new SelectList(_dbContext.Roles.ToList(), "roleID", "name");
+            return View(obj);
+        }
+        public static string GetMD5(String str)
+        {
+            MD5 md5 = new MD5CryptoServiceProvider();
+            byte[] fromdata = Encoding.UTF8.GetBytes(str);
+            byte[] targetData = md5.ComputeHash(fromdata);
+            string byte25String = null;
+
+            for (int i = 0; i < targetData.Length; i++)
+            {
+                byte25String += targetData[i].ToString("x2");
+            }
+            return byte25String;
         }
         public IActionResult Edit(int id)
         {
-            IEnumerable<Customer> customers = _dbContext.Customers.ToList();
-            return View(customers);
+            ViewData["roleID"] = new SelectList(_dbContext.Roles.ToList(), "roleID", "name");
+            Customer obj = _dbContext.Customers.Find(id);
+            if (obj == null)
+            {
+                return RedirectToAction("Index");
+            }
+            return View(obj);
+        }
+        [HttpPost]
+        public IActionResult Edit(int id, Customer obj)
+        {
+            Customer existingCustomer = _dbContext.Customers.Find(id);
+
+            if (existingCustomer == null)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                // Detach the existing entity from the context
+                _dbContext.Entry(existingCustomer).State = EntityState.Detached;
+
+                // Set the key of the new object
+                obj.customerID = id;
+
+                // Attach and update the new object
+                _dbContext.Customers.Update(obj);
+
+                // Save changes
+                _dbContext.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+
+            ViewData["roleID"] = new SelectList(_dbContext.Roles.ToList(), "roleID", "name");
+            return View(obj);
+        }
+
+        public ActionResult Delete(int id)
+        {
+            var obj = _dbContext.Customers.Find(id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            _dbContext.Customers.Remove(obj);
+            _dbContext.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        public IActionResult detailCustomer(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var customer = _dbContext.Customers.Find(id);
+
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            return View(customer);
         }
     }
 }
