@@ -141,8 +141,6 @@ namespace CameraStore.Controllers
                     _dbContext.SaveChanges();
                     return RedirectToAction("Index");
                 }
-            }
-        }
         public IActionResult detailPro(int? id, string img)
         {
             if (id == null)
