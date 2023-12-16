@@ -92,27 +92,32 @@ namespace CameraStore.Controllers
         }
         public IActionResult Delete(int id, string img)
         {
-            Category cate = _dbContext.Categories.Find(id);
-            if (cate == null)
+            Category obj = _dbContext.Categories.Find(id);
+            if (obj == null)
             {
                 return RedirectToAction("Index");
             }
             else
             {
-                if (cate.cateUrlImage != null)
+                if (obj.cateUrlImage == null)
                 {
-                    img = Path.Combine("wwwroot", "uploads", img);
+                    _dbContext.Categories.Remove(obj);
+                    _dbContext.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    img = Path.Combine("wwwroot", "image", img);
                     FileInfo infor = new FileInfo(img);
                     if (infor != null)
                     {
                         System.IO.File.Delete(img);
                         infor.Delete();
                     }
+                    _dbContext.Categories.Remove(obj);
+                    _dbContext.SaveChanges();
+                    return RedirectToAction("Index");
                 }
-
-                _dbContext.Categories.Remove(cate);
-                _dbContext.SaveChanges();
-                return RedirectToAction("Index");
             }
         }
         public IActionResult detailCate(int? id, string img)

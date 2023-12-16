@@ -1,4 +1,6 @@
-﻿@model IEnumerable<Product>
+﻿﻿@using CameraStore.Models
+
+@model IEnumerable<Product>
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
@@ -35,7 +37,7 @@
                             <td>@product.proDescription</td>
                             <td>@product.proStatus</td>
                             <td>@product.proPrice</td>
-                            <td>@product.proPercent</td>
+                            <td>@product.proPercent%</td>
                             <td>@product.proSale</td>
                             <td>@product.proQuantity</td>
                             <td>@product.supID</td>

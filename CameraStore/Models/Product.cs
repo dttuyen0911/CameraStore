@@ -20,13 +20,21 @@ namespace CameraStore.Models
         [Required(ErrorMessage = "Please select a date")]
         public DateTime proDate { get; set; }
         public int? proQuantity { get; set; }
-        [Required(ErrorMessage = "Please select a sale")]
-        public decimal? proSale { get; set; }
-        [Required(ErrorMessage = "Please select a status")]
-        public string? proStatus { get; set; }
-        [Required(ErrorMessage = "Please select a percent")]
-        public string? proPercent { get; set; }
-		public decimal? proPrice { get; set; }
+        [Required(ErrorMessage = "Please enter a valid price sale")]
+        [Range(0, double.MaxValue, ErrorMessage = "Price sale must be a non-negative value")]
+        [DisplayFormat(DataFormatString = "{0:N0} VNĐ")]
+        public decimal? proSale { get; set; } // price sale when sub percent
+
+        [Required(ErrorMessage = "Please enter a status of product")]
+        public string? proStatus { get; set; } // old or new or sold out
+        [Required(ErrorMessage = "Please enter a percent sale of product")]
+        [RegularExpression(@"^[0-9]+$", ErrorMessage = "Percent must be a non-negative integer")]
+        public string? proPercent { get; set; } // percent sale if any
+        [Required(ErrorMessage = "Please enter a valid price")]
+        [Range(0, double.MaxValue, ErrorMessage = "Price must be a non-negative value")]
+        [DataType(DataType.Currency)]
+        [DisplayFormat(DataFormatString = "{0:N0} VNĐ")]
+        public decimal? proPrice { get; set; } // price original
         [ForeignKey("Supplier")]
         public int supID { get; set; }
         public Supplier? Supplier { get; set; }

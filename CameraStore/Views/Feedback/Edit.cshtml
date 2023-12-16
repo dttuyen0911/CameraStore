@@ -14,6 +14,16 @@
                 <form asp-controller="Feedback" asp-action="Edit" enctype="multipart/form-data" method="post">
                     <div class="card-body">
                         <div class="mb-3">
+                            <span asp-validation-for="feedID"></span>
+                            <label for="exampleFormControlReadOnlyInput1" class="form-label">ID</label>
+                            <input class="form-control"
+                                   type="text"
+                                   asp-for="feedID"
+                                   id="updateFeedID"
+                                   placeholder="ID"
+                                   readonly />
+                        </div>
+                        <div class="mb-3">
                             <label asp-for="customerID" class="form-label">Customer</label>
                             <select asp-for="customerID" asp-items="ViewBag.customerID" class="form-select" id="updateFeedCus" aria-label="Default select example">
                                 <option>Choose the customer of feedback</option>

@@ -56,16 +56,19 @@
                     
                     <div class="mb-3">
                         <span asp-validation-for="proPercent"></span>
-                        <label asp-for = "proPercent" for="exampleFormControlInput1" class="form-label">Price</label>
+                        <label asp-for = "proPercent" for="exampleFormControlInput1" class="form-label">Percent sale</label>
                         <input type="text"
                                asp-for="proPercent"
                                class="form-control"
                                id="uploadProSale"
                                placeholder="Enter percent sale of product" />
+                            <div id="defaultFormControlHelp" class="form-text">
+                                In case there is no sale, enter the value as "No".
+                            </div>
                     </div>
                     <div class="mb-3">
                         <span asp-validation-for="proSale"></span>
-                            <label asp-for="proSale" for="exampleFormControlInput1" class="form-label">Price</label>
+                            <label asp-for="proSale" for="exampleFormControlInput1" class="form-label">Price slae</label>
                         <input type="text"
                                    asp-for="proSale"
                                class="form-control"
@@ -74,11 +77,12 @@
                     </div>
                     <div class="mb-3">
                         <span asp-validation-for="proQuantity"></span>
-                        <label asp-for="proQuantity" for="exampleFormControlInput1" class="form-label" min="1">Quantity</label>
+                        <label asp-for="proQuantity" for="exampleFormControlInput1" class="form-label">Quantity</label>
                         <input type="number"
                                asp-for="proQuantity"
                                class="form-control"
                                id="uploadProQuantity"
+                               min="1"
                                placeholder="Enter quantity of product" />
                     </div>
                     <div class="mb-3">

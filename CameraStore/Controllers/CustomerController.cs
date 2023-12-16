@@ -25,19 +25,33 @@ namespace CameraStore.Controllers
             ViewData["roleID"] = new SelectList(_dbContext.Roles.ToList(), "roleID", "name");
             return View();
         }
-
         [HttpPost]
         public IActionResult Create(Customer obj)
         {
             if (ModelState.IsValid)
             {
-                obj.password = GetMD5(obj.password);
-                _dbContext.Customers.Add(obj);
-                _dbContext.SaveChanges();
-                return RedirectToAction("Index");
+                if (IsEmailUnique(obj.email))
+                {
+                    obj.password = GetMD5(obj.password);
+                    _dbContext.Customers.Add(obj);
+                    _dbContext.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ModelState.AddModelError("Email", "Email already exists.");
+                }
             }
+
             ViewData["roleID"] = new SelectList(_dbContext.Roles.ToList(), "roleID", "name");
             return View(obj);
+        }
+        private bool IsEmailUnique(string email, int? customerId = null)
+        {
+            var existingCustomer = _dbContext.Customers
+                .FirstOrDefault(c => c.email == email && c.customerID != customerId);
+
+            return existingCustomer == null;
         }
         public static string GetMD5(String str)
         {
@@ -52,6 +66,7 @@ namespace CameraStore.Controllers
             }
             return byte25String;
         }
+       
         public IActionResult Edit(int id)
         {
             ViewData["roleID"] = new SelectList(_dbContext.Roles.ToList(), "roleID", "name");
@@ -74,19 +89,26 @@ namespace CameraStore.Controllers
 
             if (ModelState.IsValid)
             {
-                // Detach the existing entity from the context
-                _dbContext.Entry(existingCustomer).State = EntityState.Detached;
+                if (IsEmailUnique(obj.email, id))
+                {
+                    // Detach the existing entity from the context
+                    _dbContext.Entry(existingCustomer).State = EntityState.Detached;
 
-                // Set the key of the new object
-                obj.customerID = id;
+                    // Set the key of the new object
+                    obj.customerID = id;
 
-                // Attach and update the new object
-                _dbContext.Customers.Update(obj);
+                    // Attach and update the new object
+                    _dbContext.Customers.Update(obj);
 
-                // Save changes
-                _dbContext.SaveChanges();
+                    // Save changes
+                    _dbContext.SaveChanges();
 
-                return RedirectToAction("Index");
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ModelState.AddModelError("Email", "Email already exists.");
+                }
             }
 
             ViewData["roleID"] = new SelectList(_dbContext.Roles.ToList(), "roleID", "name");

@@ -65,5 +65,21 @@ namespace CameraStore.Controllers
             _dbContext.SaveChanges();
             return RedirectToAction("Index");
         }
+        public IActionResult detailRole(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var role = _dbContext.Roles.Find(id);
+
+            if (role == null)
+            {
+                return NotFound();
+            }
+
+            return View(role);
+        }
     }
 }

@@ -21,16 +21,7 @@ namespace CameraStore.Controllers
 			IEnumerable<Product> products = _dbContext.Products.ToList();
             return View(products);
         }
-		public IActionResult productDetail(int id)
-		{
-			IEnumerable<Product> products = _dbContext.Products.ToList();
-			return View(products);
-		}
-        public IActionResult Store(int id)
-        {
-            IEnumerable<Product> products = _dbContext.Products.ToList();
-            return View(products);
-        }
+		
         public IActionResult Create()
         {
             ViewData["supID"] = new SelectList(_dbContext.Suppliers.ToList(), "supID", "supName");
@@ -120,27 +111,31 @@ namespace CameraStore.Controllers
             {
                 return RedirectToAction("Index");
             }
-            else
+
+            if (obj.proUrlImage == null)
             {
-                if (obj.proUrlImage == null)
+                _dbContext.Products.Remove(obj);
+                _dbContext.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            if (!string.IsNullOrEmpty(img))
+            {
+                img = Path.Combine("wwwroot", "image", img);
+                FileInfo infor = new FileInfo(img);
+
+                if (infor.Exists)
                 {
-                    _dbContext.Products.Remove(obj);
-                    _dbContext.SaveChanges();
-                    return RedirectToAction("Index");
+                    System.IO.File.Delete(img);
+                    infor.Delete();
                 }
-                else
-                {
-                    img = Path.Combine("wwwroot", "uploads", img);
-                    FileInfo infor = new FileInfo(img);
-                    if (infor != null)
-                    {
-                        System.IO.File.Delete(img);
-                        infor.Delete();
-                    }
-                    _dbContext.Products.Remove(obj);
-                    _dbContext.SaveChanges();
-                    return RedirectToAction("Index");
-                }
+            }
+
+            _dbContext.Products.Remove(obj);
+            _dbContext.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
         public IActionResult detailPro(int? id, string img)
         {
             if (id == null)

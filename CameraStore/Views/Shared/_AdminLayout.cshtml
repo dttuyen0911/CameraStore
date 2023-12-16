@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿﻿
+<!DOCTYPE html>
 <html lang="en"
       class="light-style layout-menu-fixed"
       dir="ltr"
@@ -15,7 +16,7 @@
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="~/AdminLayout/img/favicon/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="~/image/logo1.png" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -51,7 +52,7 @@
     <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
-            <!-- Menu -->   
+            <!-- Menu -->
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
                 <div class="app-brand demo">
                     <a href="index.html" class="app-brand-link">
@@ -67,7 +68,7 @@
                             <div data-i18n="Analytics">Dashboard</div>
                         </a>
                     </li>
-  
+
                     <li class="menu-item">
                         <a class="menu-link" asp-area="" asp-controller="Product" asp-action="Index">
                             <i class="menu-icon tf-icons bx bxl-product-hunt"></i>
@@ -139,36 +140,35 @@
                         <!-- /Search -->
                     </div>
                 </nav>
- 
-                        @RenderBody()
-               
-                    <!-- / Layout page -->
+
+                @RenderBody()
+
+                <!-- / Layout page -->
             </div>
             <!-- Overlay -->
-    </div>
-    <!-- / Layout wrapper -->
-
-    <!-- Core JS -->
-    <!-- build:js assets/vendor/js/core.js -->
-    <script src="~/AdminLayout/vendor/libs/jquery/jquery.js"></script>
-    <script src="~/AdminLayout/vendor/libs/popper/popper.js"></script>
-    <script src="~/AdminLayout/vendor/js/bootstrap.js"></script>
-    <script src="~/AdminLayout/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+        </div>
+        <!-- / Layout wrapper -->
+        <!-- Core JS -->
+        <!-- build:js assets/vendor/js/core.js -->
+        <script src="~/AdminLayout/vendor/libs/jquery/jquery.js"></script>
+        <script src="~/AdminLayout/vendor/libs/popper/popper.js"></script>
+        <script src="~/AdminLayout/vendor/js/bootstrap.js"></script>
+        <script src="~/AdminLayout/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
         <script src="~/Plusgin/tables/js/jquery.dataTables.min.js"></script>
         <script src="~/Plusgin/tables/js/datatable/dataTables.bootstrap4.min.js"></script>
         <script src="~/Plusgin/tables/js/datatable-init/datatable-basic.min.js"></script>
-    <script src="~/AdminLayout/vendor/js/menu.js"></script>
-    <!-- endbuild -->
-    <!-- Vendors JS -->
-    <script src="~/AdminLayout/vendor/libs/apex-charts/apexcharts.js"></script>
+        <script src="~/AdminLayout/vendor/js/menu.js"></script>
+        <!-- endbuild -->
+        <!-- Vendors JS -->
+        <script src="~/AdminLayout/vendor/libs/apex-charts/apexcharts.js"></script>
 
-    <!-- Main JS -->
-    <script src="~/AdminLayout/js/main.js"></script>
+        <!-- Main JS -->
+        <script src="~/AdminLayout/js/main.js"></script>
 
-    <!-- Page JS -->
-    <script src="~/AdminLayout/js/dashboards-analytics.js"></script>
+        <!-- Page JS -->
+        <script src="~/AdminLayout/js/dashboards-analytics.js"></script>
 
-    <!-- Place this tag in your head or just before your close body tag. -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
+        <!-- Place this tag in your head or just before your close body tag. -->
+        <script async defer src="https://buttons.github.io/buttons.js"></script>
 </body>
 </html>

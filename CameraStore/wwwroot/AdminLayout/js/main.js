@@ -42,19 +42,29 @@ let menu, animate;
       }
     };
 
-    elem.onmouseleave = function () {
-      // Clear any timers set to timeout
-      document.querySelector('.layout-menu-toggle').classList.remove('d-block');
-      clearTimeout(timeout);
-    };
+      elem.onmouseleave = function () {
+          // Check if the element exists before accessing its classList
+          var menuToggle = document.querySelector('.layout-menu-toggle');
+
+          if (menuToggle) {
+              menuToggle.classList.remove('d-block');
+          }
+
+          // Clear any timers set to timeout
+          clearTimeout(timeout);
+      };
   };
-  if (document.getElementById('layout-menu')) {
-    delay(document.getElementById('layout-menu'), function () {
-      // not for small screen
-      if (!Helpers.isSmallScreen()) {
-        document.querySelector('.layout-menu-toggle').classList.add('d-block');
-      }
-    });
+    if (document.getElementById('layout-menu')) {
+        delay(document.getElementById('layout-menu'), function () {
+            // Check if the element with class 'layout-menu-toggle' exists
+            var layoutMenuToggle = document.querySelector('.layout-menu-toggle');
+
+            if (layoutMenuToggle && !Helpers.isSmallScreen()) {
+                layoutMenuToggle.classList.add('d-block');
+            }
+        });
+    }
+
   }
 
   // Display in main menu when menu scrolls

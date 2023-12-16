@@ -66,16 +66,19 @@
                     
                     <div class="mb-3">
                         <span asp-validation-for="proPercent"></span>
-                        <label asp-for = "proPercent" for="exampleFormControlInput1" class="form-label">Price</label>
+                        <label asp-for = "proPercent" for="exampleFormControlInput1" class="form-label">Percent sale</label>
                         <input type="text"
                                asp-for="proPercent"
                                class="form-control"
                                id="updateProSale"
                                placeholder="Enter percent sale of product" />
+                            <div id="defaultFormControlHelp" class="form-text">
+                                In case there is no sale, enter the value as "No".
+                            </div>
                     </div>
                     <div class="mb-3">
                         <span asp-validation-for="proSale"></span>
-                            <label asp-for="proSale" for="exampleFormControlInput1" class="form-label">Price</label>
+                            <label asp-for="proSale" for="exampleFormControlInput1" class="form-label">Price sale</label>
                         <input type="text"
                                    asp-for="proSale"
                                class="form-control"
