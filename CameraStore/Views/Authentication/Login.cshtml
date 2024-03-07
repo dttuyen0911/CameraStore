@@ -1,0 +1,47 @@
+﻿@model IEnumerable<CameraStore.Models.Customer>
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+<!-- Sing in  Form -->
+<section class="sign-in">
+    <div class="container">
+        <div class="signin-content">
+            <div class="signin-image">
+                <figure><img src="images/signin-image.jpg" alt="sing up image"></figure>
+                <a asp-area="" asp-controller="Authentication" asp-action="Register" class="signup-image-link">Create an account</a>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="signup-image-link"><i class="zmdi zmdi-home"></i>Continue Shopping</a>
+            </div>
+            <div class="signin-form">
+                <h2 class="form-title">Sign up</h2>
+                <form method="POST" class="register-form" id="login-form">
+                    <div class="form-group">
+                        <label for="your_name"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                        <input type="text" name="your_name" id="your_name" placeholder="Your Name" />
+                    </div>
+                    <div class="form-group">
+                        <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
+                        <input type="password" name="your_pass" id="your_pass" placeholder="Password" />
+                    </div>
+                    <div class="form-group">
+                        <input type="checkbox" name="remember-me" id="remember-me" class="agree-term" />
+                        <label for="remember-me" class="label-agree-term"><span><span></span></span>Remember me</label>
+                    </div>
+                    <div class="form-group form-button">
+                        <input type="submit" name="signin" id="signin" class="form-submit" value="Log in" />
+                    </div>
+                </form>
+                <div class="social-login">
+                    <span class="social-label">Or login with</span>
+                    <ul class="socials">
+                        <li><a href="https://www.facebook.com/" target="_blank"><i class="display-flex-center zmdi zmdi-facebook"></i></a></li>
+                        <li><a href="https://twitter.com/" target="_blank"><i class="display-flex-center zmdi zmdi-twitter"></i></a></li>
+                        <li><a href="https://accounts.google.com/InteractiveLogin/signinchooser?continue=https%3A%2F%2Fwww.google.com%2F&ec=GAZAmgQ&hl=vi&passive=true&ifkv=ATuJsjw02iun1HyleGigmwKi3WpckdvSFUWZQNIhrUVt-MtlL5W1Gz2kqPM1TkAtXKlcDlQUUsrIpg&theme=mn&flowName=GlifWebSignIn&flowEntry=ServiceLogin" target="_blank"><i class="display-flex-center zmdi zmdi-google"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

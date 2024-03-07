@@ -18,7 +18,9 @@ namespace CameraStore.Controllers
 		}
 		public IActionResult Index()
         {
+            IEnumerable<Category> categories = _dbContext.Categories;
 			IEnumerable<Product> products = _dbContext.Products.ToList();
+            ViewBag.Categories = categories;
             return View(products);
         }
 		
@@ -32,15 +34,15 @@ namespace CameraStore.Controllers
         [HttpPost]
         public IActionResult Create(Product obj)
         {
-            if (ModelState.IsValid)
-            {
-                string fileName = proUploadImage(obj);
+            /*if (ModelState.IsValid)
+            {*/
+            string fileName = proUploadImage(obj);
                 obj.proUrlImage = fileName;
 
                 _dbContext.Products.Add(obj);
                 _dbContext.SaveChanges();
                 return RedirectToAction("Index");
-            }
+            //}
             ViewData["supID"] = new SelectList(_dbContext.Suppliers.ToList(), "supID", "supName");
             ViewData["cateID"] = new SelectList(_dbContext.Categories.ToList(), "cateID", "cateName");
             return View(obj);
@@ -74,8 +76,8 @@ namespace CameraStore.Controllers
         [HttpPost]
         public IActionResult Edit(int id, Product obj, string img)
         {
-            if (ModelState.IsValid)
-            {
+            /*if (ModelState.IsValid)
+            {*/
                 if (obj.proImage == null)
                 {
                     obj.proID = id;
@@ -99,7 +101,7 @@ namespace CameraStore.Controllers
                     }
                 }
                 return RedirectToAction("Index");
-            }
+            //}
             ViewData["supID"] = new SelectList(_dbContext.Suppliers, "supID", "supName");
             ViewData["cateID"] = new SelectList(_dbContext.Categories.ToList(), "cateID", "cateName");
             return View(obj);

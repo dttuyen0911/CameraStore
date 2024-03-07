@@ -19,7 +19,11 @@ namespace CameraStore.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            IEnumerable<Product> products = _dbContext.Products
+                .Include(c => c.Category)
+                .Include(s => s.Supplier)
+                .ToList();
+            return View(products); ;
         }
 
         public IActionResult Privacy()

@@ -49,13 +49,6 @@
                                placeholder="Enter telephone of customer" />
                     </div>
                     <div class="mb-3">
-                        <span asp-validation-for="birthday"></span>
-                        <label asp-for = "birthday" for="html5-date-input" class="col-md-2 col-form-label">Birthday</label>
-                        <div class="col-md-12">
-                            <input class="form-control" asp-for = "birthday"type="date" id="uploadCusBirthday" />
-                        </div>
-                    </div>
-                    <div class="mb-3">
                         <label asp-for="Role" class="form-label">Role</label>
                         <select asp-for = "roleID" asp-items="ViewBag.roleID" class="form-select" id="uploadCusRole" aria-label="Default select example">
                             <option>Choose the role of customer</option>

@@ -19,22 +19,22 @@ namespace CameraStore.Models
         public string? proUrlImage { get; set; }
         [Required(ErrorMessage = "Please select a date")]
         public DateTime proDate { get; set; }
-        public int? proQuantity { get; set; }
+        public int proQuantity { get; set; }
         [Required(ErrorMessage = "Please enter a valid price sale")]
         [Range(0, double.MaxValue, ErrorMessage = "Price sale must be a non-negative value")]
         [DisplayFormat(DataFormatString = "{0:N0} VNĐ")]
         public decimal? proSale { get; set; } // price sale when sub percent
 
         [Required(ErrorMessage = "Please enter a status of product")]
-        public string? proStatus { get; set; } // old or new or sold out
+        public string proStatus { get; set; } // old or new or sold out
         [Required(ErrorMessage = "Please enter a percent sale of product")]
         [RegularExpression(@"^[0-9]+$", ErrorMessage = "Percent must be a non-negative integer")]
-        public string? proPercent { get; set; } // percent sale if any
+        public string proPercent { get; set; } // percent sale if any
         [Required(ErrorMessage = "Please enter a valid price")]
         [Range(0, double.MaxValue, ErrorMessage = "Price must be a non-negative value")]
         [DataType(DataType.Currency)]
         [DisplayFormat(DataFormatString = "{0:N0} VNĐ")]
-        public decimal? proPrice { get; set; } // price original
+        public decimal proPrice { get; set; } // price original
         [ForeignKey("Supplier")]
         public int supID { get; set; }
         public Supplier? Supplier { get; set; }
@@ -42,7 +42,7 @@ namespace CameraStore.Models
         public int cateID { get; set; }
         public Category? Category { get; set; }
         public virtual ICollection<Feedback>? Feedbacks { get; set; }
-        public virtual ICollection<OrderDetail>? orderdetails { get; set; }
-        public virtual ICollection<CartDetails>? CartDetails { get; set; }
+        public virtual ICollection<OrderDetail> orderdetails { get; set; }
+        public virtual ICollection<CartDetails> CartDetails { get; set; }
     }
 }

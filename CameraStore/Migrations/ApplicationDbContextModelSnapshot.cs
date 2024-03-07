@@ -51,10 +51,10 @@ namespace CameraStore.Migrations
 
             modelBuilder.Entity("CameraStore.Models.CartDetails", b =>
                 {
-                    b.Property<int?>("cartID")
+                    b.Property<int>("cartID")
                         .HasColumnType("int");
 
-                    b.Property<int?>("proID")
+                    b.Property<int>("proID")
                         .HasColumnType("int");
 
                     b.Property<decimal>("price")
@@ -262,11 +262,10 @@ namespace CameraStore.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("proPrice")
-                        .IsRequired()
+                    b.Property<decimal>("proPrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("proQuantity")
+                    b.Property<int>("proQuantity")
                         .HasColumnType("int");
 
                     b.Property<decimal?>("proSale")

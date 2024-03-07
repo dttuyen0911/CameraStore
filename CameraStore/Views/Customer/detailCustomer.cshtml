@@ -64,12 +64,6 @@
                                    placeholder="Telephone" />
                         </div>
                         <div class="mb-3">
-                            <label asp-for="birthday" class="col-md-2 col-form-label">Birthday</label>
-                            <div class="col-md-12">
-                                <input class="form-control" readonly asp-for="birthday" type="date" value="@Model.birthday?.ToString("yyyy-MM-dd")" id="updateCusBirthday" />
-                            </div>
-                        </div>
-                        <div class="mb-3">
                             <span asp-validation-for="Role"></span>
                             <label asp-for="roleID" for="exampleFormControlInput1" class="form-label">Role</label>
                             <input type="text"

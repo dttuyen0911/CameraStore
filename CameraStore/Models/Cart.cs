@@ -13,6 +13,6 @@ namespace CameraStore.Models
         public int cartQuantityTotal { get; set; }
         public decimal cartPriceTotal { get; set; } 
         public DateTime timeStamp { get; set; } = DateTime.UtcNow;
-        public virtual ICollection<CartDetails>? CartDetails { get; set; }
+        public virtual ICollection<CartDetails> CartDetails { get; set; }
     }
 }   

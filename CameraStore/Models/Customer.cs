@@ -19,7 +19,6 @@ namespace CameraStore.Models
         [Required(ErrorMessage = "Telephone of account is not null")]
         public string? telephone { get; set; }
         [Required(ErrorMessage = "Address of account is not null")]
-        public DateTime? birthday { get; set; }
         public DateTime? createAt { get; set; }
         [Required]
         [ForeignKey("Role")]

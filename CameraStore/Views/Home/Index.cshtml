@@ -1,26 +1,15 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@model IEnumerable<Product>
+
 <!-- Header Section End -->
 <!-- Hero Section Begin -->
 <section class="hero">
     <div class="hero__slider owl-carousel">
-        <div class="hero__items set-bg" data-setbg="../cameraStoreLayout/img/hero/hero-1.jpg">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xl-5 col-lg-7 col-md-8">
-                        <div class="hero__text">
-                            <h6>Summer Collection</h6>
-                            <h2>Fall - Winter Collections 2030</h2>
-                            <p>
-                                A specialist label creating luxury essentials. Ethically crafted with an unwavering
-                                commitment to exceptional quality.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div class="hero__items set-bg" data-setbg="../cameraStoreLayout/img/hero/1.png"></div>
+        <div class="hero__items set-bg" data-setbg="../cameraStoreLayout/img/hero/2.png"></div>
+        <div class="hero__items set-bg" data-setbg="../cameraStoreLayout/img/hero/3.png"></div>
     </div>
 </section>
 <!-- Hero Section End -->
@@ -30,45 +19,27 @@
         <!-- row -->
         <div class="row">
             <div class="row product__filter">
-                <!-- shop -->
-                <div class="col-md-4 col-xs-6">
-                    <div class="shop">
-                        <div class="shop-img">
-                            <img src="../cameraStoreLayout/img/hero/hero-2.jpg" alt="">
-                        </div>
-                        <div class="shop-body">
-                            <h3>Laptop<br>Collection</h3>
-                            <a href="#" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 col-xs-6">
-                    <div class="shop">
-                        <div class="shop-img">
-                            <img src="../cameraStoreLayout/img/hero/hero-2.jpg" alt="">
-                        </div>
-                        <div class="shop-body">
-                            <h3>Laptop<br>Collection</h3>
-                            <a href="#" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
+                <!-- Hiển thị tất cả category -->
+                @foreach (var product in Model)
+                {
+                    <div class="col-md-4 col-xs-6">
+                        <div class="shop">
+                            <div class="shop-img" style="max-width:500px; height:200px;">
+                                <img src="~/Image/@product.Category.cateUrlImage" alt="">
+                            </div>
+                            <div class="shop-body">
+                                <h3>@product.Category.cateName</h3>
+                                <a href="#" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-4 col-xs-6">
-                    <div class="shop">
-                        <div class="shop-img">
-                            <img src="../cameraStoreLayout/img/hero/hero-2.jpg" alt="">
-                        </div>
-                        <div class="shop-body">
-                            <h3>Laptop<br>Collection</h3>
-                            <a href="#" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                </div>
+                }
             </div>
             <!-- /row -->
         </div>
         <!-- /container -->
     </div>
+</section>
     <!-- Product Section Begin -->
     <section class="product spad">
         <div class="container">
@@ -80,24 +51,28 @@
                 </div>
             </div>
             <div class="row product__filter">
-                <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
-                    <div class="product__item">
-                        <div class="product__item__pic set-bg" data-setbg="../cameraStoreLayout/img/product/product-1.jpg">
-                            <span class="label">New</span>
-                        </div>
-                        <div class="product__item__text">
-                            <h6>Piqué Biker Jacket</h6>
-                            <a class="menu-link" asp-area="" asp-controller="Cart" asp-action="addtoCartStore" class="add-cart">
-                                + Add To Cart
-                            </a>
-                            <h5>$67.24</h5>
+                @foreach (var product in Model)
+                {
+                    <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
+                        <div class="product__item">
+                            <div class="product__item__pic set-bg">
+                                <img src="~/Image/@product.proUrlImage" style="height:260px;width:204px" alt="">
+                                <span class="label">@product.proStatus</span>
+                            </div>
+                            <div class="product__item__text">
+                                <h6>@product.proName</h6>
+                                <a class="menu-link" asp-area="" asp-controller="Cart" asp-action="AddToCart" class="add-cart">
+                                    + Add To Cart
+                                </a>
+                                <h5>@product.proPrice</h5>
+                            </div>
                         </div>
                     </div>
-                </div>
-
+                }
             </div>
         </div>
     </section>
+
     <!-- Product Section End -->
     <!-- Categories Section Begin -->
     <section class="categories spad">
