@@ -33,9 +33,24 @@ namespace CameraStore.Controllers
                 if (IsEmailUnique(obj.email))
                 {
                     obj.password = GetMD5(obj.password);
-                    _dbContext.Customers.Add(obj);
-                    _dbContext.SaveChanges();
-                    return RedirectToAction("Index");
+
+                    // get role member from database
+                    var memberRole = _dbContext.Roles.FirstOrDefault(r => r.name == "Member");
+
+                    if (memberRole != null)
+                    {
+                        // set role is member
+                        obj.roleID = memberRole.roleID; 
+
+                        _dbContext.Customers.Add(obj);
+                        _dbContext.SaveChanges();
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        // if not find role member is error
+                        ModelState.AddModelError("", "Default role 'Member' not found.");
+                    }
                 }
                 else
                 {
@@ -46,6 +61,7 @@ namespace CameraStore.Controllers
             ViewData["roleID"] = new SelectList(_dbContext.Roles.ToList(), "roleID", "name");
             return View(obj);
         }
+
         private bool IsEmailUnique(string email, int? customerId = null)
         {
             var existingCustomer = _dbContext.Customers
