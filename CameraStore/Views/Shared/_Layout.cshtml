@@ -32,7 +32,7 @@
         <div class="row">
             <div class="col-lg-1 col-md-1">
                 <div class="header__logo">
-                    <a href="./index.html"><img src="~/image/logo1.png" alt=""></a>
+                    <a asp-area="" asp-controller="Home" asp-action="Index"><img src="~/image/logo1.png" alt=""></a>
                 </div>
             </div>
             <div class="col-lg-5 col-md-5">
@@ -57,19 +57,23 @@
                     <div class="header__nav__option">
                         <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
                     </div>
-
                 </div>
                 <div class="col-lg-3 col-md-3">
-                <div class="header__nav__option">
-                    <a href="#"><img src="../cameraStoreLayout/img/icon/cart1.png" alt="" style="width:18px;height:20px;"></a>
-                    <a class="menu-link" asp-area="" asp-controller="Authentication" asp-action="Login"><img src="../cameraStoreLayout/img/icon/user.png" alt="" style="width:18px;height:20px;"></a>
-                        @if (TempData["WelcomeMessage"] != null)
+                    <div class="header__nav__option">
+                        <a href="#"><img src="../cameraStoreLayout/img/icon/cart1.png" alt="" style="width:20px;height:20px;"></a>
+                        <a id="userMenu" class="menu-link" asp-area="" asp-controller="Authentication" asp-action="Login">
+                            <img src="../cameraStoreLayout/img/icon/user.png" alt="" style="width:20px;height:20px;">
+                        </a>
+                        @if (ViewContext.HttpContext.Session.GetString("WelcomeMessage") != null)
                         {
-                            <span>@TempData["WelcomeMessage"]</span>
+                            <span>@ViewContext.HttpContext.Session.GetString("WelcomeMessage")</span>
                         }
+
+                       
+                    </div>
                 </div>
+   
             </div>
-        </div>
         <div class="canvas__open"><i class="fa fa-bars"></i></div>
     </div>
     </header>
@@ -81,7 +85,8 @@
                 <div class="col-lg-4 col-md-5 col-sm-5">
                     <div class="footer__widget">
                         <h6>CAMERA STORE</h6>
-                        <p>Camera Store is a place specializing in providing quality cameras and accessories from used to new products. Our products have been carefully inspected before being delivered to your hands. Our store's motto is "Customer satisfaction is our success".</p>                        <a href="#"><img src="../cameraStoreLayout/img/payment.png" alt=""></a>
+                        <p>Camera Store is a place specializing in providing quality cameras and accessories from used to new products. Our products have been carefully inspected before being delivered to your hands. Our store's motto is "Customer satisfaction is our success".</p>                        
+                        <a href="#"><img src="../cameraStoreLayout/img/payment.png" alt=""></a>
                         <ul class="footer-links">
                             <li><a href="#"><i class="fa fa-map-marker"></i>Ninh Kieu District, Can Tho City </a></li>
                             <li><a href="#"><i class="fa fa-phone"></i>+84-123-321-123</a></li>

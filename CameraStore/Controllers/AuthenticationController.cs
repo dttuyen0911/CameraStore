@@ -6,6 +6,7 @@ using CameraStore.Data;
 using CameraStore.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CameraStore.Controllers
@@ -13,10 +14,11 @@ namespace CameraStore.Controllers
     public class AuthenticationController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
-
-        public AuthenticationController(ApplicationDbContext dbContext)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public AuthenticationController(ApplicationDbContext dbContext, IHttpContextAccessor httpContextAccessor)
         {
             _dbContext = dbContext;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IActionResult Register()
@@ -42,7 +44,6 @@ namespace CameraStore.Controllers
                 }
                 else
                 {
-                    // Nếu không tìm thấy vai trò "Member" trong cơ sở dữ liệu, xử lý lỗi tương ứng
                     ModelState.AddModelError("", "Default role 'Member' not found.");
                 }
             }
@@ -53,55 +54,37 @@ namespace CameraStore.Controllers
         {
             return View();
         }
-
         [HttpPost]
         public IActionResult Login(string email, string password)
         {
-            var customer = _dbContext.Customers.FirstOrDefault(c => c.email == email);
-            if (customer == null)
+            if (ModelState.IsValid)
             {
-                ModelState.AddModelError("email", "Email invalid.");
-                return View();
+                var customer = _dbContext.Customers.FirstOrDefault(c => c.email == email);
+                if (customer != null)
+                {
+                    if (customer.password != password)
+                    {
+                        ModelState.AddModelError("password", "Password invalid.");
+                        return View();
+                    }
+
+                    // Set session
+                    HttpContext.Session.SetString("CustomerId", customer.customerID.ToString());
+
+                    var fullNameParts = customer.fullname.Split(' ');
+                    var lastName = fullNameParts[fullNameParts.Length - 1];
+
+                    HttpContext.Session.SetString("WelcomeMessage", $"Welcome, {lastName}!");
+
+                    return RedirectToAction("Index", "Home"); // Chuyển hướng sau khi đăng nhập thành công
+                }
+                else
+                {
+                    ModelState.AddModelError("email", "Email invalid.");
+                    return View();
+                }
             }
-
-            if (customer.password != password)
-            {
-                ModelState.AddModelError("password", "Password invalid.");
-                return View();
-            }
-
-            var claims = new[]
-            {
-        new Claim(ClaimTypes.Name, customer.fullname),
-        new Claim(ClaimTypes.Email, customer.email),
-    };
-
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var authProperties = new AuthenticationProperties
-            {
-                IsPersistent = true,
-                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(20) // Adjust expiration time as needed
-            };
-
-            HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties).GetAwaiter().GetResult();
-
-            var fullNameParts = customer.fullname.Split(' ');
-            var lastName = fullNameParts[fullNameParts.Length - 1]; 
-
-            TempData["WelcomeMessage"] = $"Welcome, {lastName}!";
-
-            return RedirectToAction("Index", "Home"); // Redirect to desired page after successful login
-        }
-
-
-
-        public IActionResult Logout()
-        {
-            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme).GetAwaiter().GetResult();
-            return RedirectToAction("Index", "Home"); // Redirect to desired page after logout
+            return RedirectToAction("Index", "Home");
         }
     }
 }

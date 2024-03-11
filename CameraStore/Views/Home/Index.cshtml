@@ -13,12 +13,12 @@
     </div>
 </section>
 <!-- Hero Section End -->
-<section class="product spad">
+<section class="section">
     <!-- container -->
     <div class="container">
         <!-- row -->
         <div class="row">
-            <div class="row product__filter">
+            
                 <!-- Hiển thị tất cả category -->
                 @foreach (var product in Model)
                 {
@@ -28,19 +28,16 @@
                                 <img src="~/Image/@product.Category.cateUrlImage" alt="">
                             </div>
                             <div class="shop-body">
-                                <h3>@product.Category.cateName</h3>
+                                <h3>@product.Category.cateName<br>Collection</h3>
                                 <a href="#" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
                     </div>
                 }
-            </div>
             <!-- /row -->
         </div>
         <!-- /container -->
     </div>
-</section>
-    <!-- Product Section Begin -->
     <section class="product spad">
         <div class="container">
             <div class="row">
@@ -53,12 +50,15 @@
             <div class="row product__filter">
                 @foreach (var product in Model)
                 {
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
+                    <div class="col-lg-4 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
                         <div class="product__item">
                             <div class="product__item__pic set-bg">
-                                <img src="~/Image/@product.proUrlImage" style="height:260px;width:204px" alt="">
+                                <a class="menu-link" asp-area="" asp-controller="Home" asp-action="productDetail">
+                                    <img src="~/Image/@product.proUrlImage" style="height:260px;width:300px" alt="">
+                                </a>
                                 <span class="label">@product.proStatus</span>
                             </div>
+
                             <div class="product__item__text">
                                 <h6>@product.proName</h6>
                                 <a class="menu-link" asp-area="" asp-controller="Cart" asp-action="AddToCart" class="add-cart">
