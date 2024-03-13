@@ -22,7 +22,6 @@ namespace CameraStore.Models
         public int proQuantity { get; set; }
         [Required(ErrorMessage = "Please enter a valid price sale")]
         [Range(0, double.MaxValue, ErrorMessage = "Price sale must be a non-negative value")]
-        [DisplayFormat(DataFormatString = "{0:N0} VNĐ")]
         public decimal? proSale { get; set; } // price sale when sub percent
 
         [Required(ErrorMessage = "Please enter a status of product")]
@@ -32,8 +31,6 @@ namespace CameraStore.Models
         public string proPercent { get; set; } // percent sale if any
         [Required(ErrorMessage = "Please enter a valid price")]
         [Range(0, double.MaxValue, ErrorMessage = "Price must be a non-negative value")]
-        [DataType(DataType.Currency)]
-        [DisplayFormat(DataFormatString = "{0:N0} VNĐ")]
         public decimal proPrice { get; set; } // price original
         [ForeignKey("Supplier")]
         public int supID { get; set; }

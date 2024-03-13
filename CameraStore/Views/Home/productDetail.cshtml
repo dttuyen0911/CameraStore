@@ -1,10 +1,9 @@
-﻿@model IEnumerable<Product>
+﻿@model CameraStore.Models.Product
 
 @{
-	ViewData["Title"] = "productDetail";
-	Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "productDetail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 
 <!-- Shop Details Section Begin -->
 <section class="shop-details">
@@ -12,42 +11,40 @@
         <div class="container">
             <div class="row">
                 <!-- Image Column -->
-                @foreach (var product in Model)
-                {
                 <div class="col-lg-7 col-md-7">
                     <div class="tab-content">
                         <div class="tab-pane active" id="tabs-1" role="tabpanel">
                             <div class="product__details__pic__item">
-                                <img src="~/Image/@product.proUrlImage" alt="" style="height:500px;width:700px">
+                                <img src="~/Image/@Model.proUrlImage" alt="" style="height:500px;width:700px">
                             </div>
                         </div>
                     </div>
                 </div>
                 <!-- Product Description Column -->
-                    <div class="col-lg-5 col-md-5" style="background:#ffffff">
-                        <div class="product__details__text">
-                            <h3>@product.proName</h3>
-                            <h3 style="color:#ff0000">Price: @product.proSale <span>@product.proPrice</span></h3>
-                            <h4>Status: @product.proStatus</h4>
-                            <h4>Quantity: @product.proQuantity</h4>
-                            <p>
-                                @product.proDescription
-                            </p>
-                            <div class="product__details__cart__option">
-                                <div class="quantity">
-                                    <div class="pro-qty">
-                                        <input type="number" value="1" min ="0" max="@product.proQuantity">
-                                    </div>
-                                    <a href="#" class="primary-btn">Add to cart</a>
+                <div class="col-lg-5 col-md-5" style="background:#ffffff">
+                    <div class="product__details__text">
+                        <h3>@Model.proName.ToUpper()</h3>
+                        <h3 style="color:#ff0000">Price: @Model.proSale <span>$@Model.proPrice</span></h3>
+                        <h4>Status: @Model.proStatus</h4>
+                        <h4>Quantity: @Model.proQuantity</h4>
+                        <p>
+                            @Model.proDescription
+                        </p>
+                        <a href="#tabs-5">Read More</a>
+                        <div class="product__details__cart__option">
+                            <div class="quantity">
+                                <div class="pro-qty">
+                                    <input type="number" value="1" min="0" max="@Model.proQuantity">
                                 </div>
+                                <a href="#" class="primary-btn">Add to cart</a>
                             </div>
                         </div>
                     </div>
-                }
+                </div>
             </div>
         </div>
     </div>
-
+</section>
     <div class="product__details__content">
         <div class="container">
             <div class="row">

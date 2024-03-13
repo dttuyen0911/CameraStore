@@ -34,9 +34,11 @@
                             <th scope="row">@product.proID</th>
                             <td>@product.proName</td>
                             <td><img src="~/Image/@product.proUrlImage" style="width: 100px; height: 100px" /></td>
-                            <td>@product.proDescription</td>
+                            <td style="display:-webkit-inline-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: auto;">
+                                 @product.proDescription
+                            </td>
                             <td>@product.proStatus</td>
-                            <td>@product.proPrice</td>
+                            <td>$@product.proPrice</td>
                             <td>@product.proPercent%</td>
                             <td>@product.proSale</td>
                             <td>@product.proQuantity</td>

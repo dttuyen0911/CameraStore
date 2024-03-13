@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    List<string> displayedCategories = new List<string>();
 }
 @model IEnumerable<Product>
 
@@ -18,10 +19,13 @@
     <div class="container">
         <!-- row -->
         <div class="row">
-            
                 <!-- Hiển thị tất cả category -->
                 @foreach (var product in Model)
                 {
+                if (!displayedCategories.Contains(product.Category.cateName))
+                {
+                    displayedCategories.Add(product.Category.cateName); // Thêm category vào danh sách đã hiển thị
+
                     <div class="col-md-4 col-xs-6">
                         <div class="shop">
                             <div class="shop-img" style="max-width:500px; height:200px;">
@@ -33,6 +37,7 @@
                             </div>
                         </div>
                     </div>
+                }
                 }
             <!-- /row -->
         </div>
@@ -53,7 +58,7 @@
                     <div class="col-lg-4 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
                         <div class="product__item">
                             <div class="product__item__pic set-bg">
-                                <a class="menu-link" asp-area="" asp-controller="Home" asp-action="productDetail">
+                                <a class="menu-link" asp-area="" asp-controller="Home" asp-action="productDetail" asp-route-id="@product.proID">
                                     <img src="~/Image/@product.proUrlImage" style="height:260px;width:300px" alt="">
                                 </a>
                                 <span class="label">@product.proStatus</span>
@@ -64,7 +69,7 @@
                                 <a class="menu-link" asp-area="" asp-controller="Cart" asp-action="AddToCart" class="add-cart">
                                     + Add To Cart
                                 </a>
-                                <h5>@product.proPrice</h5>
+                                <h5>$@product.proPrice</h5>
                             </div>
                         </div>
                     </div>

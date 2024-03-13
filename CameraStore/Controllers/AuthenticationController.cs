@@ -67,13 +67,27 @@ namespace CameraStore.Controllers
                         ModelState.AddModelError("password", "Password invalid.");
                         return View();
                     }
+                    // Set authentication cookie
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, customer.customerID.ToString()), // You can use any unique identifier for the user
+                        new Claim(ClaimTypes.Email, customer.email) // If needed, you can include additional claims
+                        // Add more claims as needed
+                    };
 
-                    // Set session
+                    var identity = new ClaimsIdentity(claims, "ApplicationCookie");
+                    var principal = new ClaimsPrincipal(identity);
+                    var authProperties = new AuthenticationProperties
+                    {
+                        // Customize cookie properties if needed
+                    };
+
+                    HttpContext.SignInAsync("Cookies", principal, authProperties).Wait(); // Sign in the user
+
+                    // Set session if needed
                     HttpContext.Session.SetString("CustomerId", customer.customerID.ToString());
-
                     var fullNameParts = customer.fullname.Split(' ');
                     var lastName = fullNameParts[fullNameParts.Length - 1];
-
                     HttpContext.Session.SetString("WelcomeMessage", $"Welcome, {lastName}!");
 
                     return RedirectToAction("Index", "Home"); // Chuyển hướng sau khi đăng nhập thành công
@@ -85,6 +99,25 @@ namespace CameraStore.Controllers
                 }
             }
             return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult Logout()
+        {
+            if (HttpContext.Session.IsAvailable)
+            {
+                HttpContext.Session.Remove("CustomerId");
+                HttpContext.Session.Remove("WelcomeMessage");
+                HttpContext.Session.Clear(); // Xóa tất cả các dữ liệu phiên
+                HttpContext.SignOutAsync("Cookies").Wait();
+
+                // Xác nhận việc xóa dữ liệu phiên và chuyển hướng người dùng về trang chính
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                // Trường hợp không có phiên hoặc không khả dụng, chuyển hướng người dùng về trang chính
+                return RedirectToAction("Index", "Home");
+            }
         }
     }
 }

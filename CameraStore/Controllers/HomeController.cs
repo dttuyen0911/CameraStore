@@ -3,6 +3,7 @@ using CameraStore.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Drawing.Printing;
 
 namespace CameraStore.Controllers
 {
@@ -38,13 +39,68 @@ namespace CameraStore.Controllers
         }
         public IActionResult productDetail(int id)
         {
-            IEnumerable<Product> products = _dbContext.Products.ToList();
-            return View(products);
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var product = _dbContext.Products.Find(id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
         }
-        public IActionResult Store(int id)
+        public IActionResult Store(int page = 1, int pageSize = 10)
         {
-            IEnumerable<Product> products = _dbContext.Products.ToList();
-            return View(products);
+            var categoriesDict = new Dictionary<string, int>();
+            var status = new Dictionary<string, int>();
+
+            IEnumerable<Product> products = _dbContext.Products
+                .Include(c => c.Category)
+                .ToList();
+
+            foreach (var product in products)
+            {
+                string categoryName = product.Category.cateName;
+                if (categoriesDict.ContainsKey(categoryName))
+                {
+                    categoriesDict[categoryName]++;
+                }
+                else
+                {
+                    categoriesDict[categoryName] = 1;
+                }
+            }
+            foreach (var product in products)
+            {
+                string stt = product.proStatus;
+                if (status.ContainsKey(stt))
+                {
+                    status[stt]++;
+                }
+                else
+                {
+                    status[stt] = 1;
+                }
+            }
+
+            // Phân trang
+            var totalCount = products.Count();
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+            var paginatedProducts = products.Skip((page - 1) * pageSize).Take(pageSize);
+
+            ViewBag.Status = status;
+            ViewBag.MaxPrice = products.Max(p => p.proPrice);
+            ViewBag.CategoriesDict = categoriesDict;
+            ViewBag.TotalProducts = totalCount;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.CurrentPage = page;
+
+            return View(paginatedProducts);
         }
+
     }
 }

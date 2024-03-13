@@ -16,14 +16,15 @@
           rel="stylesheet">
 
     <!-- Css Styles -->
-    <link rel="stylesheet" href="../cameraStoreLayout/css/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="../cameraStoreLayout/css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="../cameraStoreLayout/css/elegant-icons.css" type="text/css">
-    <link rel="stylesheet" href="../cameraStoreLayout/css/magnific-popup.css" type="text/css">
-    <link rel="stylesheet" href="../cameraStoreLayout/css/nice-select.css" type="text/css">
-    <link rel="stylesheet" href="../cameraStoreLayout/css/owl.carousel.min.css" type="text/css">
-    <link rel="stylesheet" href="../cameraStoreLayout/css/slicknav.min.css" type="text/css">
-    <link rel="stylesheet" href="../cameraStoreLayout/css/style.css" type="text/css">
+    <link rel="stylesheet" href="~/cameraStoreLayout/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="~/cameraStoreLayout/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="~/cameraStoreLayout/css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="~/cameraStoreLayout/css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="~/cameraStoreLayout/css/nice-select.css" type="text/css">
+    <link rel="stylesheet" href="~/cameraStoreLayout/css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="~/cameraStoreLayout/css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="~/cameraStoreLayout/css/style.css" type="text/css">
+
 </head>
 
 <body>
@@ -35,11 +36,11 @@
                     <a asp-area="" asp-controller="Home" asp-action="Index"><img src="~/image/logo1.png" alt=""></a>
                 </div>
             </div>
-            <div class="col-lg-5 col-md-5">
+            <div class="col-lg-4 col-md-4">
                 <nav class="header__menu mobile-menu">
                     <ul>
                             <li>
-                                <a class="menu-link" asp-area="" asp-controller="Product" asp-action="Store">Shop</a>
+                                <a class="menu-link" asp-area="" asp-controller="Home" asp-action="Store">Shop</a>
                                 <ul class="dropdown">
                                     <li><a href="./about.html">Product new</a></li>
                                     <li><a href="./shop-details.html">Product old</a></li>
@@ -53,31 +54,51 @@
                     </ul>
                 </nav>
             </div>
-                <div class="col-lg-3 col-md-">
+                <div class="col-lg-3 col-md-3">
                     <div class="header__nav__option">
                         <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-3">
+                <div class="col-lg-1 col-md-1">
                     <div class="header__nav__option">
-                        <a href="#"><img src="../cameraStoreLayout/img/icon/cart1.png" alt="" style="width:20px;height:20px;"></a>
-                        <a id="userMenu" class="menu-link" asp-area="" asp-controller="Authentication" asp-action="Login">
-                            <img src="../cameraStoreLayout/img/icon/user.png" alt="" style="width:20px;height:20px;">
-                        </a>
-                        @if (ViewContext.HttpContext.Session.GetString("WelcomeMessage") != null)
-                        {
-                            <span>@ViewContext.HttpContext.Session.GetString("WelcomeMessage")</span>
-                        }
+                        <a href="#"><img src="~/cameraStoreLayout/img/icon/cart1.png" alt="" style="width:30px;height:30px;"></a>
 
-                       
-                    </div>
                 </div>
-   
+                </div>
+                    <div class="col-lg-3 col-md-3">
+                        <div class="header__nav__option">
+                                <img src="~/cameraStoreLayout/img/icon/user.png" alt="" style="width:30px;height:30px;">
+                        <div class="menus">
+                            <ul id="menuItems">
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    <li><a href="#">Setting</a></li>
+                                    <li><a href="#">Order</a></li>
+                                    <li><a asp-area="" asp-controller="Authentication" asp-action="Logout">Logout</a></li>
+                                }
+                                else
+                                {
+                                    <li><a asp-area="" asp-controller="Authentication" asp-action="Login">Login</a></li>
+                                    <li><a asp-area="" asp-controller="Authentication" asp-action="Register">Register</a></li>
+                                }
+                            </ul>
+                        </div>
+                            @if (ViewContext.HttpContext.Session.GetString("WelcomeMessage") != null)
+                            {
+                                <span>@ViewContext.HttpContext.Session.GetString("WelcomeMessage")</span>
+                            }
+                        </div>
+                </div>
             </div>
         <div class="canvas__open"><i class="fa fa-bars"></i></div>
     </div>
     </header>
        @RenderBody()
+    <!-- chatbot -->
+    <div class ="chat_icon">
+        <i class=" fa fa-comments" aria-hidden="true"></i>
+    </div>
+
     <!-- Footer Section Begin -->
     <footer class="footer">
         <div class="container">
@@ -134,16 +155,17 @@
     <!-- Footer Section End -->
     <!-- Search End -->
     <!-- Js Plugins -->
-    <script src="../cameraStoreLayout/js/jquery-3.3.1.min.js"></script>
-    <script src="../cameraStoreLayout/js/bootstrap.min.js"></script>
-    <script src="../cameraStoreLayout/js/jquery.nice-select.min.js"></script>
-    <script src="../cameraStoreLayout/js/jquery.nicescroll.min.js"></script>
-    <script src="../cameraStoreLayout/js/jquery.magnific-popup.min.js"></script>
-    <script src="../cameraStoreLayout/js/jquery.countdown.min.js"></script>
-    <script src="../cameraStoreLayout/js/jquery.slicknav.js"></script>
-    <script src="../cameraStoreLayout/js/mixitup.min.js"></script>
-    <script src="../cameraStoreLayout/js/owl.carousel.min.js"></script>
-    <script src="../cameraStoreLayout/js/main.js"></script>
+    <script src="~/cameraStoreLayout/js/jquery-3.3.1.min.js"></script>
+    <script src="~/cameraStoreLayout/js/bootstrap.min.js"></script>
+    <script src="~/cameraStoreLayout/js/jquery.nice-select.min.js"></script>
+    <script src="~/cameraStoreLayout/js/jquery.nicescroll.min.js"></script>
+    <script src="~/cameraStoreLayout/js/jquery.magnific-popup.min.js"></script>
+    <script src="~/cameraStoreLayout/js/jquery.countdown.min.js"></script>
+    <script src="~/cameraStoreLayout/js/jquery.slicknav.js"></script>
+    <script src="~/cameraStoreLayout/js/mixitup.min.js"></script>
+    <script src="~/cameraStoreLayout/js/owl.carousel.min.js"></script>
+    <script src="~/cameraStoreLayout/js/main.js"></script>
+    <script type="text/javascript" scr=""></script>
 </body>
 
 </html>
