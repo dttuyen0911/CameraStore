@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Drawing.Printing;
+using System.Globalization;
 
 namespace CameraStore.Controllers
 {
@@ -24,6 +25,10 @@ namespace CameraStore.Controllers
                 .Include(c => c.Category)
                 .Include(s => s.Supplier)
                 .ToList();
+            var allCategories = _dbContext.Categories
+                    .ToList();
+            ViewBag.AllCategories = allCategories;
+
             return View(products); ;
         }
 
@@ -53,54 +58,54 @@ namespace CameraStore.Controllers
 
             return View(product);
         }
-        public IActionResult Store(int page = 1, int pageSize = 10)
+        public IActionResult Store(string selectedStatus, string[] selectedCategories, string sortByPrice = "Recommended", int page = 1, int pageSize = 10)
         {
             var categoriesDict = new Dictionary<string, int>();
             var status = new Dictionary<string, int>();
+            var allProducts = _dbContext.Products.ToList();
+            var allCategories = _dbContext.Categories
+                    .Select(c => c.cateName)
+                    .Distinct()
+                    .ToList();
+            var allStatus = _dbContext.Products
+                    .Select(p => p.proStatus)
+                    .Distinct()
+                    .ToList();
+            ViewBag.AllStatus = allStatus;
+            ViewBag.AllCategories = allCategories;
 
-            IEnumerable<Product> products = _dbContext.Products
-                .Include(c => c.Category)
-                .ToList();
-
-            foreach (var product in products)
+            IQueryable<Product> productsQuery = _dbContext.Products
+                .Include(c => c.Category);
+            if (selectedCategories != null && selectedCategories.Length > 0)
             {
-                string categoryName = product.Category.cateName;
-                if (categoriesDict.ContainsKey(categoryName))
-                {
-                    categoriesDict[categoryName]++;
-                }
-                else
-                {
-                    categoriesDict[categoryName] = 1;
-                }
+                productsQuery = productsQuery.Where(p => selectedCategories.Contains(p.Category.cateName));
             }
-            foreach (var product in products)
+            if (!string.IsNullOrEmpty(selectedStatus))
             {
-                string stt = product.proStatus;
-                if (status.ContainsKey(stt))
-                {
-                    status[stt]++;
-                }
-                else
-                {
-                    status[stt] = 1;
-                }
+                productsQuery = productsQuery.Where(p => p.proStatus == selectedStatus);
+            }
+            switch (sortByPrice)
+            {
+                case "LowToHigh":
+                    productsQuery = productsQuery.OrderBy(p => p.proPrice);
+                    break;
+                case "HighToLow":
+                    productsQuery = productsQuery.OrderByDescending(p => p.proPrice);
+                    break;
+                default:
+                    break;
             }
 
-            // Phân trang
+            var products = productsQuery.ToList();
+
             var totalCount = products.Count();
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
             var paginatedProducts = products.Skip((page - 1) * pageSize).Take(pageSize);
-
-            ViewBag.Status = status;
             ViewBag.MaxPrice = products.Max(p => p.proPrice);
-            ViewBag.CategoriesDict = categoriesDict;
-            ViewBag.TotalProducts = totalCount;
             ViewBag.TotalPages = totalPages;
             ViewBag.CurrentPage = page;
 
             return View(paginatedProducts);
         }
-
     }
 }

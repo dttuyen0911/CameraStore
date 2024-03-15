@@ -20,24 +20,19 @@
         <!-- row -->
         <div class="row">
                 <!-- Hiển thị tất cả category -->
-                @foreach (var product in Model)
+                @foreach (var category in ViewBag.AllCategories)
                 {
-                if (!displayedCategories.Contains(product.Category.cateName))
-                {
-                    displayedCategories.Add(product.Category.cateName); // Thêm category vào danh sách đã hiển thị
-
                     <div class="col-md-4 col-xs-6">
                         <div class="shop">
                             <div class="shop-img" style="max-width:500px; height:200px;">
-                                <img src="~/Image/@product.Category.cateUrlImage" alt="">
+                                <img src="~/Image/@category.cateUrlImage" alt="">
                             </div>
                             <div class="shop-body">
-                                <h3>@product.Category.cateName<br>Collection</h3>
+                                <h3>@category.cateName<br>Collection</h3>
                                 <a href="#" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
                     </div>
-                }
                 }
             <!-- /row -->
         </div>

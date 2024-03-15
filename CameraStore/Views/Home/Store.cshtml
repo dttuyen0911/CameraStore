@@ -27,10 +27,15 @@
                                     <div class="card-body">
                                         <div class="shop__sidebar__categories">
                                             <ul class="nice-scroll">
-                                                @foreach (var category in ViewBag.CategoriesDict)
-                                                {
-                                                    <li><a href="#">@category.Key (@category.Value)</a></li>
-                                                }
+                                                <form id="filterForm" asp-controller="Home" asp-action="Store" method="get">
+                                                    @foreach (var category in ViewBag.AllCategories)
+                                                    {
+                                                    <li>
+                                                        <input type="checkbox" id="@("checkbox_" + category)" name="selectedCategories" value="@category" class="categoryCheckbox" onchange="submitForm()" />
+                                                        <label for="@("checkbox_" + category)">@category</label>
+                                                    </li>
+                                                    }
+                                                </form>
                                             </ul>
                                         </div>
                                     </div>
@@ -44,10 +49,15 @@
                                     <div class="card-body">
                                         <div class="shop__sidebar__categories">
                                             <ul class="nice-scroll">
-                                                @foreach (var product in ViewBag.Status)
+                                                <form id="filterForm" asp-controller="Home" asp-action="Store" method="get">
+                                                @foreach (var status in ViewBag.AllStatus)
                                                 {
-                                                    <li><a href="#">@product.Key (@product.Value)</a></li>
+                                                    <li>
+                                                        <input type="checkbox" id="@("checkbox_" + status)" name="selectedStatus" value="@status" onchange="this.form.submit()" />
+                                                        <label for="@("checkbox_status_" + status)">@status</label>
+                                                    </li>
                                                 }
+                                                </form>
                                             </ul>
                                         </div>
                                     </div>
@@ -63,7 +73,10 @@
                                             <ul>
                                                 @foreach (var priceRange in GetPriceRanges((int)ViewBag.MaxPrice))
                                                 {
-                                                    <li><a href="#">@priceRange</a></li>
+                                                    <li>
+                                                        <input type="checkbox" id="@("checkbox_" + priceRange)" />
+                                                        <label for="@("checkbox_" + priceRange)">@priceRange</label>
+                                                    </li>
                                                 }
                                             </ul>
                                         </div>
@@ -84,13 +97,11 @@
                         </div>
                         <div class="col-lg-6 col-md-6 col-sm-6">
                             <div class="shop__product__option__right">
-                                <p>Sort by Price:</p>
-                                <select id="sortByPrice">
-                                    <option value="lowToHigh">Low To High</option>
-                                    @foreach (var priceRange in GetPriceRanges((int)ViewBag.MaxPrice))
-                                    {
-                                        <option value="@priceRange">@priceRange</option>
-                                    }
+                                <p>Sort by Price: </p>
+                                <select id="sortByPrice" onchange="sortProducts()" >
+                                    <option value="Recommended">Recommended</option>
+                                    <option value="LowToHigh">Lowest price</option>
+                                    <option value="HighToLow">Highest price</option>
                                 </select>
                             </div>
                         </div>
@@ -153,4 +164,15 @@
         return priceRanges;
     }
 }
+</script>
+<script>
+    function sortProducts() {
+        var sortByPrice = document.getElementById("sortByPrice").value;
+        window.location.href = "/Home/Store?sortByPrice=" + sortByPrice;
+    }
+</script>
+<script>
+    function submitForm() {
+        document.getElementById("filterForm").submit();
+    }
 </script>
