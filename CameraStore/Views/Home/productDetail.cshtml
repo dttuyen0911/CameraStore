@@ -36,7 +36,14 @@
                                 <input type="number" value="1" min="0" max="@Model.proQuantity">
                             </div>
                             <div class="quantity">
-                                <a href="#" class="primary-btn">Add to cart</a>
+                                <form method="post" action="@Url.Action("AddToCart", "Cart")">
+                                    <input type="hidden" name="customerId" value="1" /> <!-- Điền vào ID của khách hàng ở đây -->
+                                    <input type="hidden" name="productId" value="@Model.proID" />
+                                    <input type="hidden" name="quantity" value="1" /> <!-- Số lượng mặc định là 1, có thể thay đổi -->
+                                    <input type="hidden" name="price" value="@Model.proPrice" /> <!-- Giá của sản phẩm -->
+                                    <button type="submit" class="primary-btn">Add To Cart</button>
+
+                                </form>
                             </div>
                         </div>
                     </div>

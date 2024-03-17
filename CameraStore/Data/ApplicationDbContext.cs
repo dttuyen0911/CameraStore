@@ -38,7 +38,14 @@ namespace CameraStore.Data
                 .WithMany(c => c.CartDetails)
                 .HasForeignKey(c => c.proID)
                 .OnDelete(DeleteBehavior.ClientSetNull);
+
+            modelBuilder.Entity<Cart>()
+               .HasOne(c => c.Customer)
+               .WithMany(cust => cust.Carts)
+               .HasForeignKey(c => c.customerID)
+               .OnDelete(DeleteBehavior.ClientSetNull);
             base.OnModelCreating(modelBuilder);
+
 
         }
     }

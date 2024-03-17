@@ -61,7 +61,7 @@
 
                             <div class="product__item__text">
                                 <h6>@product.proName</h6>
-                                <a class="menu-link" asp-area="" asp-controller="Cart" asp-action="AddToCart" class="add-cart">
+                                <a class="menu-link add-cart" asp-controller="Cart" asp-action="AddToCart">
                                     + Add To Cart
                                 </a>
                                 <h5>$@product.proPrice</h5>
@@ -70,6 +70,7 @@
                     </div>
                 }
             </div>
+
         </div>
     </section>
 

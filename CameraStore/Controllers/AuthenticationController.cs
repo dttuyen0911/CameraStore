@@ -49,7 +49,6 @@ namespace CameraStore.Controllers
             }
             return View(customer);
         }
-
         public IActionResult Login()
         {
             return View();
@@ -67,13 +66,14 @@ namespace CameraStore.Controllers
                         ModelState.AddModelError("password", "Password invalid.");
                         return View();
                     }
+
                     // Set authentication cookie
                     var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, customer.customerID.ToString()), // You can use any unique identifier for the user
-                        new Claim(ClaimTypes.Email, customer.email) // If needed, you can include additional claims
-                        // Add more claims as needed
-                    };
+            {
+                new Claim(ClaimTypes.Name, customer.customerID.ToString()), // You can use any unique identifier for the user
+                new Claim(ClaimTypes.Email, customer.email) // If needed, you can include additional claims
+                // Add more claims as needed
+            };
 
                     var identity = new ClaimsIdentity(claims, "ApplicationCookie");
                     var principal = new ClaimsPrincipal(identity);
@@ -84,13 +84,7 @@ namespace CameraStore.Controllers
 
                     HttpContext.SignInAsync("Cookies", principal, authProperties).Wait(); // Sign in the user
 
-                    // Set session if needed
-                    HttpContext.Session.SetString("CustomerId", customer.customerID.ToString());
-                    var fullNameParts = customer.fullname.Split(' ');
-                    var lastName = fullNameParts[fullNameParts.Length - 1];
-                    HttpContext.Session.SetString("WelcomeMessage", $"Welcome, {lastName}!");
-
-                    return RedirectToAction("Index", "Home"); // Chuyển hướng sau khi đăng nhập thành công
+                    return RedirectToAction("Index", "Home"); // Redirect after successful login
                 }
                 else
                 {
@@ -100,6 +94,7 @@ namespace CameraStore.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
+
 
         public IActionResult Logout()
         {

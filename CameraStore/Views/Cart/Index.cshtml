@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Cart>
+﻿@model IEnumerable<CartDetails>
 
 @{
     ViewData["Title"] = "Index";
@@ -23,16 +23,20 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <th scope="row">1</th>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
+                            @foreach(var cartdetail in Model)
+                            {
+                                <th scope="row">@cartdetail.cartID</th>
+                                <td>@cartdetail.Cart.customerID</td>
+                            <td>@cartdetail.proID</td>
+                            <td>@cartdetail.quantity</td>
+                            <td>@cartdetail.price</td>
+                            <td>@cartdetail.Cart.timeStamp</td>
                             <th> 
                                 <a asp-controller="CartDetail" asp-action="Index" 
                                 class="btn btn-primary">View Detail</a>
                              </th>
+                            }
+                            
                         </tr>
                     </tbody>
                 </table>

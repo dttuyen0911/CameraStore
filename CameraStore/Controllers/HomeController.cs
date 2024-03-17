@@ -28,6 +28,17 @@ namespace CameraStore.Controllers
             var allCategories = _dbContext.Categories
                     .ToList();
             ViewBag.AllCategories = allCategories;
+            int userId = Convert.ToInt32(User.Identity.Name);
+
+            var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
+            if (customer != null)
+            {
+                ViewBag.FullName = customer.fullname;
+            }
+            else
+            {
+                ViewBag.FullName = "Unknown";
+            }
 
             return View(products); ;
         }

@@ -4,6 +4,7 @@ using CameraStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CameraStore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240316072344_cameraStoreV24")]
+    partial class cameraStoreV24
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,12 +42,19 @@ namespace CameraStore.Migrations
                     b.Property<int>("customerID")
                         .HasColumnType("int");
 
+                    b.Property<int?>("customerID1")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("timeStamp")
                         .HasColumnType("datetime2");
 
                     b.HasKey("cartID");
 
                     b.HasIndex("customerID");
+
+                    b.HasIndex("customerID1")
+                        .IsUnique()
+                        .HasFilter("[customerID1] IS NOT NULL");
 
                     b.ToTable("Carts");
                 });
@@ -350,6 +360,10 @@ namespace CameraStore.Migrations
                         .HasForeignKey("customerID")
                         .IsRequired();
 
+                    b.HasOne("CameraStore.Models.Customer", null)
+                        .WithOne("Cart")
+                        .HasForeignKey("CameraStore.Models.Cart", "customerID1");
+
                     b.Navigation("Customer");
                 });
 
@@ -461,6 +475,9 @@ namespace CameraStore.Migrations
 
             modelBuilder.Entity("CameraStore.Models.Customer", b =>
                 {
+                    b.Navigation("Cart")
+                        .IsRequired();
+
                     b.Navigation("Carts");
 
                     b.Navigation("Feedbacks");
