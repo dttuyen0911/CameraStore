@@ -46,7 +46,6 @@ body {
 	cursor: pointer;
 	z-index: 1000;
 }
-
 .header__nav__option .menus {
 	position: absolute;
 	left: 20px;

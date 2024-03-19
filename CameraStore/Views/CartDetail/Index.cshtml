@@ -19,12 +19,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                        </tr>
+                        @foreach (var cartdetail in Model)
+                        {
+                            <tr>
+                                <td>@cartdetail.cartID</td>
+                                <td>@cartdetail.proID</td>
+                                <td>@cartdetail.quantity</td>
+                                <td>@cartdetail.price</td>
+                                <td>
+                                    <a asp-controller="Cart" asp-action="Index" class="btn btn-primary">View cart</a>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>

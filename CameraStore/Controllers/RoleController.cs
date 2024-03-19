@@ -1,9 +1,11 @@
 ﻿using CameraStore.Data;
 using CameraStore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CameraStore.Controllers
 {
+    [Authorize(Policy = "AdminPolicy")]
     public class RoleController : Controller
     {
         private readonly ApplicationDbContext _dbContext;

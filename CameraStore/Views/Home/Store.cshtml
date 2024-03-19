@@ -4,7 +4,21 @@
     ViewData["Title"] = "Store";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<section class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__text">
+                    <h4>Store</h4>
+                    <div class="breadcrumb__links">
+                        <a asp-controller="Home" asp-action="Index">Home</a>
+                        <span>Store</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 <!-- Shop Section Begin -->
 <section class="shop spad">
     <div class="container">

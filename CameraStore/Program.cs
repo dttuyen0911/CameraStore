@@ -1,25 +1,21 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using CameraStore.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
-using System;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContext");
+// Add services
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationDbContext")));
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Account/Login";
-        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.LoginPath = "/Authentication/Login";
+        options.AccessDeniedPath = "/Authentication/Error";
     });
 
 builder.Services.AddControllersWithViews();
-
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSession(options =>
@@ -30,8 +26,34 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30); // Timeout after 30 minutes of inactivity
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminPolicy", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("Admin");
+    });
+
+    options.AddPolicy("MemberPolicy", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("Member");
+    });
+    options.AddPolicy("EmployeePolicy", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("Employee");
+    });
+    options.AddPolicy("OwnerPolicy", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("Owner");
+    });
+});
+
 var app = builder.Build();
 
+// Configure middleware
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -47,6 +69,7 @@ app.UseAuthentication();
 app.UseSession();
 app.UseAuthorization();
 
+// Configure endpoints
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

@@ -55,6 +55,17 @@ namespace CameraStore.Controllers
         }
         public IActionResult productDetail(int id)
         {
+            int userId = Convert.ToInt32(User.Identity.Name);
+
+            var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
+            if (customer != null)
+            {
+                ViewBag.FullName = customer.fullname;
+            }
+            else
+            {
+                ViewBag.FullName = "Unknown";
+            }
             if (id == null)
             {
                 return NotFound();
@@ -84,7 +95,17 @@ namespace CameraStore.Controllers
                     .ToList();
             ViewBag.AllStatus = allStatus;
             ViewBag.AllCategories = allCategories;
+            int userId = Convert.ToInt32(User.Identity.Name);
 
+            var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
+            if (customer != null)
+            {
+                ViewBag.FullName = customer.fullname;
+            }
+            else
+            {
+                ViewBag.FullName = "Unknown";
+            }
             IQueryable<Product> productsQuery = _dbContext.Products
                 .Include(c => c.Category);
             if (selectedCategories != null && selectedCategories.Length > 0)

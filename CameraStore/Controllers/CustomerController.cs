@@ -8,6 +8,7 @@ using System.Text;
 
 namespace CameraStore.Controllers
 {
+
     public class CustomerController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
@@ -18,6 +19,7 @@ namespace CameraStore.Controllers
         public IActionResult Index()
         {
             IEnumerable<Customer> customers = _dbContext.Customers.ToList();
+
             return View(customers);
         }
         public IActionResult Create()
@@ -107,6 +109,7 @@ namespace CameraStore.Controllers
             {
                 if (IsEmailUnique(obj.email, id))
                 {
+                    obj.password = GetMD5(obj.password);
                     // Detach the existing entity from the context
                     _dbContext.Entry(existingCustomer).State = EntityState.Detached;
 

@@ -6,6 +6,7 @@ namespace CameraStore.Controllers
     {
         public IActionResult Index()
         {
+
             return View();
         }
     }

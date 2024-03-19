@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CameraStore.Controllers
 {
+
     public class AuthenticationController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
@@ -53,6 +54,10 @@ namespace CameraStore.Controllers
         {
             return View();
         }
+        public IActionResult Error()
+        {
+            return View();
+        }
         [HttpPost]
         public IActionResult Login(string email, string password)
         {
@@ -67,12 +72,20 @@ namespace CameraStore.Controllers
                         return View();
                     }
 
-                    // Set authentication cookie
+                    // Lấy thông tin vai trò của khách hàng từ cơ sở dữ liệu
+                    var role = _dbContext.Roles.FirstOrDefault(r => r.roleID == customer.roleID);
+                    if (role == null)
+                    {
+                        ModelState.AddModelError("", "Role not found.");
+                        return View();
+                    }
+
+                    // Set authentication cookie với các claims bao gồm vai trò của người dùng
                     var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, customer.customerID.ToString()), // You can use any unique identifier for the user
-                new Claim(ClaimTypes.Email, customer.email) // If needed, you can include additional claims
-                // Add more claims as needed
+                new Claim(ClaimTypes.Email, customer.email), // If needed, you can include additional claims
+                new Claim(ClaimTypes.Role, role.name) // Add role claim
             };
 
                     var identity = new ClaimsIdentity(claims, "ApplicationCookie");

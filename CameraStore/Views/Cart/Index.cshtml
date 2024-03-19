@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CartDetails>
+﻿@model IEnumerable<Cart>
 
 @{
     ViewData["Title"] = "Index";
@@ -14,7 +14,6 @@
                         <tr class="text-nowrap">
                             <th>#</th>
                             <th>User</th>
-                            <th>Product</th>
                             <th>Quantity Total</th>
                             <th>Price Total</th>
                             <th>Time Stamp</th>
@@ -22,22 +21,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            @foreach(var cartdetail in Model)
-                            {
-                                <th scope="row">@cartdetail.cartID</th>
-                                <td>@cartdetail.Cart.customerID</td>
-                            <td>@cartdetail.proID</td>
-                            <td>@cartdetail.quantity</td>
-                            <td>@cartdetail.price</td>
-                            <td>@cartdetail.Cart.timeStamp</td>
-                            <th> 
-                                <a asp-controller="CartDetail" asp-action="Index" 
-                                class="btn btn-primary">View Detail</a>
-                             </th>
-                            }
-                            
-                        </tr>
+                        @foreach (var cart in Model)
+                        {
+                                <tr>
+                                    <td>@cart.cartID</td>
+                                    <td>@cart.customerID</td>
+                                    <td>@cart.cartQuantityTotal</td>
+                                    <td>@cart.cartPriceTotal</td>
+                                    <td>@cart.timeStamp</td>
+                                    <td>
+                                        <a asp-controller="CartDetail" asp-action="Index" asp-route-id="@cart.cartID"class="btn btn-primary">View Detail</a>
+                                    </td>
+                                </tr>
+                        }
                     </tbody>
                 </table>
             </div>

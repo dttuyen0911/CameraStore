@@ -14,6 +14,16 @@ namespace CameraStore.Controllers
         public IActionResult Index()
         {
             IEnumerable<Order> orders = _dbContext.Orders.ToList();
+            int userId = Convert.ToInt32(User.Identity.Name);
+            var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
+            if (customer != null)
+            {
+                ViewBag.FullName = customer.fullname;
+            }
+            else
+            {
+                ViewBag.FullName = "Unknown";
+            }
             return View(orders);
         }
         public IActionResult createOrder(int id)
