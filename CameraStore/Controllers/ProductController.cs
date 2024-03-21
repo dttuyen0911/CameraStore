@@ -39,6 +39,18 @@ namespace CameraStore.Controllers
             string fileName = proUploadImage(obj);
             obj.proUrlImage = fileName;
 
+            // Kiểm tra proPercent có giá trị hay không
+            if (obj.proPercent != null)
+            {
+                // Nếu proPercent có giá trị, tính proSale dựa trên proPrice và proPercent
+                obj.proSale = obj.proPrice * (100 - obj.proPercent) / 100;
+            }
+            else
+            {
+                // Nếu proPercent là null, proSale bằng proPrice
+                obj.proSale = obj.proPrice;
+            }
+
             _dbContext.Products.Add(obj);
             _dbContext.SaveChanges();
             return RedirectToAction("Index");
@@ -78,6 +90,16 @@ namespace CameraStore.Controllers
         {
             /*if (ModelState.IsValid)
             {*/
+            if (obj.proPercent == null)
+            {
+                // Nếu proPercent là null, gán proSale = proPrice
+                obj.proSale = obj.proPrice;
+            }
+            else
+            {
+                // Nếu proPercent có giá trị, tính proSale dựa trên proPrice và proPercent
+                obj.proSale = obj.proPrice * (100 - obj.proPercent) / 100;
+            }
             if (obj.proImage == null)
             {
                 obj.proID = id;

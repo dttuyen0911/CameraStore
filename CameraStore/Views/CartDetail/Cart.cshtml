@@ -47,43 +47,45 @@
                                     <tr>
                                         <td class="product__cart__item">
                                             <div class="product__cart__item__pic">
-                                                @if (item.Product != null)
-                                                {
                                                     <img src="~/Image/@item.Product.proUrlImage" style="width: 150px; height: 100px" alt="@item.Product.proName">
-                                                }
                                             </div>
                                             <div class="product__cart__item__text">
-                                                @if (item.Product != null)
-                                                {
                                                     <h6>@item.Product.proName</h6>
-                                                    <h5>@item.Product.proPrice</h5>
+                                                @if (item.Product.proSale != null)
+                                                {
+                                                    <h5>$@item.Product.proSale</h5>
+                                                }
+                                                else
+                                                {
+                                                    <h5>$@item.Product.proPrice</h5>
                                                 }
                                             </div>
                                         </td>
                                         <td class="quantity__item">
-                                            <div class="quantity">
-                                                <div class="pro-qty-2">
-                                                    @if (item != null && item.Product != null)
-                                                    {
-                                                        <input type="text" value="@item.quantity" onchange="updateCart(@item.Product.proID, this.value)">
-                                                    }
-                                                </div>
-                                            </div>
+                                            <input style="width: 80px;" type="number" value="@item.quantity" min="1" onchange="updateCart('@item.cartID', '@item.proID', this.value)">
                                         </td>
-                                        <td class="cart__price">
-                                            @if (item.Product != null)
-                                            {
-                                                <span>@(item.Product.proPrice * item.quantity)</span>
-                                            }
+                                        <td class="cart__price" id="cartPrice_@item.cartID">
+                                            <span>
+                                                @{
+                                                    decimal totalPrice = 0;
+                                                    if (item.Product.proSale != null)
+                                                    {
+                                                        totalPrice = item.Product.proSale * item.quantity;
+                                                    }
+                                                    else
+                                                    {
+                                                        totalPrice = item.Product.proPrice * item.quantity;
+                                                    }
+                                                }
+                                                $@totalPrice
+                                            </span>
                                         </td>
                                         <td class="cart__close">
-                                            @if (item.Product != null)
-                                            {
-                                                <a href="#" onclick="removeFromCart(@item.Product.proID)">
-                                                    <i class="fa fa-close"></i>
-                                                </a>
-                                            }
+                                            <a href="#" onclick="removeFromCart('@item.cartID','@item.proID')">
+                                                <i class="fa fa-close"></i>
+                                            </a>
                                         </td>
+
                                     </tr>
                                 }
                             </tbody>
@@ -93,11 +95,6 @@
                         <div class="col-lg-6 col-md-6 col-sm-6">
                             <div class="continue__btn">
                                 <a asp-controller="Home" asp-action="Index">Continue Shopping</a>
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-md-6 col-sm-6">
-                            <div class="continue__btn update__btn">
-                                <a href="#" onclick="updateCart()">Update cart</a>
                             </div>
                         </div>
                     </div>
@@ -112,13 +109,12 @@
                     </div>
                     <div class="cart__total">
                         <h6>Cart total</h6>
-                        <ul>
+                        <ul id="cartTotal">
                             @if (Model != null && Model.Any())
                             {
-                                <li>Subtotal <span id="subtotal">$ @Model.Where(item => item != null && item.Product != null).Sum(item => item.Product.proPrice * item.quantity)</span></li>
-                                <!-- Calculate total price for all items in the cart -->
-                                <li>Total <span id="total">$ @Model.Where(item => item != null && item.Product != null).Sum(item => item.Product.proPrice * item.quantity)</span></li>
+                                <li>Subtotal <span id="subtotal">$ @Model.Where(item => item != null && item.Product != null).Sum(item => item.Product.proSale != null ? (item.Product.proSale * item.quantity) : (item.Product.proPrice * item.quantity))</span></li>
                             }
+
                         </ul>
                         <a class="primary-btn" asp-area="" asp-controller="Order" asp-action="CreateOrder">Proceed to checkout</a>
                     </div>
@@ -137,44 +133,47 @@
             </div>
         </div>
     }
+    <div id="notification1" style="display: none; position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 1000;" class="alert alert-danger" role="alert">
+        The product has been successfully deleted to the cart!
+    </div>
 </section>
 <!-- Shopping Cart Section End -->
 
-@section Scripts {
-    <script>
-        function updateCart(productId, quantity) {
-            // Perform update cart operation here using Ajax
-            // For example:
-            $.ajax({
-                url: "/Cart/UpdateCart",
-                type: "POST",
-                data: { id: productId, quantity: quantity },
-                success: function (data) {
-                    // Update the subtotal and total
-                    $('#subtotal').text('$ ' + data.subtotal);
-                    $('#total').text('$ ' + data.total);
-                },
-                error: function () {
-                    alert('Error updating cart.');
-                }
-            });
-        }
+<script>
+    function updateCart(cartId, proId, quantity) {
+        // Perform update cart operation here using Ajax
+        $.ajax({
+            url: "/Cart/UpdateCart",
+            type: "POST",
+            data: { cartId: cartId, proId: proId, quantity: quantity }, // Thêm tham số 'proId'
+            success: function (data) {
+                // Update the subtotal and total
+                $('#cartTotal #subtotal').text('$ ' + data.subtotal);
+            },
+            error: function () {
+                alert('Error updating cart.');
+            }
+        });
+    }
 
-        function removeFromCart(productId) {
-            // Perform remove from cart operation here using Ajax
-            // For example:
-            $.ajax({
-                url: "/Cart/RemoveFromCart",
-                type: "POST",
-                data: { id: productId },
-                success: function () {
-                    // Reload the page or update the cart summary
-                    location.reload();
-                },
-                error: function () {
-                    alert('Error removing from cart.');
-                }
-            });
-        }
-    </script>
-}
+    function removeFromCart(cartId, proId) {
+        // Perform remove from cart operation here using Ajax
+        $.ajax({
+            url: "/Cart/RemoveCart",
+            type: "POST",
+            data: { cartId: cartId, proId: proId }, // Sửa tên tham số từ 'productId' thành 'cartId'
+            success: function () {
+                $('#notification1').fadeIn().delay(1000).fadeOut();
+                // Xóa phần tử trực tiếp từ DOM
+                $('tr[data-cart-id="' + cartId + '"]').remove();;
+            },
+            error: function () {
+                alert('Error removing from cart.');
+            }
+        });
+    }
+</script>

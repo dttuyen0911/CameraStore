@@ -62,29 +62,26 @@
                                    asp-for="proPrice"
                                    readonly
                                    class="form-control"
-                                   id="detailProPrice"
-                                   placeholder="Enter price of product" />
+                                   id="detailProPrice"/>
                         </div>
 
                         <div class="mb-3">
                             <span asp-validation-for="proPercent"></span>
-                            <label asp-for="proPercent" for="exampleFormControlInput1" class="form-label">Price</label>
+                            <label asp-for="proPercent" for="exampleFormControlInput1" class="form-label">Percent</label>
                             <input type="text"
                                    asp-for="proPercent"
                                    class="form-control"
                                    readonly
-                                   id="detailProSale"
-                                   placeholder="Enter percent sale of product" />
+                                   id="detailProSale" />
                         </div>
                         <div class="mb-3">
                             <span asp-validation-for="proSale"></span>
-                            <label asp-for="proSale" for="exampleFormControlInput1" class="form-label">Price</label>
+                            <label asp-for="proSale" for="exampleFormControlInput1" class="form-label">Price sale</label>
                             <input type="text"
                                    asp-for="proSale"
                                    class="form-control"
                                    readonly
-                                   id="detailProPrice"
-                                   placeholder="Enter price sale of product" />
+                                   id="detailProPrice"/>
                         </div>
                         <div class="mb-3">
                             <span asp-validation-for="proQuantity"></span>
@@ -93,10 +90,17 @@
                                    asp-for="proQuantity"
                                    readonly
                                    class="form-control"
-                                   id="detailProQuantity"
-                                   placeholder="Enter quantity of product" />
+                                   id="detailProQuantity" />
                         </div>
-
+                        <div class="mb-3">
+                            <span asp-validation-for="proQuantitySold"></span>
+                            <label asp-for="proQuantitySold" for="exampleFormControlInput1" class="form-label" min="1">Quantity sold</label>
+                            <input type="number"
+                                   asp-for="proQuantitySold"
+                                   readonly
+                                   class="form-control"
+                                   id="detailproQuantitySold" />
+                        </div>
                         <div class="mb-3">
                             <span asp-validation-for="Category"></span>
                             <label asp-for="cateID" for="exampleFormControlInput1" class="form-label">Category</label>
@@ -108,7 +112,7 @@
                         </div>
                         <div class="mb-3">
                             <span asp-validation-for="Supplier"></span>
-                            <label asp-for="supID" for="exampleFormControlInput1" class="form-label">Category</label>
+                            <label asp-for="supID" for="exampleFormControlInput1" class="form-label">Supplier</label>
                             <input type="text"
                                    asp-for="supID"
                                    readonly

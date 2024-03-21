@@ -73,17 +73,8 @@
                                id="updateProSale"
                                placeholder="Enter percent sale of product" />
                             <div id="defaultFormControlHelp" class="form-text">
-                                In case there is no sale, enter the value as "No".
+                                In case there is no sale, a value that can be left blank.
                             </div>
-                    </div>
-                    <div class="mb-3">
-                        <span asp-validation-for="proSale"></span>
-                            <label asp-for="proSale" for="exampleFormControlInput1" class="form-label">Price sale</label>
-                        <input type="text"
-                                   asp-for="proSale"
-                               class="form-control"
-                               id="updateProPrice"
-                               placeholder="Enter price sale of product" />
                     </div>
                     <div class="mb-3">
                         <span asp-validation-for="proQuantity"></span>
@@ -94,6 +85,15 @@
                                id="updateProQuantity"
                                placeholder="Enter quantity of product" />
                     </div>
+                        <div class="mb-3">
+                            <span asp-validation-for="proQuantitySold"></span>
+                            <label asp-for="proQuantitySold" for="exampleFormControlInput1" class="form-label" min="1">Quantity sold</label>
+                            <input type="number"
+                                   asp-for="proQuantitySold"
+                                   class="form-control"
+                                   id="updateProQuantity"
+                                   placeholder="Enter quantity sold of product" />
+                        </div>
                     <div class="mb-3">
                         <label asp-for="Category" class="form-label">Category</label>
                         <select asp-for = "cateID" asp-items="ViewBag.cateID" class="form-select" id="updateProCate" aria-label="Default select example">

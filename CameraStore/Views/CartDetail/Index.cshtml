@@ -16,6 +16,7 @@
                             <th>Product</th>
                             <th>Quantity</th>
                             <th>Price</th>
+                            <th>Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -25,7 +26,14 @@
                                 <td>@cartdetail.cartID</td>
                                 <td>@cartdetail.proID</td>
                                 <td>@cartdetail.quantity</td>
-                                <td>@cartdetail.price</td>
+                                @if (@cartdetail.Product.proSale != null)
+                                {
+                                    <td>$@cartdetail.Product.proSale</td>
+                                }
+                                else
+                                {
+                                    <td>$@cartdetail.Product.proPrice</td>
+                                }
                                 <td>
                                     <a asp-controller="Cart" asp-action="Index" class="btn btn-primary">View cart</a>
                                 </td>

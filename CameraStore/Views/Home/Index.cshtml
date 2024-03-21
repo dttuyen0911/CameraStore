@@ -48,7 +48,10 @@
                 </div>
             </div>
             <div class="row product__filter">
-                @foreach (var product in Model)
+                @{
+                    var topProducts = Model.Where(p => p.proStatus == "New").OrderByDescending(p => p.proDate).Take(6);
+                }
+                @foreach (var product in topProducts)
                 {
                     <div class="col-lg-4 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
                         <div class="product__item">
@@ -66,70 +69,39 @@
                                         + Add To Cart
                                     </a>
                                 </div>
-                                <h5>$@product.proPrice</h5>
+                                <!-- Hiển thị giá trị proSale nếu có, ngược lại hiển thị giá trị proPrice -->
+                                @if (@product.proSale != null)
+                                {
+                                    <h5>$@product.proSale</h5>
+                                }
+                                else
+                                {
+                                    <h5>$@product.proPrice</h5>
+                                }
                             </div>
                         </div>
                     </div>
                 }
             </div>
+
             <div id="notification" style="display: none; position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	z-index: 1000;" class="alert alert-success" role="alert">
+	        top: 50%;
+	        left: 50%;
+	        transform: translate(-50%, -50%);
+	        z-index: 1000;" class="alert alert-success" role="alert">
                 The product has been successfully added to the cart!
+            </div>
+            <div id="notification1" style="display: none; position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;" class="alert alert-danger" role="alert">
+                This product is currently out of stock. Please choose another product!
             </div>
         </div> 
     </section>
 
     <!-- Product Section End -->
-    <!-- Categories Section Begin -->
-    <section class="categories spad">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3">
-                    <div class="categories__text">
-                        <h2>Clothings Hot <br /> <span>Shoe Collection</span> <br /> Accessories</h2>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="categories__hot__deal">
-                        <img src="../cameraStoreLayout/img/product-sale.png" alt="">
-                        <div class="hot__deal__sticker">
-                            <span>Sale Of</span>
-                            <h5>$29.99</h5>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 offset-lg-1">
-                    <div class="categories__deal__countdown">
-                        <span>Deal Of The Week</span>
-                        <h2>Multi-pocket Chest Bag Black</h2>
-                        <div class="categories__deal__countdown__timer" id="countdown">
-                            <div class="cd-item">
-                                <span>3</span>
-                                <p>Days</p>
-                            </div>
-                            <div class="cd-item">
-                                <span>1</span>
-                                <p>Hours</p>
-                            </div>
-                            <div class="cd-item">
-                                <span>50</span>
-                                <p>Minutes</p>
-                            </div>
-                            <div class="cd-item">
-                                <span>18</span>
-                                <p>Seconds</p>
-                            </div>
-                        </div>
-                        <a href="#" class="primary-btn">Shop now</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Categories Section End -->
     <!-- Latest Blog Section Begin -->
     <section class="latest spad">
         <div class="container">
@@ -142,22 +114,42 @@
                 </div>
             </div>
             <div class="row product__filter">
-                <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
-                    <div class="product__item sale">
-                        <div class="product__item__pic set-bg" data-setbg="../cameraStoreLayout/img/product/product-3.jpg">
-                            <span class="label">Sale</span>
-                        </div>
-                        <div class="product__item__text">
-                            <h6>Multi-pocket Chest Bag</h6>
-                            <a class="menu-link" asp-area="" asp-controller="Product" asp-action="productDetail" class="add-cart">
-                                Quick view
-                            </a>
-                            <h5>$43.48</h5>
+                @{
+                    var saleProducts = Model.Where(p => p.proStatus == "Sale").OrderByDescending(p => p.proDate).Take(6);
+                }
+                @foreach (var product in saleProducts)
+                {
+                    <div class="col-lg-4 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
+                        <div class="product__item">
+                            <div class="product__item__pic set-bg">
+                                <a class="menu-link" asp-area="" asp-controller="Home" asp-action="productDetail" asp-route-id="@product.proID">
+                                    <img src="~/Image/@product.proUrlImage" style="height:260px;width:300px" alt="">
+                                </a>
+                                <span class="label">@product.proStatus</span>
+                            </div>
+
+                            <div class="product__item__text">
+                                <h6>@product.proName</h6>
+                                <div id="addToCartForm"> 
+                                    <a href="#" class="menu-link add-cart" data-controller="Cart" data-action="AddToCart" data-customer-id="@User.Identity.Name" data-product-id="@product.proID" data-quantity="1" data-price="@product.proPrice">
+                                        + Add To Cart
+                                    </a>
+                                </div>
+                                <!-- Hiển thị giá trị proSale nếu có, ngược lại hiển thị giá trị proPrice -->
+                                @if (@product.proSale != null)
+                                {
+                                    <h5>$@product.proSale</h5>
+                                }
+                                else
+                                {
+                                    <h5>$@product.proPrice</h5>
+                                }
+                            </div>
                         </div>
                     </div>
-                </div>
-
+                }
             </div>
+
         </div>
     </section>
     <!-- Latest Blog Section End -->
@@ -172,19 +164,41 @@
                 </div>
             </div>
             <div class="row product__filter">
-                <div class="col-lg-3 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
-                    <div class="product__item sale">
-                        <div class="product__item__pic set-bg" data-setbg="../cameraStoreLayout/img/product/product-3.jpg">
-                            <span class="label">Sale</span>
+            @{
+                var topSoldProducts = Model.OrderByDescending(p => p.proQuantitySold).Take(6);
+            }
+
+            @foreach (var product in topSoldProducts)
+            {
+                <div class="col-lg-4 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
+                    <div class="product__item">
+                        <div class="product__item__pic set-bg">
+                            <a class="menu-link" asp-area="" asp-controller="Home" asp-action="productDetail" asp-route-id="@product.proID">
+                                <img src="~/Image/@product.proUrlImage" style="height:260px;width:300px" alt="">
+                            </a>
+                            <span class="label">@product.proStatus</span>
                         </div>
+
                         <div class="product__item__text">
-                            <h6>Multi-pocket Chest Bag</h6>
-                            <a href="#" class="add-cart">+ Add To Cart</a>
-                            <h5>$43.48</h5>
+                            <h6>@product.proName</h6>
+                            <div id="addToCartForm">
+                                    <a href="#" class="menu-link add-cart" data-controller="Cart" data-action="AddToCart" data-customer-id="@User.Identity.Name" data-product-id="@product.proID" data-quantity="1" data-price="@product.proPrice" data-status="@product.proStatus">
+                                    + Add To Cart
+                                </a>
+                            </div>
+                            <!-- Hiển thị giá trị proSale nếu có, ngược lại hiển thị giá trị proPrice -->
+                            @if (product.proSale != null)
+                            {
+                                <h5>$@product.proSale</h5>
+                            }
+                            else
+                            {
+                                <h5>$@product.proPrice</h5>
+                            }
                         </div>
                     </div>
                 </div>
-
+            }
             </div>
         </div>
     </section>
@@ -246,26 +260,41 @@
                 var productId = $(this).data('product-id');
                 var quantity = $(this).data('quantity');
                 var price = $(this).data('price');
+                var productStatus = $(this).data('status');
+                // Kiểm tra xem người dùng đã đăng nhập chưa
+                var isAuthenticated = @(User.Identity.IsAuthenticated ? "true" : "false");
 
-                $.ajax({
-                    url: '/' + controller + '/' + action,
-                    type: 'POST',
-                    data: {
-                        customerId: customerId,
-                        productId: productId,
-                        quantity: quantity,
-                        price: price
-                    },
-                    success: function (response) {
-                        // Hiển thị thông báo khi thêm vào giỏ hàng thành công
-                        $('#notification').fadeIn().delay(2000).fadeOut(); // Hiển thị div và sau đó ẩn nó sau 2 giây
-                    },
-                    error: function (xhr, status, error) {
-                        // Xử lý lỗi nếu có
-                        console.error('Lỗi: ' + error);
+                if (!isAuthenticated) {
+                    // Nếu chưa đăng nhập, chuyển hướng sang trang login
+                    window.location.href = "/Authentication/Login";
+                } 
+                else {
+                    if (productStatus === "Sold out") {
+                        // Hiển thị thông báo nếu sản phẩm đã hết hàng
+                        $('#notification1').fadeIn().delay(1000).fadeOut();
+                        return;
                     }
-                });
+
+                    // Nếu đã đăng nhập, thực thi hàm addToCart
+                    $.ajax({
+                        url: '/' + controller + '/' + action,
+                        type: 'POST',
+                        data: {
+                            customerId: customerId,
+                            productId: productId,
+                            quantity: quantity,
+                            price: price
+                        },
+                        success: function (response) {
+                            // Hiển thị thông báo khi thêm vào giỏ hàng thành công
+                            $('#notification').fadeIn().delay(1000).fadeOut(); // Hiển thị div và sau đó ẩn nó sau 2 giây
+                        },
+                        error: function (xhr, status, error) {
+                            // Xử lý lỗi nếu có
+                            console.error('Lỗi: ' + error);
+                        }
+                    });
+                }
             });
         });
     </script>
-

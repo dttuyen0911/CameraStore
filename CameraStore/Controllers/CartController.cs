@@ -20,6 +20,7 @@ namespace CameraStore.Controllers
         public IActionResult Index()
         {
             IEnumerable<Cart> cart = _dbContext.Carts.ToList();
+            IEnumerable<CartDetails> cartDetails = _dbContext.CartDetails.Include(cd => cd.Product).ToList();
             int userId = Convert.ToInt32(User.Identity.Name);
 
             var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
@@ -33,8 +34,6 @@ namespace CameraStore.Controllers
             }
             return View(cart);
         }
-
-        // Hành động để hiển thị giỏ hàng của người dùng
        
         [HttpPost]
         // Sử dụng Authorize attribute để chỉ cho phép người dùng đã đăng nhập truy cập hành động này
@@ -88,6 +87,22 @@ namespace CameraStore.Controllers
             if (product != null)
             {
                 product.proQuantity -= quantity;
+                product.proQuantitySold += quantity;
+                if (product.proQuantity == 0)
+                {
+                    product.proStatus = "Sold out";
+                }
+                else
+                {
+                    if (product.proPercent != null && product.proPercent > 0)
+                    {
+                        product.proStatus = "Sale";
+                    }
+                    else
+                    {
+                        product.proStatus = "New";
+                    }
+                }
                 _dbContext.SaveChanges();
             }
             else
@@ -99,11 +114,11 @@ namespace CameraStore.Controllers
             // Trả về thông tin sản phẩm đã thêm vào giỏ hàng dưới dạng JSON
             return Json(new { productId = productId, quantity = quantity, price = price });
         }
-
+        [HttpPost]
         // Cập nhật số lượng sản phẩm trong giỏ hàng
-        public IActionResult UpdateCart(int cartId, int quantity, decimal price)
+        public IActionResult UpdateCart(int cartId, int proId, int quantity)
         {
-            var cartDetail = _dbContext.CartDetails.FirstOrDefault(cd => cd.cartID == cartId);
+            var cartDetail = _dbContext.CartDetails.FirstOrDefault(cd => cd.cartID == cartId && cd.proID == proId);
             if (cartDetail == null)
             {
                 return NotFound(); // Không tìm thấy mục giỏ hàng
@@ -119,53 +134,24 @@ namespace CameraStore.Controllers
             var product = _dbContext.Products.FirstOrDefault(p => p.proID == cartDetail.proID);
             if (product != null)
             {
-                if (quantity > product.proQuantity)
+                product.proQuantitySold += (quantity - cartDetail.quantity);
+                // Trừ số lượng mới từ số lượng sản phẩm có sẵn trong kho
+                product.proQuantity = product.proQuantity - (quantity - cartDetail.quantity);
+                if (product.proQuantity == 0)
                 {
-                    // Nếu số lượng mới lớn hơn số lượng có sẵn của sản phẩm,
-                    // giảm số lượng mới xuống bằng số lượng có sẵn của sản phẩm
-                    quantity = product.proQuantity;
+                    product.proStatus = "Sold out";
                 }
-            }
-            else
-            {
-                return NotFound(); // Trả về 404 nếu không tìm thấy sản phẩm
-            }
-
-            // Cập nhật số lượng và giá trong cartDetail
-            cart.cartQuantityTotal -= cartDetail.quantity;
-            cart.cartPriceTotal -= cartDetail.price;
-
-            cartDetail.quantity = quantity;
-            cartDetail.price = price;
-
-            cart.cartQuantityTotal += quantity;
-            cart.cartPriceTotal += price;
-
-            _dbContext.SaveChanges();
-
-            return Ok();
-        }
-
-        // Xóa mục trong giỏ hàng
-        public IActionResult RemoveCart(int cartId)
-        {
-            var cartDetail = _dbContext.CartDetails.FirstOrDefault(cd => cd.cartID == cartId);
-            if (cartDetail == null)
-            {
-                return NotFound(); // Không tìm thấy mục giỏ hàng
-            }
-
-            var cart = _dbContext.Carts.Find(cartDetail.cartID);
-            if (cart == null)
-            {
-                return NotFound(); // Không tìm thấy giỏ hàng
-            }
-
-            // Cộng lại số lượng sản phẩm vào số lượng của sản phẩm trong cơ sở dữ liệu
-            var product = _dbContext.Products.FirstOrDefault(p => p.proID == cartDetail.proID);
-            if (product != null)
-            {
-                product.proQuantity += cartDetail.quantity;
+                else
+                {
+                    if (product.proPercent != null && product.proPercent > 0)
+                    {
+                        product.proStatus = "Sale";
+                    }
+                    else
+                    {
+                        product.proStatus = "New";
+                    }
+                }
                 _dbContext.SaveChanges();
             }
             else
@@ -174,12 +160,94 @@ namespace CameraStore.Controllers
             }
 
             cart.cartQuantityTotal -= cartDetail.quantity;
-            cart.cartPriceTotal -= cartDetail.price;
-            _dbContext.CartDetails.Remove(cartDetail);
+
+            cartDetail.quantity = quantity;
+
+            cart.cartQuantityTotal += quantity;
+
+            if (product.proSale != null && product.proSale > 0)
+            {
+                cartDetail.price = product.proSale; // Sử dụng giá sale
+            }
+            else
+            {
+                cartDetail.price = product.proPrice; // Sử dụng giá thông thường
+            }
+
+            // Tính tổng giá cho giỏ hàng
+            cart.cartPriceTotal += (cartDetail.price * cartDetail.quantity);
+
             _dbContext.SaveChanges();
+
+            // Tạo object chứa subtotal và total để trả về
+            var subtotal = _dbContext.CartDetails
+                .Where(cd => cd.cartID == cartId)
+            .Sum(cd => cd.Product.proSale != null ? cd.quantity * cd.Product.proSale : cd.quantity * cd.Product.proPrice);
+            // Ở đây có thể thêm các chi phí vận chuyển hoặc giảm giá nếu cần
+
+            // Trả về dữ liệu tổng cộng dưới dạng JSON
+            return Json(new { subtotal = subtotal });
+        }
+        [HttpPost]
+        public IActionResult RemoveCart(int cartId, int proId)
+        {
+            var cartDetail = _dbContext.CartDetails.FirstOrDefault(cd => cd.cartID == cartId && cd.proID == proId);
+            if (cartDetail == null)
+            {
+                return NotFound();
+            }
+
+            var cart = _dbContext.Carts.Find(cartDetail.cartID);
+            if (cart == null)
+            {
+                return NotFound();
+            }
+
+            // Lấy thông tin sản phẩm để cập nhật lại số lượng sản phẩm trong kho và tính lại tổng giá trị giỏ hàng
+            var product = _dbContext.Products.FirstOrDefault(p => p.proID == cartDetail.proID);
+            if (product != null)
+            {
+                product.proQuantitySold -= cartDetail.quantity;
+                product.proQuantity += cartDetail.quantity;
+                cart.cartPriceTotal -= cartDetail.price;
+                if (product.proQuantity == 0)
+                {
+                    product.proStatus = "Sold out";
+                }
+                else
+                {
+                    if (product.proPercent != null && product.proPercent > 0)
+                    {
+                        product.proStatus = "Sale";
+                    }
+                    else
+                    {
+                        product.proStatus = "New";
+                    }
+                }
+                _dbContext.SaveChanges();
+            }
+            else
+            {
+                return NotFound(); 
+            }
+
+            cart.cartQuantityTotal -= cartDetail.quantity; // Cập nhật lại tổng số lượng sản phẩm trong giỏ hàng
+            _dbContext.CartDetails.Remove(cartDetail);
+            _dbContext.SaveChanges(); 
+
+            // Kiểm tra xem giỏ hàng có trống sau khi xóa sản phẩm không
+            var remainingCartDetails = _dbContext.CartDetails.Where(cd => cd.cartID == cartId).ToList();
+            if (remainingCartDetails.Count == 0)
+            {
+                // Nếu không còn sản phẩm nào trong giỏ hàng, xóa giỏ hàng
+                _dbContext.Carts.Remove(cart);
+                _dbContext.SaveChanges();
+            }
 
             return Ok();
         }
+
 
 
     }

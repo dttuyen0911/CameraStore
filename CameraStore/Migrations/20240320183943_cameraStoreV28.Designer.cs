@@ -4,6 +4,7 @@ using CameraStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CameraStore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240320183943_cameraStoreV28")]
+    partial class cameraStoreV28
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,16 +258,14 @@ namespace CameraStore.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<int>("proPercent")
-                        .HasColumnType("int");
+                    b.Property<string>("proPercent")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("proPrice")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("proQuantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("proQuantitySold")
                         .HasColumnType("int");
 
                     b.Property<decimal>("proSale")

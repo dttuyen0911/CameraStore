@@ -39,9 +39,17 @@
                 <div class="col-lg-5 col-md-5" style="background:#ffffff">
                     <div class="product__details__text">
                         <h3>@Model.proName.ToUpper()</h3>
-                        <h3 style="color:#ff0000">Price: @Model.proSale <span>$@Model.proPrice</span></h3>
+                        @if (Model.proSale == Model.proPrice)
+                        {
+                            <h3 style="color:#ff0000">Price: $@Model.proSale</h3>
+                        }
+                        else
+                        {
+                            <h3 style="color:#ff0000">Price: @Model.proSale <span>$@Model.proPrice</span></h3>
+                        }                        
                         <h4>Status: @Model.proStatus</h4>
                         <h4>Quantity: @Model.proQuantity</h4>
+                        <h4>Sold: @Model.proQuantitySold</h4>
                         <p>
                             @Model.proDescription
                         </p>
@@ -55,7 +63,8 @@
                                     <input type="hidden" name="customerId" value="@User.Identity.Name" />
                                     <input type="hidden" name="productId" value="@Model.proID" />
                                     <input type="hidden" name="quantity" value="1" />
-                                    <input type="hidden" name="price" value="@Model.proPrice" /> 
+                                    <input type="hidden" name="status" value="@Model.proStatus" />
+                                    <input type="hidden" name="price" value="@Model.proPrice" />
                                     <button type="submit" class="primary-btn">Add To Cart</button>
                                 </form>
                                 </div>
@@ -72,6 +81,14 @@
 	z-index: 1000;" class="alert alert-success" role="alert">
         The product has been successfully added to the cart!
     </div>
+    <div id="notification1" style="display: none; position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;" class="alert alert-danger" role="alert">
+        This product is currently out of stock. Please choose another product!
+    </div>
+
 </section>
 <section>
     <div class="product__details__content">
@@ -303,24 +320,37 @@
         $('form.add-to-cart-form').submit(function (event) {
             // Ngăn chặn hành động gửi mặc định của form
             event.preventDefault();
+            var isAuthenticated = @(User.Identity.IsAuthenticated ? "true" : "false");
+            if (!isAuthenticated) {
+                // Nếu chưa đăng nhập, chuyển hướng sang trang login
+                window.location.href = "/Authentication/Login";
+            } else {
+                // Lấy giá trị của trạng thái sản phẩm
+                var productStatus = $('input[name="status"]').val();
 
-            // Lấy dữ liệu từ form
-            var formData = $(this).serialize();
-
-            // Gửi yêu cầu AJAX
-            $.ajax({
-                type: 'POST',
-                url: $(this).attr('action'),
-                data: formData,
-                success: function (response) {
-                    // Hiển thị thông báo khi thêm vào giỏ hàng thành công
-                    $('#notification').fadeIn().delay(2000).fadeOut(); // Hiển thị div và sau đó ẩn nó sau 2 giây
-                },
-                error: function (xhr, status, error) {
-                    // Xử lý lỗi nếu có
-                    console.error(error);
+                if (productStatus === "Sold out") {
+                    // Hiển thị thông báo nếu sản phẩm đã hết hàng
+                    $('#notification1').fadeIn().delay(1000).fadeOut();
+                    return;
                 }
-            });
+
+                var formData = $(this).serialize();
+
+                // Gửi yêu cầu AJAX
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: formData,
+                    success: function (response) {
+                        // Hiển thị thông báo khi thêm vào giỏ hàng thành công
+                        $('#notification').fadeIn().delay(1000).fadeOut(); // Hiển thị div và sau đó ẩn nó sau 2 giây
+                    },
+                    error: function (xhr, status, error) {
+                        // Xử lý lỗi nếu có
+                        console.error(error);
+                    }
+                });
+            }
         });
     });
 </script>
