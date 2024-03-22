@@ -30,6 +30,7 @@ namespace CameraStore.Controllers
                 .ToList();
             return View(cartDetails);
         }
+
         public IActionResult Cart()
         {
             var customerId = User.FindFirst(ClaimTypes.Name)?.Value; // Lấy ID của người dùng từ cookie
@@ -49,7 +50,6 @@ namespace CameraStore.Controllers
             {
                 ViewBag.FullName = "Unknown";
             }
-            // Lấy giỏ hàng của người dùng từ cơ sở dữ liệu
             var cart = _dbContext.Carts
                 .Include(c => c.CartDetails)
                 .ThenInclude(cd => cd.Product)
@@ -58,12 +58,12 @@ namespace CameraStore.Controllers
             if (cart == null || cart.CartDetails.Count == 0)
             {
                 ViewBag.Message = "No items in cart";
-                return View(); // Nếu không có giỏ hàng, chuyển hướng đến trang chính
+                return View(); 
             }
 
-            var cartDetails = cart.CartDetails.ToList(); // Chuyển đổi danh sách CartDetails từ Cart
+            var cartDetails = cart.CartDetails.ToList(); 
 
-            return View(cartDetails); // Trả về danh sách CartDetails để hiển thị giỏ hàng
+            return View(cartDetails); 
         }
     }
 }

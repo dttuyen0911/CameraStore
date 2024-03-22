@@ -47,7 +47,9 @@
                                     <tr>
                                         <td class="product__cart__item">
                                             <div class="product__cart__item__pic">
+                                                <a class="menu-link" asp-area="" asp-controller="Home" asp-action="productDetail" asp-route-id="@item.proID">
                                                     <img src="~/Image/@item.Product.proUrlImage" style="width: 150px; height: 100px" alt="@item.Product.proName">
+                                                </a>
                                             </div>
                                             <div class="product__cart__item__text">
                                                     <h6>@item.Product.proName</h6>

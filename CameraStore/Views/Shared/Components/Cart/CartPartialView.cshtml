@@ -1,0 +1,81 @@
+﻿@model IEnumerable<CameraStore.Models.CartDetails>
+@{
+    int totalQuantity = 0;
+    decimal totalPrice = 0;
+    foreach (var item in Model)
+    {
+        if (item.Product != null)
+        {
+            totalQuantity += item.quantity;
+            if (item.Product.proSale != null)
+            {
+                totalPrice += item.Product.proSale * item.quantity;
+            }
+            else
+            {
+                totalPrice += item.Product.proPrice * item.quantity;
+            }
+        }
+    }
+}
+@if (Model != null)
+{
+        <div class="qty" style="
+            position: absolute;
+            right: 20px;
+            top: 5px;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            border-radius: 50%;
+            font-size: 10px;
+            color: #FFF;
+            background-color: #D10024;">
+            @totalQuantity
+        </div>
+        <div class="cart-dropdown">
+            <div class="cart-list">
+                <!-- Lặp qua các sản phẩm trong giỏ hàng -->
+                @foreach (var item in Model)
+                {
+                if (item.Product != null)
+                {
+                     <div class="product-widget">
+                        <div class="product-img">
+                        <a class="menu-link" asp-area="" asp-controller="Home" asp-action="productDetail" asp-route-id="@item.proID">
+                            <img src="~/Image/@item.Product.proUrlImage" alt="" style="width:70px; height:50px">
+                        </a>
+                        </div>
+                        <div class="product-body">
+                        <h3 class="product-name" style="font-weight:bold;font-size:17px;padding-bottom:3px;color:#000000">
+                                @item.Product.proName
+                                </h3>
+                            <h4 class="product-price" style="font-size:15px">
+                            @if (@item.Product.proSale != null)
+                            {
+                                <span class="qty">@item.quantity x</span>@item.Product.proSale.ToString("C")
+                            }
+                            else
+                            {
+                                <span class="qty">@item.quantity x</span>@item.Product.proPrice.ToString("C")
+                            }
+                            </h4>
+                        </div>
+                    </div>
+                }
+                }
+                </div>
+            <div class="cart-summary">
+                <small>@totalQuantity Item(s) selected</small>
+
+            <h5>SUBTOTAL: $ @totalPrice</h5>
+                <div class="cart-btns">
+                    <a asp-area="" asp-controller="CartDetail" asp-action="Cart">View Cart</a>
+                    <a href="#">Checkout  <i class="fa fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+        </div>
+}
+
+

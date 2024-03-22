@@ -109,17 +109,20 @@ namespace CameraStore.Controllers
             {
                 if (IsEmailUnique(obj.email, id))
                 {
-                    obj.password = GetMD5(obj.password);
-                    // Detach the existing entity from the context
-                    _dbContext.Entry(existingCustomer).State = EntityState.Detached;
+                    // Nếu mật khẩu không thay đổi, không cần mã hóa lại
+                    if (obj.password != existingCustomer.password)
+                    {
+                        // Mã hóa mật khẩu mới trước khi cập nhật
+                        obj.password = GetMD5(obj.password);
+                    }
 
-                    // Set the key of the new object
-                    obj.customerID = id;
+                    // Cập nhật thông tin của khách hàng trong cơ sở dữ liệu
+                    existingCustomer.email = obj.email;
+                    existingCustomer.fullname = obj.fullname;
+                    existingCustomer.password = obj.password; // Mật khẩu đã được mã hóa (nếu cần)
+                    existingCustomer.roleID = obj.roleID;
 
-                    // Attach and update the new object
-                    _dbContext.Customers.Update(obj);
-
-                    // Save changes
+                    // Lưu thay đổi vào cơ sở dữ liệu
                     _dbContext.SaveChanges();
 
                     return RedirectToAction("Index");
@@ -133,6 +136,7 @@ namespace CameraStore.Controllers
             ViewData["roleID"] = new SelectList(_dbContext.Roles.ToList(), "roleID", "name");
             return View(obj);
         }
+
 
         public ActionResult Delete(int id)
         {

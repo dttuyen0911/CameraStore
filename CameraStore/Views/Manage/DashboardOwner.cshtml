@@ -1,0 +1,301 @@
+﻿@model (IEnumerable<Product>, IEnumerable<Category>,IEnumerable<Supplier>, IEnumerable<Cart>,IEnumerable<Order>, IEnumerable<Feedback>)
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_OwnerLayout.cshtml";
+}
+<div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="card">
+            <h5 class="card-header">Product Table</h5>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered zero-configuration">
+                    <thead>
+                        <tr class="text-nowrap">
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Image</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Price</th>
+                            <th>Percent sale</th>
+                            <th>Price sale</th>
+                            <th>Quantity</th>
+                            <th>Sold</th>
+                            <th>Create date</th>
+                            <th>Supplier</th>
+                            <th>Category</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Model.Item1)
+                        {
+                            <tr>
+                                <th scope="row">@product.proID</th>
+                                <td>@product.proName</td>
+                                <td><img src="~/Image/@product.proUrlImage" style="width: 100px; height: 100px" /></td>
+                                <td style="display:-webkit-inline-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: auto;">
+                                    @product.proDescription
+                                </td>
+                                <td>@product.proStatus</td>
+                                <td>$@product.proPrice</td>
+                                <td>@product.proPercent%</td>
+                                <td>@product.proSale</td>
+                                <td>@product.proQuantity</td>
+                                <th>@product.proQuantitySold</th>
+                                <td>@product.proDate</td>
+                                <td>@product.supID</td>
+                                <td>@product.cateID</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" asp-controller="Product" asp-action="detailPro" asp-route-id="@product.proID"><i class="bx bx-book-alt me-1"></i> View Detail</a>
+                                            <a class="dropdown-item" asp-controller="Product" asp-action="Edit" asp-route-id="@product.proID" asp-route-img="@product.proImage"><i class="bx bx-edit-alt me-1"></i> Update</a>
+                                            <a class="dropdown-item" asp-action="Delete" asp-route-id="@product.proID" asp-route-img="@product.proImage" onclick="return confirm('Are you sure?');">
+                                                <i class="bx bx-trash me-1"></i> Delete
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="card">
+            <h5 class="card-header">Category Table</h5>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered zero-configuration">
+                    <thead>
+                        <tr class="text-nowrap">
+                            <th style="width: 5%;">#</th>
+                            <th style="width: 15%;">Name</th>
+                            <th style="width: 30%;">Image</th>
+                            <th style="width: 35%;">Description</th>
+                            <th style="width: 15%;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var category in Model.Item2)
+                        {
+                            <tr>
+                                <th scope="row">@category.cateID</th>
+                                <td>@category.cateName</td>
+                                <td><img src="~/Image/@category.cateUrlImage" style="width: 250px; height: 200px" /></td>
+                                <td style="display:-webkit-inline-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical;">@category.cateDescription</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" asp-controller="Category" asp-action="detailCate" asp-route-id="@category.cateID" asp-route-img="@category.cateImage"><i class="bx bx-book-alt me-1"></i> View Detail</a>
+                                            <a class="dropdown-item" asp-controller="Category" asp-action="Edit" asp-route-id="@category.cateID" asp-route-img="@category.cateImage"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                                            <a class="dropdown-item" asp-action="Delete" asp-route-id="@category.cateID" asp-route-img="@category.cateUrlImage" onclick="return confirm('Are you sure?');">
+                                                <i class="bx bx-trash me-1"></i> Delete
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="card">
+            <h5 class="card-header">Supplier Table</h5>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered zero-configuration">
+                    <thead>
+                        <tr class="text-nowrap">
+                            <th style="width: 5%;">#</th>
+                            <th style="width: 20%;">Name</th>
+                            <th style="width: 25%;">Description</th>
+                            <th style="width: 15%;">Telephone</th>
+                            <th style="width: 20%;">Address</th>
+                            <th style="width: 15%;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var supplier in Model.Item3)
+                        {
+                            <tr>
+                                <th scope="row">@supplier.supID</th>
+                                <td>@supplier.supName</td>
+                                <td style="white-space: normal; word-wrap: break-word;">@supplier.supDescription</td>
+                                <td>@supplier.supTelephone</td>
+                                <td>@supplier.supAddress</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" asp-controller="Supplier" asp-action="detailSup" asp-route-id="@supplier.supID"><i class="bx bx-book-alt me-1"></i> View Detail</a>
+                                            <a class="dropdown-item" asp-controller="Supplier" asp-action="Edit" asp-route-id="@supplier.supID"><i class="bx bx-edit-alt me-1"></i> Edit</a>
+                                            <a class="dropdown-item" asp-action="Delete" asp-route-id="@supplier.supID" onclick="return confirm('Are you sure?');">
+                                                <i class="bx bx-trash me-1"></i> Delete
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="card">
+            <h5 class="card-header">Cart Table</h5>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered zero-configuration">
+                    <thead>
+                        <tr class="text-nowrap">
+                            <th>#</th>
+                            <th>User</th>
+                            <th>Quantity Total</th>
+                            <th>Price Total</th>
+                            <th>Time Stamp</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cart in Model.Item4)
+                        {
+                            <tr>
+                                <td>@cart.cartID</td>
+                                <td>@cart.customerID</td>
+                                <td>@cart.cartQuantityTotal</td>
+                                <td>$@cart.cartPriceTotal</td>
+                                <td>@cart.timeStamp</td>
+                                <td>
+                                    <a asp-controller="CartDetail" asp-action="Index" asp-route-id="@cart.cartID" class="btn btn-primary">View Detail</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="card">
+            <h5 class="card-header">Order Table</h5>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered zero-configuration">
+                    <thead>
+                        <tr class="text-nowrap">
+                            <th>#</th>
+                            <th>Account</th>
+                            <th>Telephone</th>
+                            <th>Address</th>
+                            <th>Order Date</th>
+                            <th>Order Delivery</th>
+                            <th>Total Amount</th>
+                            <th>Payment Method</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.Item5)
+                        {
+                            <tr>
+                                <td>@order.customerID</td>
+                                <td>@order.orderPhone</td>
+                                <td>@order.orderAddress</td>
+                                <td>@order.orderDate</td>
+                                <td>@order.orderDelivery</td>
+                                <td>@order.totalAmount</td>
+                                <td>@order.paymentMethod</td>
+                                <td>@order.orderStatus</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" asp-controller="OrderDetail" asp-action="Index"><i class="bx bx-edit-alt me-1"></i>View detail</a>
+                                            <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i> Confirm</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="card">
+            <h5 class="card-header">Feedback Table</h5>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered zero-configuration">
+                    <thead>
+                        <tr class="text-nowrap">
+                            <th style="width: 10%;">#</th>
+                            <th style="width: 20%;">Account</th>
+                            <th style="width: 20%;">Product</th>
+                            <th style="width: 30%;">Comment</th>
+                            <th style="width: 20%;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var feedback in Model.Item6)
+                        {
+                            <tr>
+                                <th scope="row">@feedback.feedID</th>
+                                <td>@feedback.customerID</td>
+                                <td>@feedback.proID</td>
+                                <td>@feedback.feedDescription</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" asp-controller="Feedback" asp-action="detailFeed" asp-route-id="@feedback.feedID"><i class="bx bx-book-alt me-1"></i> View Detail</a>
+                                            <a class="dropdown-item" asp-controller="Feedback" asp-action="Edit" asp-route-id="@feedback.feedID"><i class="bx bx-edit-alt me-1"></i> Update</a>
+                                            <a class="dropdown-item" asp-action="Delete" asp-route-id="@feedback.feedID" onclick="return confirm('Are you sure?');">
+                                                <i class="bx bx-trash me-1"></i> Delete
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

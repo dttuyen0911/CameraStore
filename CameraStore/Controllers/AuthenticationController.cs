@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using CameraStore.Data;
 using CameraStore.Models;
@@ -66,7 +68,7 @@ namespace CameraStore.Controllers
                 var customer = _dbContext.Customers.FirstOrDefault(c => c.email == email);
                 if (customer != null)
                 {
-                    if (customer.password != password)
+                    if (customer.password != GetMD5(password))
                     {
                         ModelState.AddModelError("password", "Password invalid.");
                         return View();
@@ -108,7 +110,19 @@ namespace CameraStore.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        public static string GetMD5(String str)
+        {
+            MD5 md5 = new MD5CryptoServiceProvider();
+            byte[] fromdata = Encoding.UTF8.GetBytes(str);
+            byte[] targetData = md5.ComputeHash(fromdata);
+            string byte25String = null;
 
+            for (int i = 0; i < targetData.Length; i++)
+            {
+                byte25String += targetData[i].ToString("x2");
+            }
+            return byte25String;
+        }
         public IActionResult Logout()
         {
             if (HttpContext.Session.IsAvailable)

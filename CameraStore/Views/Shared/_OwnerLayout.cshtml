@@ -63,21 +63,52 @@
                 <ul class="menu-inner py-1">
                     <!-- Dashboard -->
                     <li class="menu-item">
-                        <a class="menu-link" asp-area="" asp-controller="Manage" asp-action="DashboardAdmin">
+                        <a class="menu-link" asp-area="" asp-controller="Manage" asp-action="DashboardOwner">
                             <i class="menu-icon tf-icons bx bx-home-circle"></i>
                             <div data-i18n="Analytics">Dashboard</div>
                         </a>
                     </li>
+
                     <li class="menu-item">
-                        <a class="menu-link" asp-area="" asp-controller="Customer" asp-action="Index">
-                            <i class="menu-icon tf-icons bx bx-user-circle"></i>
-                            <div data-i18n="Boxicons">Account</div>
+                        <a class="menu-link" asp-area="" asp-controller="Product" asp-action="Index">
+                            <i class="menu-icon tf-icons bx bxl-product-hunt"></i>
+                            <div data-i18n="Basic">Product</div>
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" asp-area="" asp-controller="Role" asp-action="Index">
-                            <i class="menu-icon tf-icons bx bx-layer"></i>
-                            <div data-i18n="Boxicons">Role</div>
+                        <a class="menu-link" asp-area="" asp-controller="Category" asp-action="Index">
+                            <i class="menu-icon tf-icons bx bx-category"></i>
+                            <div data-i18n="Boxicons">Category</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a class="menu-link" asp-area="" asp-controller="Supplier" asp-action="Index">
+                            <i class="menu-icon tf-icons bx bx-building"></i>
+                            <div data-i18n="Boxicons">Supplier</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a class="menu-link" asp-area="" asp-controller="Feedback" asp-action="Index">
+                            <i class="menu-icon tf-icons bx bx-message-rounded-dots"></i>
+                            <div data-i18n="Boxicons">Feedback</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a class="menu-link" asp-area="" asp-controller="Order" asp-action="Index">
+                            <i class="menu-icon tf-icons bx bx-file"></i>
+                            <div data-i18n="Boxicons">Order</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a class="menu-link" asp-area="" asp-controller="Cart" asp-action="Index">
+                            <i class="menu-icon tf-icons bx bx-cart"></i>
+                            <div data-i18n="Boxicons">Cart</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a class="menu-link" asp-area="" asp-controller="Home" asp-action="Statistical">
+                            <i class="menu-icon tf-icons bx bx-chart"></i>
+                            <div data-i18n="Boxicons">Report / Statistical</div>
                         </a>
                     </li>
                 </ul>
@@ -94,13 +125,11 @@
                         <div class="navbar-nav align-items-center">
                             <div class="nav-item d-flex align-items-center">
                                 <i class="bx bx-search fs-4 lh-0"></i>
-                                <input type="text" class="form-control border-0 shadow-none" placeholder="Search..." aria-label="Search..." />
+                                <input type="text"
+                                       class="form-control border-0 shadow-none"
+                                       placeholder="Search..."
+                                       aria-label="Search..." />
                             </div>
-                        </div>
-                        <!-- /Search -->
-                        <!-- Icon menu -->
-                        <div class="nav-item d-flex align-items-center ms-3" id="toggle-layout-menu">
-                            <i class="bx bx-menu fs-4 lh-0"></i>
                         </div>
                         <!-- /Search -->
                     </div>

@@ -41,12 +41,6 @@
                     <ul>
                             <li>
                                 <a class="menu-link" asp-area="" asp-controller="Home" asp-action="Store">Shop</a>
-                                <ul class="dropdown">
-                                    <li><a href="./about.html">Product new</a></li>
-                                    <li><a href="./shop-details.html">Product old</a></li>
-                                    <li><a href="./shopping-cart.html">Accessory</a></li>
-                                    <li><a href="./checkout.html">Sale</a></li>
-                                </ul>
                          </li>
                             <li><a href="./blog.html">Blog</a></li>
                             <li><a href="./blog.html">About us</a></li>
@@ -61,61 +55,18 @@
                 </div>
                 <div class="col-lg-1 col-md-1">
                     <div class="header__nav__option">
-                        <img src="/cameraStoreLayout/img/icon/cart1.png" alt="" style="margin-left: 15px;width:30px;height:30px;display:block">                            
+                        <img src="/cameraStoreLayout/img/icon/cart1.png" alt="" style="margin-left: 15px;width:30px;height:30px;display:block">
                         <span>Your Cart</span>
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                                <div b-hsukbasm6h="" class="qty" style="
-                                    position: absolute;
-                                    right: 20px;
-                                    top: 5px;
-                                    width: 20px;
-                                    height: 20px;
-                                    line-height: 20px;
-                                    text-align: center;
-                                    border-radius: 50%;
-                                    font-size: 10px;
-                                    color: #FFF;
-                                    background-color: #D10024;">3
-                                </div>
-                                <div class="cart-dropdown">
-                                    <div class="cart-list">
-                                        <div class="product-widget">
-                                            <div class="product-img">
-                                                <img src="~/image//04ddb9b6-e174-4f5d-b72f-4a561fc9f5230Now!.png" alt="">
-                                            </div>
-                                            <div class="product-body">
-                                                <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                                                <h4 class="product-price"><span class="qty">1x</span>$980.00</h4>
-                                            </div>
-                                        </div>
-
-                                        <div class="product-widget">
-                                            <div class="product-img">
-                                                <img src="~/image//04ddb9b6-e174-4f5d-b72f-4a561fc9f5230Now!.png" alt="">
-                                            </div>
-                                            <div class="product-body">
-                                                <h3 class="product-name"><a href="#">product name goes here</a></h3>
-                                                <h4 class="product-price"><span class="qty">3x</span>$980.00</h4>
-                                            </div>
-                                        </div>
-                                        <div class="cart-summary">
-                                            <small>3 Item(s) selected</small>
-                                            <h5>SUBTOTAL: $2940.00</h5>
-                                        </div>
-                                        <div class="cart-btns">
-                                            <a asp-area="" asp-controller="CartDetail" asp-action="Cart">View Cart</a>
-                                            <a href="#">Checkout  <i class="fa fa-arrow-circle-right"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="cart-dropdown">
-                                <a style ="margin-left:40px"asp-area="" asp-controller="Authentication" asp-action="Login">Please login to view your cart</a>
-                                </div>
-                            }      
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            @await Component.InvokeAsync("Cart")
+                        }
+                        else
+                        {
+                            <div class="cart-dropdown">
+                                <a style="margin-left:40px" asp-area="" asp-controller="Authentication" asp-action="Login">Please login to view your cart</a>
+                            </div>
+                        }
                     </div>
                 </div>
                     <div class="col-lg-3 col-md-3">
@@ -138,6 +89,27 @@
                                     <li>
                                         <i class="fa fa-cog" aria-hidden="true"></i><a href="#">My account</a>
                                     </li>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <li>
+                                            <i class="fa fa-university" aria-hidden="true"></i>
+                                            <a asp-area="" asp-controller="Manage" asp-action="DashboardAdmin">Home</a>
+                                        </li>
+                                    }
+                                    else if (User.IsInRole("Owner"))
+                                    {
+                                        <li>
+                                            <i class="fa fa-university" aria-hidden="true"></i>
+                                            <a asp-area="" asp-controller="Manage" asp-action="IndexOwner">Home</a>
+                                        </li>
+                                    }
+                                    else if (User.IsInRole("Employee"))
+                                    {
+                                        <li>
+                                            <i class="fa fa-university" aria-hidden="true"></i>
+                                            <a asp-area="" asp-controller="Manage" asp-action="DashboardEmployee">Home</a>
+                                        </li>
+                                    }
                                     <li>
                                         <i class="fa fa-book" aria-hidden="true"></i><a href="#">Order</a>
                                     </li>

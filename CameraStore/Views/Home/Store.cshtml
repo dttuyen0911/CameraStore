@@ -134,7 +134,11 @@
                                 </div>
                                 <div class="product__item__text">
                                     <h6>@product.proName</h6>
-                                    <a asp-controller="Cart" asp-action="AddToCart" class="add-cart">+ Add To Cart</a>
+                                    <div id="addToCartForm">
+                                        <a href="#" class="menu-link add-cart" data-controller="Cart" data-action="AddToCart" data-customer-id="@User.Identity.Name" data-product-id="@product.proID" data-quantity="1" data-price="@product.proPrice" data-status="@product.proStatus">
+                                            + Add To Cart
+                                        </a>
+                                    </div>
                                     <h5>$@product.proPrice</h5>
                                 </div>
                             </div>
@@ -159,6 +163,20 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div id="notification" style="display: none; position: fixed;
+	        top: 50%;
+	        left: 50%;
+	        transform: translate(-50%, -50%);
+	        z-index: 1000;" class="alert alert-success" role="alert">
+            The product has been successfully added to the cart!
+        </div>
+        <div id="notification1" style="display: none; position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;" class="alert alert-danger" role="alert">
+            This product is currently out of stock. Please choose another product!
         </div>
     </div>
 </section>
@@ -190,3 +208,53 @@
         document.getElementById("filterForm").submit();
     }
 </script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.add-cart').on('click', function (e) {
+            e.preventDefault();
+            var controller = $(this).data('controller');
+            var action = $(this).data('action');
+            var customerId = $(this).data('customer-id');
+            var productId = $(this).data('product-id');
+            var quantity = $(this).data('quantity');
+            var price = $(this).data('price');
+            var productStatus = $(this).data('status');
+            // Kiểm tra xem người dùng đã đăng nhập chưa
+            var isAuthenticated = @(User.Identity.IsAuthenticated ? "true" : "false");
+
+            if (!isAuthenticated) {
+                // Nếu chưa đăng nhập, chuyển hướng sang trang login
+                window.location.href = "/Authentication/Login";
+            }
+            else {
+                if (productStatus === "Sold out") {
+                    // Hiển thị thông báo nếu sản phẩm đã hết hàng
+                    $('#notification1').fadeIn().delay(1000).fadeOut();
+                    return;
+                }
+
+                // Nếu đã đăng nhập, thực thi hàm addToCart
+                $.ajax({
+                    url: '/' + controller + '/' + action,
+                    type: 'POST',
+                    data: {
+                        customerId: customerId,
+                        productId: productId,
+                        quantity: quantity,
+                        price: price
+                    },
+                    success: function (response) {
+                        // Hiển thị thông báo khi thêm vào giỏ hàng thành công
+                        $('#notification').fadeIn().delay(1000).fadeOut(); // Hiển thị div và sau đó ẩn nó sau 2 giây
+                    },
+                    error: function (xhr, status, error) {
+                        // Xử lý lỗi nếu có
+                        console.error('Lỗi: ' + error);
+                    }
+                });
+            }
+        });
+    });
+</script>
+</section>
