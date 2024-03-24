@@ -20,16 +20,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <th> 
-                                <a asp-controller="OrderDetail" asp-action="Index" 
-                                class="btn btn-primary">Confirm</a>
-                             </th>
-                        </tr>
+                        @foreach(var orderdetail in Model)
+                        {
+                            <tr>
+                                <td>@orderdetail.orderID</td>
+                                <td>@orderdetail.proID</td>
+                                <td>@orderdetail.quantity</td>
+                                <td>@orderdetail.unitPrice</td>
+                                <th>
+                                    <a asp-controller="Order" asp-action="Index"
+                                       class="btn btn-primary">View order</a>
+                                </th>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>

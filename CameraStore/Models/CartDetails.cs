@@ -15,6 +15,7 @@ namespace CameraStore.Models
 
         [Required]
         public int quantity { get; set; }
+        public Boolean isSelect { get; set; }
 
         [Required]
         public decimal price { get; set; }

@@ -9,8 +9,18 @@ namespace CameraStore.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int orderID { get; set; }
         public DateTime orderDate { get; set; } = DateTime.Now;
-        public DateTime orderDelivery { get; set; } 
-        public Boolean orderStatus { get; set; }
+        public DateTime orderDelivery { get; set; }
+        [Display(Name = "Order Status")]
+        public bool orderStatus { get; set; }
+
+        [NotMapped]
+        public string OrderStatusString
+        {
+            get
+            {
+                return orderStatus ? "Confirmed" : "Pending";
+            }
+        }
         [Required(ErrorMessage = "Telephone of order is not null")]
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Phone numbers that only accept 10 numbers are allowed")]
         [StringLength(50, MinimumLength = 3)]
@@ -18,6 +28,7 @@ namespace CameraStore.Models
         [Required(ErrorMessage = "Address of order is not null")]
         [StringLength(255, MinimumLength = 3, ErrorMessage = "String length no more than 255 characters")]
         public string orderAddress { get; set; }
+        public string orderFullname { get; set; }
         public string paymentMethod { get; set; }
         public decimal totalAmount { get; set; }
 

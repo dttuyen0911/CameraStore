@@ -31,19 +31,19 @@ namespace CameraStore.Data
                 .HasOne(c => c.Cart)
                 .WithMany(c => c.CartDetails)
                 .HasForeignKey(c => c.cartID)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<CartDetails>()
                 .HasOne(c => c.Product)
                 .WithMany(c => c.CartDetails)
                 .HasForeignKey(c => c.proID)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Cart>()
                .HasOne(c => c.Customer)
                .WithMany(cust => cust.Carts)
                .HasForeignKey(c => c.customerID)
-               .OnDelete(DeleteBehavior.ClientSetNull);
+               .OnDelete(DeleteBehavior.Cascade);
             base.OnModelCreating(modelBuilder);
 
 

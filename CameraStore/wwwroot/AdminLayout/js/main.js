@@ -41,6 +41,7 @@ let menu, animate;
         timeout = setTimeout(callback, 0);
       }
     };
+ 
 
       elem.onmouseleave = function () {
           // Check if the element exists before accessing its classList
@@ -64,8 +65,6 @@ let menu, animate;
             }
         });
     }
-
-  }
 
   // Display in main menu when menu scrolls
   let menuInnerContainer = document.getElementsByClassName('menu-inner'),
@@ -125,4 +124,4 @@ let menu, animate;
 
   // Auto update menu collapsed/expanded based on the themeConfig
   window.Helpers.setCollapsed(true, false);
-})();
+();

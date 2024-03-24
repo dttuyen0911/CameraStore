@@ -23,7 +23,6 @@
     </div>
 </section>
 <!-- Breadcrumb Section End -->
-
 <!-- Shopping Cart Section Begin -->
 <section class="shopping-cart spad">
     @if (Model != null && Model.Any())
@@ -35,6 +34,7 @@
                         <table>
                             <thead>
                                 <tr>
+                                    <th><input type="checkbox" id="selectAllCheckbox" onchange="selectAll(this)"></th>
                                     <th>Product</th>
                                     <th>Quantity</th>
                                     <th>Total</th>
@@ -45,6 +45,9 @@
                                 @foreach (var item in Model)
                                 {
                                     <tr>
+                                        <td>
+                                            <input type="checkbox" class="productCheckbox" data-proid="@item.proID" data-price="@item.Product.proSale ?? item.Product.proPrice" data-quantity="@item.quantity" onchange="toggleSelect(this)">
+                                        </td>
                                         <td class="product__cart__item">
                                             <div class="product__cart__item__pic">
                                                 <a class="menu-link" asp-area="" asp-controller="Home" asp-action="productDetail" asp-route-id="@item.proID">
@@ -52,7 +55,7 @@
                                                 </a>
                                             </div>
                                             <div class="product__cart__item__text">
-                                                    <h6>@item.Product.proName</h6>
+                                                <h6>@item.Product.proName</h6>
                                                 @if (item.Product.proSale != null)
                                                 {
                                                     <h5>$@item.Product.proSale</h5>
@@ -87,7 +90,6 @@
                                                 <i class="fa fa-close"></i>
                                             </a>
                                         </td>
-
                                     </tr>
                                 }
                             </tbody>
@@ -102,13 +104,6 @@
                     </div>
                 </div>
                 <div class="col-lg-4">
-                    <div class="cart__discount">
-                        <h6>Discount codes</h6>
-                        <form action="#">
-                            <input type="text" placeholder="Coupon code">
-                            <button type="submit">Apply</button>
-                        </form>
-                    </div>
                     <div class="cart__total">
                         <h6>Cart total</h6>
                         <ul id="cartTotal">
@@ -116,11 +111,21 @@
                             {
                                 <li>Subtotal <span id="subtotal">$ @Model.Where(item => item != null && item.Product != null).Sum(item => item.Product.proSale != null ? (item.Product.proSale * item.quantity) : (item.Product.proPrice * item.quantity))</span></li>
                             }
-
                         </ul>
-                        <a class="primary-btn" asp-area="" asp-controller="Order" asp-action="CreateOrder">Proceed to checkout</a>
-                    </div>
+                        <form method="post" asp-action="CreateOrder" asp-controller="Order" onsubmit="return processOrder()">
+                            @foreach (var item in Model)
+                            {
+                                if (item.isSelect) // Only include selected items
+                                {
+                                    <input type="hidden" name="selectedProductIds[]" value="@item.proID" />
+                                }
+                            }
+                            <input type="hidden" id="selectedProductIds" name="selectedProductIds" />
+                            <button type="submit" class="primary-btn">Proceed to checkout</button>
+                        </form>
 
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -136,16 +141,65 @@
         </div>
     }
     <div id="notification1" style="display: none; position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	z-index: 1000;" class="alert alert-danger" role="alert">
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;" class="alert alert-danger" role="alert">
         The product has been successfully deleted to the cart!
     </div>
 </section>
 <!-- Shopping Cart Section End -->
 
 <script>
+    function toggleSelect(checkbox) {
+        var isSelect = checkbox.checked;
+        if (isSelect) {
+            $('#selectAllCheckbox').prop('checked', $('.productCheckbox:not(:checked)').length === 0);
+        } else {
+            $('#selectAllCheckbox').prop('checked', false);
+        }
+        calculateTotal();
+    }
+
+    function selectAll(source) {
+        $('.productCheckbox').prop('checked', source.checked);
+        calculateTotal();
+    }
+
+    function calculateTotal() {
+        var total = 0;
+        var checkboxes = document.querySelectorAll('.productCheckbox:checked');
+        checkboxes.forEach(function (checkbox) {
+            var price = parseFloat(checkbox.getAttribute('data-price'));
+            var quantity = parseInt(checkbox.getAttribute('data-quantity'));
+            total += price * quantity;
+        });
+        $('#subtotal').text('$ ' + total.toFixed(2));
+    }
+    function processOrder() {
+        // Lấy danh sách ID của tất cả các sản phẩm đã chọn
+        var selectedProductIds = [];
+        $('.productCheckbox:checked').each(function () {
+            selectedProductIds.push($(this).data('proid'));
+        });
+
+        // Kiểm tra xem có sản phẩm nào được chọn không
+        if (selectedProductIds.length === 0) {
+            alert("Please select at least one product before proceeding to checkout.");
+            return false; // Ngăn form được submit nếu không có sản phẩm nào được chọn
+        }
+
+        // Tạo một chuỗi dữ liệu có dạng '1,2,3,...'
+        var selectedProductIdsString = selectedProductIds.join(',');
+
+        // Gán giá trị vào input hidden
+        $('#selectedProductIds').val(selectedProductIdsString);
+
+        return true; // Cho phép form được submit
+    }
+
+
+
     function updateCart(cartId, proId, quantity) {
         // Perform update cart operation here using Ajax
         $.ajax({
@@ -179,3 +233,4 @@
         });
     }
 </script>
+

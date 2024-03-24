@@ -4,6 +4,7 @@ using CameraStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CameraStore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240324135108_cameraStoreV34")]
+    partial class cameraStoreV34
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,9 +59,6 @@ namespace CameraStore.Migrations
 
                     b.Property<int>("proID")
                         .HasColumnType("int");
-
-                    b.Property<bool>("isSelect")
-                        .HasColumnType("bit");
 
                     b.Property<decimal>("price")
                         .HasColumnType("decimal(18,2)");
@@ -356,7 +356,6 @@ namespace CameraStore.Migrations
                     b.HasOne("CameraStore.Models.Customer", "Customer")
                         .WithMany("Carts")
                         .HasForeignKey("customerID")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Customer");
@@ -367,13 +366,11 @@ namespace CameraStore.Migrations
                     b.HasOne("CameraStore.Models.Cart", "Cart")
                         .WithMany("CartDetails")
                         .HasForeignKey("cartID")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("CameraStore.Models.Product", "Product")
                         .WithMany("CartDetails")
                         .HasForeignKey("proID")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Cart");

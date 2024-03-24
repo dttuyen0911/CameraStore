@@ -14,6 +14,7 @@
                         <tr class="text-nowrap">
                             <th>#</th>
                             <th>Account</th>
+                            <th>Full name</th>
                             <th>Telephone</th>
                             <th>Address</th>
                             <th>Order Date</th>
@@ -25,28 +26,33 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                        <i class="bx bx-dots-vertical-rounded"></i>
-                                    </button>
-                                    <div class="dropdown-menu">
-                                        <a class="dropdown-item" asp-controller="OrderDetail" asp-action="Index" ><i class="bx bx-edit-alt me-1"></i>View detail</a>
-                                        <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i> Confirm</a>
+                        @foreach (var order in Model)
+                        {
+                            <tr>
+                                <th scope="row">@order.orderID</th>
+                                <td>@order.customerID</td>
+                                <td>@order.orderFullname</td>
+                                <td>@order.orderPhone</td>
+                                <td>@order.orderAddress</td>
+                                <td>@order.orderDate</td>
+                                <td>@order.orderDelivery</td>
+                                <td>@order.totalAmount</td>
+                                <td>@order.paymentMethod</td>
+                                <td>@order.orderStatus</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                                            <i class="bx bx-dots-vertical-rounded"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" asp-controller="OrderDetail" asp-action="Index" sp-route-id="@order.orderID"><i class="bx bx-edit-alt me-1"></i>View detail</a>
+                                            <a class="dropdown-item" href="javascript:void(0);"><i class="bx bx-trash me-1"></i> Confirm</a>
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
+                        }
+                        
                     </tbody>
                 </table>
             </div>

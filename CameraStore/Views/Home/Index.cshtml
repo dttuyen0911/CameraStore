@@ -19,26 +19,25 @@
     <div class="container">
         <!-- row -->
         <div class="row" style="border: inset;">
-        </div>
-                <!-- Hiển thị tất cả category -->
-                @foreach (var category in ViewBag.AllCategories)
-                {
-                    <div class="col-md-4 col-xs-6">
-                        <div class="shop">
-                            <div class="shop-img" style="max-width:500px; height:200px;">
-                                <img src="~/Image/@category.cateUrlImage" alt="">
-                            </div>
-                            <div class="shop-body">
-                                <h3>@category.cateName<br>Collection</h3>
-                                <a href="#" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
-                            </div>
+            <!-- Hiển thị tất cả category -->
+            @foreach (var category in ViewBag.AllCategories)
+            {
+                <div class="col-md-4 col-xs-6">
+                    <div class="shop">
+                        <div class="shop-img" style="max-width:500px; height:200px;">
+                            <img src="~/Image/@category.cateUrlImage" alt="">
+                        </div>
+                        <div class="shop-body">
+                            <h3>@category.cateName<br>Collection</h3>
+                            <a href="#" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
-                }
+                </div>
+            }
+        </div> 
             <!-- /row -->
-        </div>
-        <!-- /container -->
     </div>
+        <!-- /container -->
     <section class="product spad">
         <div class="container">
             <div class="row">
