@@ -16,18 +16,17 @@ namespace CameraStore.Controllers
         }
         public IActionResult Index(int ?id)
         {
-
             if (id == null)
             {
                 return NotFound();
             }
 
             var orderdetails = _dbContext.OrderDetails
-                .Where(cd => cd.orderID == id)
-                .Include(cd => cd.proID)
+                .Where(od => od.orderID == id)
                 .ToList();
             return View(orderdetails);
         }
+        
         public IActionResult viewOrder()
         {
             var customerId = User.FindFirst(ClaimTypes.Name)?.Value;
@@ -46,19 +45,55 @@ namespace CameraStore.Controllers
             {
                 ViewBag.FullName = "Unknown";
             }
-            var order = _dbContext.Orders
-              .Include(od => od.orderdetails)
-              .ThenInclude(cd => cd.Product)
-              .FirstOrDefault(c => c.customerID == int.Parse(customerId));
-            if (order == null || order.orderdetails.Count == 0)
+
+            var orderDetails = _dbContext.OrderDetails
+                .Include(od => od.Order)
+                .ThenInclude(o => o.Customer)
+                .Include(od => od.Product)
+                .Where(od => od.Order.customerID == userId)
+                .ToList();
+
+            if (orderDetails == null || orderDetails.Count == 0)
             {
-                ViewBag.Message = "No order in irder";
-                return View();
+                ViewBag.Message = "No order found";
             }
-            var orderDetails = order.orderdetails.ToList();
 
             return View(orderDetails);
+        }
+        public IActionResult orderDetail(int ?id)
+        {
+            var customerId = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (customerId == null)
+            {
+                return RedirectToAction("Login", "Authentication");
+            }
+            int userId = Convert.ToInt32(User.Identity.Name);
 
+            var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
+            if (customer != null)
+            {
+                ViewBag.FullName = customer.fullname;
+            }
+            else
+            {
+                ViewBag.FullName = "Unknown";
+            }
+            if (id == null)
+            {
+                return NotFound(); // Trả về trang 404 nếu không có id được cung cấp
+            }
+
+            var orderDetail = _dbContext.OrderDetails
+                .Include(od => od.Order)
+                .ThenInclude(o => o.Customer)
+                .Include(od => od.Product)
+                .FirstOrDefault(od => od.Order.orderID == id);
+
+            if (orderDetail == null)
+            {
+                return NotFound(); // Trả về trang 404 nếu không tìm thấy thông tin đơn hàng
+            }
+            return View("orderDetail", new List<OrderDetail> { orderDetail });
         }
     }
 }

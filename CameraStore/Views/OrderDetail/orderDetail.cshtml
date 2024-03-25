@@ -1,0 +1,176 @@
+﻿@model IEnumerable<CameraStore.Models.OrderDetail>
+
+@{
+    ViewData["Title"] = "View detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<section class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__text">
+                    <h4>View order detail</h4>
+                    <div class="breadcrumb__links">
+                        <a asp-controller="Home" asp-action="Index">Home</a>
+                        <a asp-controller="OrderDetail" asp-action="viewOrder">View order</a>
+                        <span>View order detail</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="shopping-cart spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card" style="border-radius: 10px;">
+                    @foreach (var item in Model)
+                    {
+                        <div class="card-header px-4 py-2">
+                            <h5 class="text-muted mb-0">OrderID:<span style="color: #a8729a;">@item.orderID</span>!</h5>
+                        </div>
+                        <div class="container py-5 h-100">
+                            <div class="row d-flex justify-content-center align-items-center h-100">
+                                <div class="col">
+
+                                    <div class="card card-stepper" style="border-radius: 10px;">
+                                        <div class="card-body p-4">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="d-flex flex-column">
+                                                    <span class="lead fw-normal">Order information</span>
+                                                    <span class="text-muted small">Full name: @item.Order.orderFullname</span>
+                                                    <span class="text-muted small">Address: @item.Order.orderAddress</span>
+                                                    <span class="text-muted small">Telephone: @item.Order.orderPhone </span>
+                                                    <span class="text-muted small">Payment method: @item.Order.paymentMethod</span>
+                                                </div>
+                                            </div>
+                                            <hr class="my-4">
+
+                                            <div class="d-flex flex-row justify-content-between align-items-center align-content-center">
+                                                @if (item.Order.orderStatus == false)
+                                                {
+                                                    <span class="d-flex justify-content-center align-items-center big-dot dot">
+                                                        <i class="fa fa-check text-white"></i>
+                                                    </span>
+                                                    <hr class="flex-fill track-line"><span class="dot"></span>
+                                                    <hr class="flex-fill track-line">
+                                                    <span class="dot"></span>
+                                                    <hr class="flex-fill track-line">
+                                                    <span class="dot"></span>
+                                                    <hr class="flex-fill track-line">
+                                                    <span class="dot"></span>
+                                                    <hr class="flex-fill track-line">
+                                                    <span class="dot"></span>
+                                                }
+                                                else
+                                                {
+                                                   <span class="dot"></span>
+                                                    <hr class="flex-fill track-line">
+                                                    <span class="d-flex justify-content-center align-items-center big-dot dot">
+                                                        <i class="fa fa-check text-white"></i>
+                                                    </span> 
+                                                    <hr class="flex-fill track-line">
+                                                    <span class="dot"></span>
+                                                    <hr class="flex-fill track-line">
+                                                    <span class="dot"></span>
+                                                    <hr class="flex-fill track-line">
+                                                    <span class="dot"></span>
+                                                    <hr class="flex-fill track-line">
+                                                    <span class="dot"></span>
+                                                }
+                                            </div>
+                                            <div class="d-flex flex-row justify-content-between align-items-center">
+                                                <div class="d-flex flex-column align-items-start">
+                                                    <span>Order process</span>
+                                                </div>
+                                                <div class="d-flex flex-column justify-content-center">
+                                                    <span>
+                                                        Order Shipped
+                                                    </span>
+                                                </div>
+                                                <div class="d-flex flex-column justify-content-center align-items-center">
+                                                    <span>Order En Route</span>
+                                                </div>
+                                                <div class="d-flex flex-column align-items-center">
+                                                    <span>Order Arrived</span>
+                                                </div>
+                                                <div class="d-flex flex-column align-items-end"><span>Delivered</span></div>
+                                            </div>
+                                            <button class="btn btn-success" disabled style="
+                                                        margin-left: 82%;
+                                                        width: 200px;">
+                                                Received
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="shopping__cart__table">
+                                    <table>
+                                        <tr>
+                                            <th style="width: 30%;">Product</th>
+                                            <th style="text-align: center;width: 10%;">Quantity</th>
+                                            <th style="text-align: center;width: 10%;">Total</th>
+                                            <th style="text-align: center;width: 10%;">Order date</th>
+                                            <th style="text-align: center;width: 17%">Estimated delivery date</th>
+                                            <th style="width: 5%;text-align: center;">Status</th>
+                                        </tr>
+                                        <tbody>
+                                            <tr>
+                                                <td class="product__cart__item" style="width: 30%;">
+                                                    <div class="product__cart__item__pic">
+                                                        <a class="menu-link" asp-area="" asp-controller="Home" asp-action="productDetail" asp-route-id="@item.proID">
+                                                            <img src="~/Image/@item.Product.proUrlImage" style="width: 150px; height: 100px">
+                                                        </a>
+                                                    </div>
+                                                    <div class="product__cart__item__text">
+                                                        <h6>@item.Product.proName</h6>
+                                                    </div>
+                                                </td>
+                                                <td class="quantity__item" style="text-align: center;width: 8%;">
+                                                    <h5 style="text-align: center;">@item.quantity</h5>
+                                                </td>
+                                                <td class="cart__price" style="text-align: center; width: 10%; ">
+                                                    @item.unitPrice
+                                                </td>
+                                                <td class="cart__close" style="
+                                                   text-align: center;
+                                                   width: 10%;
+                                                               ">
+                                                    @item.Order.orderDate
+                                                </td>
+                                                <td class="cart__close" style="text-align: center;width: 17%"> @item.Order.orderDelivery.ToString("dd/MM/yyyy")</td>
+                                                <td class="cart__close" style=" width: 5%; text-align: center;">
+                                                    @if (@item.Order.orderStatus == false)
+                                                    {
+                                                        <button class="btn btn-dark">Pending</button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button class="btn btn-success">Confirmed</button>
+                                                    }
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td colspan="7">
+
+                                                    <div class="d-flex justify-content-between pt-2">
+                                                        <p class="fw-bold mb-0">Please pay @item.unitPrice when receiving goods</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
