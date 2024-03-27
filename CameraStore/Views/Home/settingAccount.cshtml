@@ -1,0 +1,277 @@
+﻿@model CameraStore.Models.Customer
+@{
+    var successMessage = TempData["SuccessMessage"] as string;
+    ViewData["Title"] = "Setting page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+<section class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__text">
+                    <h4>Setting</h4>
+                    <div class="breadcrumb__links">
+                        <a asp-controller="Home" asp-action="Index">Home</a>
+                        <span>Setting</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container p-0">
+    <h1 class="h3 mb-3">Settings</h1>
+    <div class="row">
+        <div class="col-md-5 col-xl-4">
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Profile Settings</h5>
+                </div>
+
+                <div class="list-group list-group-flush" role="tablist">
+                    <a class="list-group-item list-group-item-action active" data-toggle="list" href="#account" role="tab">
+                        Account
+                    </a>
+                    <a class="list-group-item list-group-item-action" data-toggle="list" href="#password" role="tab">
+                        Password
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7 col-xl-8">
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="account" role="tabpanel">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Private info</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="changeInfoForm" asp-action="ChangeInfo" asp-controller="Home" method="post">
+                                <div class="form-group">
+                                    <span asp-validation-for="fullname"></span>
+                                    <label asp-for="fullname" for="fullname">Full name</label>
+                                    <input type="text" class="form-control" asp-for="fullname" id="fullname" placeholder="Full name" value="@Model.fullname">
+                                </div>
+                                <div class="form-group">
+                                    <span asp-validation-for="email"></span>
+                                    <label asp-for="email" for="email">Email</label>
+                                    <input type="email" class="form-control" asp-for="email" id="email" placeholder="Email" value="@Model.email">
+                                </div>
+                                <div class="form-group">
+                                    <span asp-validation-for="telephone"></span>
+                                    <label asp-for="telephone" for="telephone">Telephone</label>
+                                    <input type="text" class="form-control" asp-for="telephone" id="telephone" placeholder="Telephone" value="@Model.telephone">
+                                </div>
+                                <input type="hidden" id="customerID" name="customerID" value="@Model.customerID">
+                                <button type="submit" id="saveChangesBtn" class="btn btn-primary">Save changes</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="password" role="tabpanel">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Password</h5>
+                            <form id="changePasswordForm" asp-action="ChangePassword" asp-controller="Home" method="post">
+                                <div class="form-group">
+                                    <label for="currentPassword">Current Password</label>
+                                    <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newPassword">New Password</label>
+                                    <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmPassword">Confirm Password</label>
+                                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                </div>
+                                <input type="hidden" id="customerID" name="customerID" value="@Model.customerID">
+                                <button type="submit" class="btn btn-primary">Save changes</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="notification5" style="display: none; position: fixed;
+	                top: 50%;
+	                left: 50%;
+	                transform: translate(-50%, -50%);
+	                z-index: 1000;" class="alert alert-danger" role="alert">
+    Fields cannot be null.
+</div>
+<div id="notification" style="display: none; position: fixed;
+	                top: 50%;
+	                left: 50%;
+	                transform: translate(-50%, -50%);
+	                z-index: 1000;" class="alert alert-success" role="alert">
+    Information updated successfully.
+</div>
+<div id="notification1" style="display: none; position: fixed;
+	                top: 50%;
+	                left: 50%;
+	                transform: translate(-50%, -50%);
+	                z-index: 1000;" class="alert alert-danger" role="alert">
+    An error occurred. Please try again later.
+</div>
+<div id="notification2" style="display: none; position: fixed;
+	                top: 50%;
+	                left: 50%;
+	                transform: translate(-50%, -50%);
+	                z-index: 1000;" class="alert alert-danger" role="alert">
+    New password and confirm password do not match.
+</div>
+<div id="notification3" style="display: none; position: fixed;
+	                top: 50%;
+	                left: 50%;
+	                transform: translate(-50%, -50%);
+	                z-index: 1000;" class="alert alert-success" role="alert">
+    Password changed successfully.
+</div>
+<div id="notification4" style="display: none; position: fixed;
+	                top: 50%;
+	                left: 50%;
+	                transform: translate(-50%, -50%);
+	                z-index: 1000;" class="alert alert-danger" role="alert">
+    Incorrect current password or an error occurred.
+</div>
+<div id="notification6" style="display: none; position: fixed;
+	                top: 50%;
+	                left: 50%;
+	                transform: translate(-50%, -50%);
+	                z-index: 1000;" class="alert alert-danger" role="alert">
+    Please fill in all required fields in the Account.
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // Lắng nghe sự kiện click vào nút "Save changes"
+        $('#saveChangesBtn').click(function () {
+            var fullname = $('#fullname').val();
+            var email = $('#email').val();
+            var telephone = $('#telephone').val();
+            var customerID = $('#customerID').val();
+            if (!fullname || !email || !telephone) {
+                $('#notification5').fadeIn().delay(1000).fadeOut();
+                return;
+            }
+            // Gửi yêu cầu AJAX để cập nhật thông tin
+            $.ajax({
+                type: 'POST',
+                url: '/Home/ChangeInfo', // Đường dẫn đến action trong controller của bạn
+                data: {
+                    customerID: customerID,
+                    fullname: fullname,
+                    email: email,
+                    telephone: telephone
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $('#notification').fadeIn().delay(1000).fadeOut();
+                    } else {
+                        $('#notification5').fadeIn().delay(1000).fadeOut();
+                    }
+                    // Hiển thị thông báo khi cập nhật thành công
+                },
+                error: function (xhr, status, error) {
+                    $('#notification1').fadeIn().delay(1000).fadeOut();
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        $('#changePasswordForm').submit(function (e) {
+            e.preventDefault();
+
+            var currentPassword = $('#currentPassword').val();
+            var newPassword = $('#newPassword').val();
+            var confirmPassword = $('#confirmPassword').val();
+            var customerID = $('#customerID').val();
+
+            // Kiểm tra trường trống
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            // Kiểm tra mật khẩu mới và mật khẩu xác nhận
+            if (newPassword !== confirmPassword) {
+                $('#notification2').fadeIn().delay(1000).fadeOut();
+                return;
+            }
+
+            // Gửi yêu cầu AJAX để thay đổi mật khẩu
+            $.ajax({
+                type: 'POST',
+                url: '/Home/ChangePassword',
+                data: {
+                    customerID: customerID,
+                    currentPassword: currentPassword,
+                    newPassword: newPassword
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $('#notification3').fadeIn().delay(1000).fadeOut();
+                    } else {
+                        $('#notification4').fadeIn().delay(1000).fadeOut();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    $('#notification1').fadeIn().delay(1000).fadeOut();
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tabs = document.querySelectorAll('.list-group-item');
+
+        tabs.forEach(function (tab) {
+            tab.addEventListener('click', function (event) {
+                var target = event.target.getAttribute('href');
+
+                if (target === '#password') {
+                    var fullname = $('#fullname').val().trim();
+                    var email = $('#email').val().trim();
+                    var telephone = $('#telephone').val().trim();
+
+                    // Kiểm tra giá trị của các trường điều khiển
+                    if (!fullname || !email || !telephone) {
+                        alert("Please fill in all required fields in the 'Account' tab.");
+                        event.preventDefault();
+                        return;
+                    }
+                }
+
+                // Xóa lớp active từ tất cả các tab
+                tabs.forEach(function (tab) {
+                    tab.classList.remove('active');
+                });
+
+                // Thêm lớp active cho tab được chọn
+                event.target.classList.add('active');
+
+                // Hiển thị tab pane tương ứng
+                var tabPanes = document.querySelectorAll('.tab-pane');
+                tabPanes.forEach(function (pane) {
+                    pane.classList.remove('show', 'active');
+                    if (pane.id === target.substring(1)) {
+                        pane.classList.add('show', 'active');
+                    }
+                });
+            });
+        });
+    });
+
+</script>

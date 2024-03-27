@@ -176,5 +176,6 @@ namespace CameraStore.Controllers
 
             return View(product);
         }
+        
     }
 }

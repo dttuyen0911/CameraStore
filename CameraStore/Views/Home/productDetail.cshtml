@@ -41,15 +41,24 @@
                         <h3>@Model.proName.ToUpper()</h3>
                         @if (Model.proSale == Model.proPrice)
                         {
-                            <h3 style="color:#ff0000">Price: $@Model.proSale</h3>
+                            <h4 style="color:#ff0000">Price: $@Model.proSale</h4>
                         }
                         else
                         {
-                            <h3 style="color:#ff0000">Price: @Model.proSale <span>$@Model.proPrice</span></h3>
+                            <h4 style="color:#ff0000">Price: @Model.proSale <span>$@Model.proPrice</span></h4>
                         }                        
                         <h4>Status: @Model.proStatus</h4>
                         <h4>Quantity: @Model.proQuantity</h4>
                         <h4>Sold: @Model.proQuantitySold</h4>
+                            <div class="rating">
+                                <i class="fa fa-star"></i> <!-- Sao đầy -->
+                                <i class="fa fa-star"></i> <!-- Sao đầy -->
+                                <i class="fa fa-star"></i> <!-- Sao đầy -->
+                                <i class="fa fa-star"></i> <!-- Sao đầy -->
+                                <i class="fa fa-star-o"></i> <!-- Sao rỗng -->
+                                <span> - 5 Reviews</span>
+                            </div>
+
                         <p>
                             @Model.proDescription
                         </p>

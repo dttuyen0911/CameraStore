@@ -41,6 +41,19 @@ body {
 	background-color: #488978;
 	opacity: 1;
 }
+.search-results-overlay {
+	position: absolute;
+	top: calc(100% + 10px); /* Hiển thị overlay ngay dưới trường tìm kiếm */
+	left: 0;
+	width: 100%;
+	max-height: 300px; /* Giới hạn chiều cao của overlay để tránh quá dài */
+	overflow-y: auto; /* Cho phép cuộn nếu nội dung quá dài */
+	background-color: white;
+	border: 1px solid #ccc;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+	display: none; /* Mặc định ẩn overlay */
+	z-index: 999; /* Đảm bảo overlay hiển thị trên tất cả các phần khác */
+}
 
 .dot {
 	height: 10px;
@@ -694,7 +707,7 @@ ol {
 }
 
 .header__menu {
-	text-align: right;
+	text-align: center;
 	padding: 26px 0 25px;
 }
 
@@ -2520,10 +2533,11 @@ ol {
 	margin-bottom: 30px;
 }
 
-.team__item img {
-	min-width: 100%;
-	margin-bottom: 25px;
-}
+	.team__item img {
+		height: 400px;
+		width: 350px;
+		margin-bottom: 25px;
+	}
 
 .team__item h4 {
 	color: #111111;

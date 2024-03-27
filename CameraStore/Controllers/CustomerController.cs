@@ -119,6 +119,7 @@ namespace CameraStore.Controllers
                     // Cập nhật thông tin của khách hàng trong cơ sở dữ liệu
                     existingCustomer.email = obj.email;
                     existingCustomer.fullname = obj.fullname;
+                    existingCustomer.telephone = obj.telephone; // Mật khẩu đã được mã hóa (nếu cần)
                     existingCustomer.password = obj.password; // Mật khẩu đã được mã hóa (nếu cần)
                     existingCustomer.roleID = obj.roleID;
 

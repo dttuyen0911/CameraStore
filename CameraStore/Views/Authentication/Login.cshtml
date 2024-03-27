@@ -26,6 +26,11 @@
                         <label asp-for="password" for="your_pass"><i class="zmdi zmdi-lock"></i></label>
                         <input type="password" asp-for="password" name="password" id="password" placeholder="Password" />
                         <span asp-validation-for="password" class="text-danger"></span>
+                        <div class="input-group-append">
+                            <span class="input-group-text toggle-password">
+                                <i class="fa fa-eye" id="toggleCurrentPassword"></i>
+                            </span>
+                        </div>
                     </div>
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="form-group">
@@ -48,3 +53,37 @@
         </div>
     </div>
 </section>
+
+<script>
+    // Hàm để lưu trữ mật khẩu vào localStorage khi người dùng nhấn vào nút đăng nhập
+    $(document).ready(function () {
+        $('#login-form').submit(function () {
+            if ($('#remember-me').is(':checked')) {
+                var password = $('#password').val();
+                rememberPassword(password);
+            }
+        });
+    });
+
+    // Hàm để lưu trữ mật khẩu vào localStorage
+    function rememberPassword(password) {
+        localStorage.setItem('rememberedPassword', password);
+    }
+
+    // Hàm để kiểm tra xem có mật khẩu đã ghi nhớ trong localStorage hay không
+    function checkRememberedPassword() {
+        var rememberedPassword = localStorage.getItem('rememberedPassword');
+        if (rememberedPassword) {
+            // Nếu có mật khẩu đã ghi nhớ, điền nó vào trường mật khẩu
+            $('#password').val(rememberedPassword);
+            // Đánh dấu checkbox 'Remember me'
+            $('#remember-me').prop('checked', true);
+        }
+    }
+
+    // Gọi hàm kiểm tra mật khẩu đã ghi nhớ khi tài liệu đã được tải
+    $(document).ready(function () {
+        checkRememberedPassword();
+    });
+</script>
+

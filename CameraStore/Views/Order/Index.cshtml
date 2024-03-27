@@ -39,15 +39,25 @@
                                 <td>@order.totalAmount</td>
                                 <td>@order.paymentMethod</td>
                                 <td>
-                                    @if (order.orderStatus == false)
+                                    @if (@order.orderStatus == false)
                                     {
                                         <button class="btn btn-dark">Pending</button>
                                     }
-                                    else
+                                    else if (order.orderStatus == true && order.IsShipped == true && order.IsDelivered == true)
                                     {
-                                        <button class="btn btn-success">Confirmed</button>
+                                        <button class="btn btn-success">Delivered</button>
                                     }
+                                    else if (order.orderStatus == true && order.IsShipped == true)
+                                    {
+                                        <button class="btn btn-primary">EnRoute</button>
+                                    }
+                                    else if (order.orderStatus == true && order.IsShipped == false)
+                                    {
+                                        <button class="btn btn-warning">Confirmed</button>
+                                    }
+
                                 </td>
+
                                 <td>
                                     <div class="dropdown">
                                         <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
@@ -55,7 +65,9 @@
                                         </button>
                                         <div class="dropdown-menu">
                                             <a class="dropdown-item" asp-controller="OrderDetail" asp-action="Index" asp-route-id="@order.orderID"><i class="bx bx-edit-alt me-1"></i>View detail</a>
-                                            <a class="dropdown-item" asp-controller="Order" asp-action="Confirm" asp-route-orderId="@order.orderID"><i class="bx bx-check-circle me-1"></i> Confirm</a>
+                                            <a class="dropdown-item" asp-controller="Order" asp-action="@(order.orderStatus ? "EnRoute" : "Confirm")" asp-route-orderId="@order.orderID">
+                                                <i class="bx bx-check-circle me-1"></i> @(order.orderStatus ? "Order En Route" : "Confirm")
+                                            </a>
                                         </div>
                                     </div>
                                 </td>

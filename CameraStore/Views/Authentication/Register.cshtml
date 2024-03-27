@@ -25,6 +25,11 @@
                         <span asp-validation-for="password"></span>
                         <label asp-for="password" for="your_pass"><i class="zmdi zmdi-lock"></i></label>
                         <input type="password" asp-for="password" name="password" id="password" placeholder="Password" />
+                        <div class="input-group-append">
+                            <span class="input-group-text toggle-password">
+                                <i class="fa fa-eye" id="toggleCurrentPassword"></i>
+                            </span>
+                        </div>
                     </div>
                     <div class="form-group">
                         <span asp-validation-for="telephone"></span>

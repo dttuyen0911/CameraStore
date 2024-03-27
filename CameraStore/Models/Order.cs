@@ -12,7 +12,8 @@ namespace CameraStore.Models
         public DateTime orderDelivery { get; set; }
         [Display(Name = "Order Status")]
         public bool orderStatus { get; set; }
-
+        public bool IsShipped { get; set; }
+        public bool IsDelivered { get; set; }
         [NotMapped]
         public string OrderStatusString
         {

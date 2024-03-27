@@ -64,6 +64,13 @@
 
                             <div class="product__item__text">
                                 <h6>@product.proName</h6>
+                                <div class="rating">
+                                    <i class="fa fa-star"></i> <!-- Sao đầy -->
+                                    <i class="fa fa-star"></i> <!-- Sao đầy -->
+                                    <i class="fa fa-star"></i> <!-- Sao đầy -->
+                                    <i class="fa fa-star"></i> <!-- Sao đầy -->
+                                    <i class="fa fa-star-o"></i> <!-- Sao rỗng -->
+                                </div>
                                 <div id="addToCartForm">
                                     <a href="#" class="menu-link add-cart" data-controller="Cart" data-action="AddToCart" data-customer-id="@User.Identity.Name" data-product-id="@product.proID" data-quantity="1" data-price="@product.proPrice">
                                         + Add To Cart

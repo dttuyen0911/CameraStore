@@ -15,5 +15,9 @@ namespace CameraStore.Models
         public virtual Product? Product { get; set; }
         public string feedDescription { get; set; }
         public DateTime createDate { get; set; } = DateTime.Now;
+        public int StarRating { get; set; }
+        [NotMapped]
+        public IFormFile? feedImage { get; set; }
+        public string? feedUrlImage { get; set; }
     }
 }

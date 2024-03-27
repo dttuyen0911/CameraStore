@@ -1,10 +1,13 @@
-using CameraStore.Data;
+﻿using CameraStore.Data;
 using CameraStore.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Drawing.Printing;
 using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace CameraStore.Controllers
 {
@@ -46,6 +49,151 @@ namespace CameraStore.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+        public IActionResult Contact()
+        {
+            int userId = Convert.ToInt32(User.Identity.Name);
+
+            var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
+            if (customer != null)
+            {
+                ViewBag.FullName = customer.fullname;
+            }
+            else
+            {
+                ViewBag.FullName = "Unknown";
+            }
+            return View();
+        }
+        public IActionResult AboutUs()
+        {
+            int userId = Convert.ToInt32(User.Identity.Name);
+
+            var customer1 = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
+            if (customer1 != null)
+            {
+                ViewBag.FullName = customer1.fullname;
+            }
+            else
+            {
+                ViewBag.FullName = "Unknown";
+            }
+            var customer = _dbContext.Customers.ToList().AsEnumerable();
+            var category = _dbContext.Categories.ToList().AsEnumerable();
+            var supplier = _dbContext.Suppliers.ToList().AsEnumerable();
+            var product = _dbContext.Products.ToList().AsEnumerable();
+
+            return View((customer, category, supplier, product));
+        }
+        public IActionResult Search(string searchTerm)
+        {
+            var products = _dbContext.Products.Where(p => p.proName.Contains(searchTerm)).ToList();
+
+            return View("Index", products);
+        }
+        public IActionResult recommenedProduct()
+        { 
+            return View();
+        }
+        public IActionResult settingAccount()
+        {
+            int userId = Convert.ToInt32(User.Identity.Name);
+
+            var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
+            if (customer != null)
+            {
+                ViewBag.FullName = customer.fullname;
+                return View(customer);
+            }
+            else
+            {
+                ViewBag.FullName = "Unknown";
+                return View(new Customer());
+            }
+        }
+        [HttpPost]
+        public IActionResult ChangeInfo(Customer updatedCustomer)
+        {
+            // Lấy thông tin khách hàng hiện tại từ cơ sở dữ liệu
+            Customer existingCustomer = _dbContext.Customers.Find(updatedCustomer.customerID);
+            if (existingCustomer == null)
+            {
+                return NotFound();
+            }
+            if (updatedCustomer.email == null || updatedCustomer.fullname == null || updatedCustomer.telephone == null)
+            {
+                return Ok(new { success = false });// Trả về thông báo lỗi nếu mật khẩu hiện tại không đúng
+            }
+            // Cập nhật thông tin của khách hàng trong cơ sở dữ liệu
+            existingCustomer.email = updatedCustomer.email;
+            existingCustomer.fullname = updatedCustomer.fullname;
+            existingCustomer.telephone = updatedCustomer.telephone;
+
+            // Lưu thay đổi vào cơ sở dữ liệu
+            _dbContext.SaveChanges();
+
+            return Ok(new { success = true });
+        }
+
+
+        private bool IsEmailUnique(string email, int? customerId = null)
+            {
+                var existingCustomer = _dbContext.Customers
+                    .FirstOrDefault(c => c.email == email && c.customerID != customerId);
+
+                return existingCustomer == null;
+            }
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        [HttpPost]
+        public IActionResult ChangePassword(int customerID, string currentPassword, string newPassword)
+        {
+            var existingCustomer = _dbContext.Customers.FirstOrDefault(c => c.customerID == customerID);
+
+            if (existingCustomer == null)
+            {
+                return NotFound(); // Trả về kết quả không thành công nếu không tìm thấy khách hàng
+            }
+
+            if (string.IsNullOrEmpty(currentPassword) || string.IsNullOrEmpty(newPassword))
+            {
+                return BadRequest("Please provide both current and new passwords."); // Trả về thông báo lỗi nếu trường mật khẩu trống
+            }
+
+            if (existingCustomer.password != GetMD5(currentPassword))
+            {
+                return Ok(new { success = false });// Trả về thông báo lỗi nếu mật khẩu hiện tại không đúng
+            }
+
+            existingCustomer.password = GetMD5(newPassword);
+            _dbContext.SaveChanges();
+
+            return Ok(new { success = true });
+        }
+
+
+        public static string GetMD5(String str)
+        {
+            MD5 md5 = new MD5CryptoServiceProvider();
+            byte[] fromdata = Encoding.UTF8.GetBytes(str);
+            byte[] targetData = md5.ComputeHash(fromdata);
+            string byte25String = null;
+
+            for (int i = 0; i < targetData.Length; i++)
+            {
+                byte25String += targetData[i].ToString("x2");
+            }
+            return byte25String;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

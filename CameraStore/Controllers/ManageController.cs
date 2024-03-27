@@ -42,5 +42,6 @@ namespace CameraStore.Controllers
             //statistical
             return View((product, category, supplier, cart, order, feedback));
         }
+
     }
 }

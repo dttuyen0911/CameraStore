@@ -42,15 +42,17 @@
                             <li>
                                 <a class="menu-link" asp-area="" asp-controller="Home" asp-action="Store">Shop</a>
                          </li>
-                            <li><a href="./blog.html">Blog</a></li>
-                            <li><a href="./blog.html">About us</a></li>
-                            <li><a href="./contact.html">Contacts</a></li>
+                            <li><a asp-area ="" asp-controller="Home" asp-action="AboutUs">About us</a></li>
+                            <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contacts</a></li>
                     </ul>
                 </nav>
             </div>
                 <div class="col-lg-3 col-md-3">
                     <div class="header__menu mobile-menu">
-                        <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                        <input id="searchInput" type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                        <div class="menus">
+
+                        </div>
                     </div>
                 </div>
                 <div class="col-lg-1 col-md-1">
@@ -80,14 +82,12 @@
                         {
                             <span>Account</span>
                         }
-
-
                         <div class="menus">
                             <ul id="menuItems">
                                 @if (User.Identity.IsAuthenticated)
                                 {
                                     <li>
-                                        <i class="fa fa-cog" aria-hidden="true"></i><a href="#">My account</a>
+                                        <i class="fa fa-cog" aria-hidden="true"></i><a asp-controller="Home" asp-action="settingAccount">My account</a>
                                     </li>
                                     @if (User.IsInRole("Admin"))
                                     {
@@ -212,7 +212,36 @@
     <script src="~/cameraStoreLayout/js/main.js"></script>
     <script type="text/javascript" scr=""></script>
     @RenderSection("Scripts", required: false)
+    @section scripts {
+    <script>
+        // Lắng nghe sự kiện nhập liệu trong hộp tìm kiếm
+        document.getElementById('searchInput').addEventListener('input', function () {
+            // Lấy giá trị từ hộp tìm kiếm
+            var searchTerm = this.value;
 
+            // Gửi yêu cầu tìm kiếm bằng Ajax
+            $.ajax({
+                url: '@Url.Action("Search", "Product")',
+                type: 'GET',
+                data: { searchTerm: searchTerm },
+                success: function (data) {
+                    // Hiển thị kết quả tìm kiếm trong overlay
+                    $('#searchResultsOverlay').html(data);
+                    $('#searchResultsOverlay').show(); // Hiển thị overlay
+                    }, error: function () {
+                        // Xử lý lỗi nếu có
+                    }
+                });
+            });
+
+            // Ẩn overlay khi người dùng click ra ngoài
+            $(document).click(function (event) {
+                if (!$(event.target).closest('#searchResultsOverlay, #searchInput').length) {
+                    $('#searchResultsOverlay').hide(); // Ẩn overlay
+                }
+            });
+        </script>
+    }
 </body>
 
 </html>

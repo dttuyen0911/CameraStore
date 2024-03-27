@@ -38,6 +38,7 @@ namespace CameraStore.Controllers
                 customer.createAt = DateTime.Now;
                 if (memberRole != null)
                 {
+                    customer.password = GetMD5(customer.password);
                     // Gán vai trò mặc định là "Member" cho tài khoản mới
                     customer.roleID = memberRole.roleID; // Đây là giả sử tên cột chứa ID của vai trò trong đối tượng Customer là RoleID, điều này có thể thay đổi tùy theo thiết kế cơ sở dữ liệu của bạn
 

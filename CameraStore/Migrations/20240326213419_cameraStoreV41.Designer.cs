@@ -4,6 +4,7 @@ using CameraStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CameraStore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240326213419_cameraStoreV41")]
+    partial class cameraStoreV41
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -127,9 +130,8 @@ namespace CameraStore.Migrations
                     b.Property<int>("roleID")
                         .HasColumnType("int");
 
-                    b.Property<string>("telephone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("telephone")
+                        .HasColumnType("int");
 
                     b.HasKey("customerID");
 
@@ -146,9 +148,6 @@ namespace CameraStore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("feedID"));
 
-                    b.Property<int>("StarRating")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("createDate")
                         .HasColumnType("datetime2");
 
@@ -157,9 +156,6 @@ namespace CameraStore.Migrations
 
                     b.Property<string>("feedDescription")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("feedUrlImage")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("proID")
@@ -181,12 +177,6 @@ namespace CameraStore.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("orderID"));
-
-                    b.Property<bool>("IsDelivered")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsShipped")
-                        .HasColumnType("bit");
 
                     b.Property<int>("customerID")
                         .HasColumnType("int");

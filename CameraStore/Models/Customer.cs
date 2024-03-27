@@ -16,7 +16,8 @@ namespace CameraStore.Models
         public string? email {  get; set; }
         [Required(ErrorMessage = "Password of account is not null")]
         public string? password { get; set; }
-        [Required(ErrorMessage = "Telephone of account is not null")]
+        [Required(ErrorMessage = "Telephone of account is required")]
+        [RegularExpression(@"^\d{10,11}$", ErrorMessage = "Telephone must be 10 or 11 digits")]
         public string? telephone { get; set; }
         [Required(ErrorMessage = "Address of account is not null")]
         public DateTime? createAt { get; set; }

@@ -167,6 +167,8 @@ namespace CameraStore.Controllers
                         orderDate = DateTime.Now,
                         orderDelivery = DateTime.Now.AddDays(3),
                         orderStatus = false,
+                        IsShipped = false,
+                        IsDelivered = false,
                         customerID = userId,
                         orderFullname = order.orderFullname,
                         orderPhone = order.orderPhone,
@@ -226,7 +228,9 @@ namespace CameraStore.Controllers
                         totalAmount = selectedProducts.Sum(item => item.quantity * item.Product.proPrice),
                         orderDate = DateTime.Now,
                         orderDelivery = deliveryDate,
-                        orderStatus = false, // Chưa xác nhận đơn hàng
+                        orderStatus = false,// Chưa xác nhận đơn hàng
+                        IsShipped = false,
+                        IsDelivered = false,
                         customerID = userId,
                         orderAddress = order.orderAddress,
                         orderFullname = order.orderFullname,
@@ -315,5 +319,73 @@ namespace CameraStore.Controllers
             // Chuyển hướng người dùng đến trang Index của đơn hàng sau khi xác nhận
             return RedirectToAction("Index", "Order");
         }
+        public IActionResult EnRoute(int? orderId)
+        {
+            var customerId = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (customerId == null)
+            {
+                return RedirectToAction("Login", "Authentication");
+            }
+
+            int userId = Convert.ToInt32(customerId);
+
+            // Lấy thông tin khách hàng từ database
+            var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
+
+            // Kiểm tra customer có null không trước khi truy cập thuộc tính của nó
+            if (customer == null)
+            {
+                // Xử lý khi không tìm thấy thông tin khách hàng
+                return RedirectToAction("Index", "Home");
+            }
+            var order = _dbContext.Orders.FirstOrDefault(o => o.orderID == orderId);
+            if (order == null)
+            {
+                // Xử lý khi không tìm thấy đơn hàng
+                return RedirectToAction("Index", "Order");
+            }
+
+            order.IsShipped = true;
+
+            // Lưu thay đổi vào DbContext
+            _dbContext.SaveChanges();
+
+            // Chuyển hướng người dùng đến trang Index của đơn hàng sau khi xác nhận
+            return RedirectToAction("Index", "Order");
+        }
+        public IActionResult Received(int? orderId)
+        {
+            var customerId = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (customerId == null)
+            {
+                return RedirectToAction("Login", "Authentication");
+            }
+
+            int userId = Convert.ToInt32(customerId);
+
+            // Lấy thông tin khách hàng từ database
+            var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
+
+            // Kiểm tra customer có null không trước khi truy cập thuộc tính của nó
+            if (customer == null)
+            {
+                // Xử lý khi không tìm thấy thông tin khách hàng
+                return RedirectToAction("Index", "Home");
+            }
+
+            var order = _dbContext.Orders.FirstOrDefault(o => o.orderID == orderId);
+            if (order == null)
+            {
+                // Xử lý khi không tìm thấy đơn hàng
+                return RedirectToAction("Index", "Order");
+            }
+
+            order.IsDelivered = true;
+            _dbContext.SaveChanges();
+
+            // Chuyển hướng người dùng đến trang Index của đơn hàng sau khi kiểm tra giao hàng
+            return Json(new { success = true });
+        }
+
     }
 }
