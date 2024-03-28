@@ -65,7 +65,7 @@
                                                     </span>
                                                     <hr class="flex-fill track-line">
                                                 }
-                                                else if (DateTime.Today.Date == item.Order.orderDelivery.Date)
+                                                else if (DateTime.Today.Date >= item.Order.orderDelivery.Date)
                                                 {
                                                     <span class="dot"></span>
                                                     <hr class="flex-fill track-line">
@@ -105,17 +105,50 @@
                                                 </div>
                                                 <div class="d-flex flex-column align-items-end"><span>Delivered</span></div>
                                             </div>
-                                                @if (DateTime.Today.Date == item.Order.orderDelivery.Date)
+                                                @if (DateTime.Today.Date >= item.Order.orderDelivery.Date)
                                                 {   
                                                     if(@item.Order.IsDelivered == false)
                                                     {
                                                     <button id="receivedButton" class="btn btn-success" style="margin-left: 82%; width: 200px;" data-order-id="@item.Order.orderID">
                                                         Received
                                                     </button>
-                                                    }else{
-                                                    <button class="btn btn-success" style="margin-left: 82%; width: 200px;">
+                                                    }
+                                                    else
+                                                    {
+                                                    <button class="btn btn-success" onclick="openForm(@item.Order.orderID); checkSubmit(@item.Order.orderID)" style="margin-left: 82%; width: 200px;">
                                                         Feedback
                                                     </button>
+                                                    <div class="form-popup" id="myForm">
+                                                        <form id="feedbackForm" asp-action="Create" asp-controller="Feedback" method="post" class="form-container" enctype="multipart/form-data">
+                                                            <input type="hidden" id="orderId" name="orderId" value="" />
+                                                            <h1>Feedback</h1>
+                                                            <label for="fullname"><b>Full Name</b></label>
+                                                            <input type="text" id="fullname" name="Fullname" value="@item.Order.orderFullname" readonly class="form-control" data-fullname="@item.Order.orderFullname" />
+
+                                                            <div class="rating" style="font-size: xx-large;">
+                                                                <i class="fa fa-star star" data-value="1"></i>
+                                                                <i class="fa fa-star star" data-value="2"></i>
+                                                                <i class="fa fa-star star" data-value="3"></i>
+                                                                <i class="fa fa-star star" data-value="4"></i>
+                                                                <i class="fa fa-star star" data-value="5"></i>
+                                                            </div>
+
+                                                            <div>
+                                                                <label for="uploadProDes" class="form-label">Please give us feedback about the product</label>
+                                                                <textarea id="uploadProDes" name="feedDescription" class="form-control" rows="3" required></textarea>
+                                                            </div>
+
+                                                            <div class="mb-3">
+                                                                <!-- Thêm input để chọn file hình ảnh -->
+                                                                <input type="file" onchange="chooseFile(this)" style="width: 100%" id="feedImage" name="feedImage" accept="image/gif, image/jpeg, image/png" class="form-control" />
+                                                                <div> <img style="height:200px;width:250px" id="image" /></div>
+                                                                <span class="text-danger"></span>
+                                                            </div>
+
+                                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                                            <button type="button" class="btn cancel" onclick="closeForm()">Cancel</button>
+                                                        </form>
+                                                    </div>
                                                     }
                                                 }
                                                 else
@@ -209,8 +242,15 @@
 	                top: 50%;
 	                left: 50%;
 	                transform: translate(-50%, -50%);
-	                z-index: 1000;" class="alert alert-danger" role="alert">
+	                z-index: 1000;" class="alert alert-success" role="alert">
     Congratulations on successfully receiving the goods, don't forget to leave me a feedback.
+</div>
+<div id="notification1" style="display: none; position: fixed;
+	                top: 50%;
+	                left: 50%;
+	                transform: translate(-50%, -50%);
+	                z-index: 1000;" class="alert alert-success" role="alert">
+    Thanks for feedback.
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -239,3 +279,145 @@
         });
     });
 </script>
+<script>
+    function chooseFile(fileInput) {
+        if (fileInput.files && fileInput.files[0]) {
+            var render = new FileReader();
+
+            render.onload = function (e) {
+                $('#image').attr('src', e.target.result);
+            }
+            render.readAsDataURL(fileInput.files[0]);
+        }
+    }
+</script>
+<script>
+    function openForm(orderId) {
+        document.getElementById("myForm").style.display = "block";
+        document.getElementById("orderId").value = orderId; // Set giá trị orderId vào input hidden trong form
+    }
+    function closeForm() {
+        document.getElementById("myForm").style.display = "none";
+    }
+</script>
+<script>
+    let selectedRating = 0; // Biến global để lưu giá trị rating
+
+    const stars = document.querySelectorAll('.star');
+
+    stars.forEach((star) => {
+        star.addEventListener('click', function () {
+            const rating = parseInt(this.getAttribute('data-value'));
+            selectedRating = rating; // Lưu giá trị rating vào biến global
+            const orderId = document.getElementById('orderId').getAttribute('data-orderid'); // Lấy orderId từ thuộc tính data-orderid
+            saveRating(rating, orderId); // Truyền cả rating và orderId tới hàm saveRating
+            highlightStars(rating);
+        });
+    });
+
+    function highlightStars(rating) {
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.classList.add('fa-star');
+                star.classList.remove('fa-star-o');
+            } else {
+                star.classList.remove('fa-star');
+                star.classList.add('fa-star-o');
+            }
+        });
+    }
+
+    function saveRating(rating, orderId) {
+        // Tạo đối tượng chứa dữ liệu rating và orderId
+        const ratingData = {
+            orderId: orderId,
+            rating: rating
+        };
+
+        // Gửi yêu cầu AJAX
+        $.ajax({
+            type: 'POST',
+            url: '/Feedback/Create', // Đường dẫn đến action Create trong controller Feedback
+            contentType: 'application/json',
+            data: JSON.stringify(ratingData),
+            success: function (response) {
+                console.log(response); // Hiển thị kết quả trả về từ server
+            },
+            error: function (xhr, status, error) {
+                console.error(error); // Hiển thị lỗi nếu có
+            }
+        });
+    }
+
+    function submitFeedback() {
+        const fullname = document.getElementById('fullname').value;
+        const feedDescription = document.getElementById('uploadProDes').value;
+        const feedImage = document.getElementById('feedImage').files[0]; // Lấy file hình ảnh
+        const orderId = document.getElementById('orderId').getAttribute('data-orderid');
+
+        // Lấy giá trị rating từ biến global
+        const rating = selectedRating;
+
+        // Tạo đối tượng chứa dữ liệu feedback và gửi yêu cầu AJAX
+        const feedbackData = {
+            Fullname: fullname,
+            feedDescription: feedDescription,
+            feedImage: feedImage,
+            rating: rating
+        };
+
+        // Gửi yêu cầu AJAX
+        $.ajax({
+            type: 'POST',
+            url: '/Feedback/Create',
+            contentType: 'application/json',
+            data: JSON.stringify(feedbackData),
+            success: function (response) {
+                if (response.responseText) {
+                    $('#notification1').fadeIn().delay(1000).fadeOut();
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error(error); // Hiển thị lỗi nếu có
+            },
+        });
+    }
+
+    function checkSubmit(orderId) {
+        // Gửi yêu cầu AJAX để kiểm tra xem feedback đã được submit chưa
+        $.ajax({
+            type: 'GET',
+            url: '/Feedback/CheckSubmit',
+            data: { orderId: orderId },
+            success: function (response) {
+                if (response.success) {
+                    // Nếu feedback đã được submit, hiển thị thông tin feedback trên form
+                    const feedback = response.feedback;
+                    const fullname = document.getElementById('fullname').dataset.fullname;
+                    // Đặt giá trị fullname vào input
+                    document.getElementById('fullname').value = fullname;
+                    document.getElementById('uploadProDes').value = feedback.feedDescription;
+                    // Hiển thị hình ảnh nếu có
+                    if (feedback.feedImageUrl) {
+                        document.getElementById('image').src = '~/Image/feedback.feedUrlImage' + feedback.feedImageUrl;
+                        document.getElementById('image').style.display = 'block'; // Hiển thị hình ảnh
+                    }
+
+                    // Hiển thị rating
+                    highlightStars(feedback.starRating);
+                    // Hiển thị nút Submit để người dùng có thể submit lại feedback đã có
+                    document.getElementById('submitButton').style.display = 'block';
+                } else {
+                    // Nếu chưa submit, hiển thị form để người dùng nhập feedback mới
+                    document.getElementById('submitButton').style.display = 'block';
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error(error); // Hiển thị lỗi nếu có
+            }
+        });
+    }
+
+</script>
+
+

@@ -133,7 +133,6 @@ namespace CameraStore.Controllers
             {
                 return NotFound();
             }
-
             return View(category);
         }
     }

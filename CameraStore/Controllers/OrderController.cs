@@ -382,8 +382,6 @@ namespace CameraStore.Controllers
 
             order.IsDelivered = true;
             _dbContext.SaveChanges();
-
-            // Chuyển hướng người dùng đến trang Index của đơn hàng sau khi kiểm tra giao hàng
             return Json(new { success = true });
         }
 

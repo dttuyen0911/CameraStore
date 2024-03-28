@@ -46,6 +46,17 @@ namespace CameraStore.Data
                .OnDelete(DeleteBehavior.Cascade);
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<OrderDetail>()
+                .HasOne(od => od.Order)
+                .WithMany(o => o.orderdetails)
+                .HasForeignKey(od => od.orderID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<OrderDetail>()
+                .HasOne(od => od.Product)
+                .WithMany(p => p.orderdetails)
+                .HasForeignKey(od => od.proID)
+                .OnDelete(DeleteBehavior.Cascade);
 
         }
     }
