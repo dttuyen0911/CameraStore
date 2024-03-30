@@ -50,14 +50,11 @@
                         <h4>Status: @Model.proStatus</h4>
                         <h4>Quantity: @Model.proQuantity</h4>
                         <h4>Sold: @Model.proQuantitySold</h4>
-                            <div class="rating">
-                                <i class="fa fa-star"></i> <!-- Sao đầy -->
-                                <i class="fa fa-star"></i> <!-- Sao đầy -->
-                                <i class="fa fa-star"></i> <!-- Sao đầy -->
-                                <i class="fa fa-star"></i> <!-- Sao đầy -->
-                                <i class="fa fa-star-o"></i> <!-- Sao rỗng -->
-                                <span> - 5 Reviews</span>
-                            </div>
+                        <div class="rating" id="productRating">
+                            <!-- Các sao sẽ được thêm bởi JavaScript -->
+                            <i id="starContainer"></i>
+                            <span id="reviewCount"></span>
+                        </div>
 
                         <p>
                             @Model.proDescription
@@ -362,4 +359,42 @@
             }
         });
     });
+</script>
+<script>
+    $(document).ready(function () {
+        var proID = @Model.proID; // Lấy proID từ Model
+
+        // Gửi yêu cầu AJAX để lấy giá trị trung bình của đánh giá
+        $.ajax({
+            type: 'GET',
+            url: '/Feedback/CalculateAverageRating',
+            data: { proId: proID }, // Điều chỉnh tên tham số thành 'proId' thay vì 'proID'
+            success: function (result) {
+                var averageRating = result.averageRating;
+                var feedbackAccountCount = result.feedbackAccountCount;
+                displayStars(averageRating); // Hiển thị số sao tương ứng
+                displayReviewCount(feedbackAccountCount); // Hiển thị số lượng người dùng đã feedback
+            },
+            error: function () {
+                console.error('Error retrieving average rating');
+            }
+        });
+
+        function displayStars(rating) {
+            var starHtml = '';
+            for (var i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    starHtml += '<i class="fa fa-star"></i>'; // Sao đầy
+                } else {
+                    starHtml += '<i class="fa fa-star-o"></i>'; // Sao rỗng
+                }
+            }
+            $('#starContainer').html(starHtml);
+        }
+
+        function displayReviewCount(count) {
+            $('#reviewCount').text(' - ' + count + ' Reviews');
+        }
+    });
+
 </script>

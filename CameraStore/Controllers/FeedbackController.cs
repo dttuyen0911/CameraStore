@@ -42,11 +42,10 @@ namespace CameraStore.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Feedback feedback, IFormFile feedImage, int rating, int orderId)
+        public IActionResult Create([FromForm] Feedback feedback, IFormFile feedImage, [FromForm] int StarRating, int orderId)
         {
             if (ModelState.IsValid)
             {
-                // Lấy thông tin chi tiết đơn hàng từ database dựa trên orderId
                 OrderDetail orderDetail = _dbContext.OrderDetails
                     .Include(od => od.Order)
                     .FirstOrDefault(od => od.orderID == orderId);
@@ -61,7 +60,6 @@ namespace CameraStore.Controllers
                     return NotFound();
                 }
 
-                // Xử lý file ảnh nếu có
                 if (feedImage != null)
                 {
                     string uploadsFolder = Path.Combine("wwwroot", "image");
@@ -74,25 +72,23 @@ namespace CameraStore.Controllers
                     feedback.feedUrlImage = uniqueFileName;
                 }
 
-                // Lưu giá trị rating vào feedback
-                feedback.StarRating = rating;
-                // Thêm feedback vào database và lưu thay đổi
+                feedback.StarRating = StarRating;
+
                 _dbContext.Feedbacks.Add(feedback);
                 _dbContext.SaveChanges();
 
-                // Chuyển hướng đến trang chính
-                return Json(new { success = true });
+                return Json(new { success = true, feedImageUrl = feedback.feedUrlImage });
             }
 
-            // Trả về view feedback nếu ModelState không hợp lệ
             return View(feedback);
         }
+
         [HttpGet]
         public IActionResult CheckSubmit(int orderId)
         {
             OrderDetail orderDetail = _dbContext.OrderDetails
-            .Include(od => od.Order)
-            .FirstOrDefault(od => od.orderID == orderId);
+                .Include(od => od.Order)
+                .FirstOrDefault(od => od.orderID == orderId);
 
             if (orderDetail != null && orderDetail.Order != null)
             {
@@ -107,7 +103,7 @@ namespace CameraStore.Controllers
                     string imageUrl = null;
                     if (!string.IsNullOrEmpty(feedback.feedUrlImage))
                     {
-                        imageUrl = "~/Image/" + feedback.feedUrlImage;
+                        imageUrl = Url.Content("~/Image/" + feedback.feedUrlImage); // Sử dụng Url.Content để tạo URL tương đối
                     }
 
                     // Nếu có feedback, trả về thông tin feedback
@@ -121,10 +117,34 @@ namespace CameraStore.Controllers
             }
             else
             {
-                return Json(new { success = false });
+                return NotFound(); // Trả về lỗi 404 nếu không tìm thấy chi tiết đơn hàng
             }
-
         }
+        [HttpGet]
+        public IActionResult CalculateAverageRating(int proId)
+        {
+            var allFeedbacks = _dbContext.Feedbacks.Where(f => f.proID == proId).ToList();
+
+            if (allFeedbacks.Count > 0)
+            {
+                int totalRatings = allFeedbacks.Sum(f => f.StarRating);
+                double averageRating = (double)totalRatings / allFeedbacks.Count;
+                int feedbackAccountCount = allFeedbacks.Select(f => f.customerID).Distinct().Count();
+
+                var result = new
+                {
+                    AverageRating = averageRating,
+                    FeedbackAccountCount = feedbackAccountCount
+                };
+
+                return Json(result);
+            }
+            else
+            {
+                return Json(new { AverageRating = 0, FeedbackAccountCount = 0 });
+            }
+        }
+
 
     }
 }

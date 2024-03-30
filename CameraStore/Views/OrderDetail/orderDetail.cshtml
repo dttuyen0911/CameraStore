@@ -55,15 +55,11 @@
                                                         <i class="fa fa-check text-white"></i>
                                                     </span>
                                                     <hr class="flex-fill track-line">
-                                                }
-                                                else if (!item.Order.IsShipped)
-                                                {
                                                     <span class="dot"></span>
                                                     <hr class="flex-fill track-line">
-                                                    <span class="d-flex justify-content-center align-items-center big-dot dot">
-                                                        <i class="fa fa-check text-white"></i>
-                                                    </span>
+                                                    <span class="dot"></span>
                                                     <hr class="flex-fill track-line">
+                                                    <span class="dot"></span>
                                                 }
                                                 else if (DateTime.Today.Date >= item.Order.orderDelivery.Date)
                                                 {
@@ -77,6 +73,30 @@
                                                         <i class="fa fa-check text-white"></i>
                                                     </span>
                                                 }
+                                                else if (item.Order.orderStatus && item.Order.IsShipped)
+                                                {
+                                                    <span class="dot"></span>
+                                                    <hr class="flex-fill track-line">
+                                                    <span class="dot"></span>
+                                                    <hr class="flex-fill track-line">
+                                                    <span class="d-flex justify-content-center align-items-center big-dot dot">
+                                                        <i class="fa fa-check text-white"></i>
+                                                    </span>
+                                                    <hr class="flex-fill track-line">
+                                                    <span class="dot"></span>
+                                                }
+                                                else if (item.Order.orderStatus && !item.Order.IsShipped)
+                                                {
+                                                    <span class="dot"></span>
+                                                    <hr class="flex-fill track-line">
+                                                    <span class="d-flex justify-content-center align-items-center big-dot dot">
+                                                        <i class="fa fa-check text-white"></i>
+                                                    </span>
+                                                    <hr class="flex-fill track-line">
+                                                    <span class="dot"></span>
+                                                    <hr class="flex-fill track-line">
+                                                    <span class="dot"></span>
+                                                }
                                                 else
                                                 {
                                                     <span class="dot"></span>
@@ -87,9 +107,6 @@
                                                     <hr class="flex-fill track-line">
                                                     <span class="dot"></span>
                                                 }
-
-                       
-                     
                                             </div>
                                             <div class="d-flex flex-row justify-content-between align-items-center">
                                                 <div class="d-flex flex-column align-items-start">
@@ -105,17 +122,17 @@
                                                 </div>
                                                 <div class="d-flex flex-column align-items-end"><span>Delivered</span></div>
                                             </div>
-                                                @if (DateTime.Today.Date >= item.Order.orderDelivery.Date)
-                                                {   
-                                                    if(@item.Order.IsDelivered == false)
-                                                    {
+                                            @if (DateTime.Today.Date >= item.Order.orderDelivery.Date)
+                                            {
+                                                if (@item.Order.IsDelivered == false)
+                                                {
                                                     <button id="receivedButton" class="btn btn-success" style="margin-left: 82%; width: 200px;" data-order-id="@item.Order.orderID">
                                                         Received
                                                     </button>
-                                                    }
-                                                    else
-                                                    {
-                                                    <button class="btn btn-success" onclick="openForm(@item.Order.orderID); checkSubmit(@item.Order.orderID)" style="margin-left: 82%; width: 200px;">
+                                                }
+                                                else
+                                                {
+                                                    <button class="btn btn-success" onclick="openForm(@item.Order.orderID);checkSubmit(@item.Order.orderID)" style="margin-left: 82%; width: 200px;">
                                                         Feedback
                                                     </button>
                                                     <div class="form-popup" id="myForm">
@@ -125,38 +142,43 @@
                                                             <label for="fullname"><b>Full Name</b></label>
                                                             <input type="text" id="fullname" name="Fullname" value="@item.Order.orderFullname" readonly class="form-control" data-fullname="@item.Order.orderFullname" />
 
-                                                            <div class="rating" style="font-size: xx-large;">
-                                                                <i class="fa fa-star star" data-value="1"></i>
-                                                                <i class="fa fa-star star" data-value="2"></i>
-                                                                <i class="fa fa-star star" data-value="3"></i>
-                                                                <i class="fa fa-star star" data-value="4"></i>
-                                                                <i class="fa fa-star star" data-value="5"></i>
+                                                            <div class="ratings-wrapper" style="color:orange">
+                                                                <select id="ddlRate" class="form-select" onchange="updateHiddenInput()">
+                                                                    <option value="5" selected>&#9733;&#9733;&#9733;&#9733;&#9733;</option>
+                                                                    <option value="4">&#9733;&#9733;&#9733;&#9733;&#9734;</option>
+                                                                    <option value="3">&#9733;&#9733;&#9733;&#9734;&#9734;</option>
+                                                                    <option value="2">&#9733;&#9733;&#9734;&#9734;&#9734;</option>
+                                                                    <option value="1">&#9733;&#9734;&#9734;&#9734;&#9734;</option>
+                                                                </select>
+                                                                <input type="hidden" id="starRating" name="starRating">
                                                             </div>
 
                                                             <div>
-                                                                <label for="uploadProDes" class="form-label">Please give us feedback about the product</label>
+                                                                <label for="uploadProDes" class="form-label" style="margin-top: 10px;">Please give us feedback about the product</label>
                                                                 <textarea id="uploadProDes" name="feedDescription" class="form-control" rows="3" required></textarea>
                                                             </div>
 
                                                             <div class="mb-3">
                                                                 <!-- Thêm input để chọn file hình ảnh -->
-                                                                <input type="file" onchange="chooseFile(this)" style="width: 100%" id="feedImage" name="feedImage" accept="image/gif, image/jpeg, image/png" class="form-control" />
-                                                                <div> <img style="height:200px;width:250px" id="image" /></div>
+                                                                <input type="file" onchange="chooseFile(this)" style="width: 100%;margin-top:10px" id="feedImage" name="feedImage" accept="image/gif, image/jpeg, image/png" class="form-control" />
+                                                                <div>
+                                                                    <img id="image" src="" style="margin-top: 10px;width: 200px;height: 200px;" alt="Feedback Image">
+                                                                </div>
                                                                 <span class="text-danger"></span>
                                                             </div>
-
+                                                            
                                                             <button type="submit" class="btn btn-primary">Submit</button>
                                                             <button type="button" class="btn cancel" onclick="closeForm()">Cancel</button>
                                                         </form>
                                                     </div>
-                                                    }
                                                 }
-                                                else
-                                                {
-                                                    <button class="btn btn-success" disabled style="margin-left: 82%; width: 200px;">
-                                                        Received
-                                                    </button>
-                                                }
+                                            }
+                                            else
+                                            {
+                                                <button class="btn btn-success" disabled style="margin-left: 82%; width: 200px;">
+                                                    Received
+                                                </button>
+                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -193,7 +215,7 @@
                                                 <td class="cart__close" style="
                                                    text-align: center;
                                                    width: 10%;
-                                                               ">
+                                                                   ">
                                                     @item.Order.orderDate
                                                 </td>
                                                 <td class="cart__close" style="text-align: center;width: 17%"> @item.Order.orderDelivery.ToString("dd/MM/yyyy")</td>
@@ -221,9 +243,19 @@
                                             <tr>
                                                 <td colspan="7">
 
-                                                    <div class="d-flex justify-content-between pt-2">
-                                                        <p class="fw-bold mb-0">Please pay @item.unitPrice when receiving goods</p>
-                                                    </div>
+                                                    @if (@item.Order.orderStatus == true && @item.Order.IsShipped == true && @item.Order.IsDelivered == true)
+                                                    {
+                                                        <div class="d-flex justify-content-between pt-2">
+                                                            <p class="fw-bold mb-0">Payment success</p>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="d-flex justify-content-between pt-2">
+                                                            <p class="fw-bold mb-0">Please pay @item.unitPrice when receiving goods</p>
+                                                        </div>
+                                                    }
+
                                                 </td>
                                             </tr>
 
@@ -267,7 +299,7 @@
                 success: function (response) {
                     if (response.success) {
                         $('#notification').fadeIn().delay(1000).fadeOut();
-                       
+
                     } else {
                         console.log("Received action failed.");
                     }
@@ -301,88 +333,54 @@
     }
 </script>
 <script>
-    let selectedRating = 0; // Biến global để lưu giá trị rating
-
-    const stars = document.querySelectorAll('.star');
-
-    stars.forEach((star) => {
-        star.addEventListener('click', function () {
-            const rating = parseInt(this.getAttribute('data-value'));
-            selectedRating = rating; // Lưu giá trị rating vào biến global
-            const orderId = document.getElementById('orderId').getAttribute('data-orderid'); // Lấy orderId từ thuộc tính data-orderid
-            saveRating(rating, orderId); // Truyền cả rating và orderId tới hàm saveRating
-            highlightStars(rating);
-        });
-    });
-
-    function highlightStars(rating) {
-        stars.forEach((star, index) => {
-            if (index < rating) {
-                star.classList.add('fa-star');
-                star.classList.remove('fa-star-o');
-            } else {
-                star.classList.remove('fa-star');
-                star.classList.add('fa-star-o');
-            }
-        });
+    function updateHiddenInput() {
+        const selectElement = document.getElementById('ddlRate');
+        const selectedOption = selectElement.options[selectElement.selectedIndex].value;
+        document.getElementById('starRating').value = selectedOption;
     }
-
-    function saveRating(rating, orderId) {
-        // Tạo đối tượng chứa dữ liệu rating và orderId
-        const ratingData = {
-            orderId: orderId,
-            rating: rating
-        };
-
-        // Gửi yêu cầu AJAX
-        $.ajax({
-            type: 'POST',
-            url: '/Feedback/Create', // Đường dẫn đến action Create trong controller Feedback
-            contentType: 'application/json',
-            data: JSON.stringify(ratingData),
-            success: function (response) {
-                console.log(response); // Hiển thị kết quả trả về từ server
-            },
-            error: function (xhr, status, error) {
-                console.error(error); // Hiển thị lỗi nếu có
-            }
-        });
-    }
-
     function submitFeedback() {
         const fullname = document.getElementById('fullname').value;
         const feedDescription = document.getElementById('uploadProDes').value;
         const feedImage = document.getElementById('feedImage').files[0]; // Lấy file hình ảnh
         const orderId = document.getElementById('orderId').getAttribute('data-orderid');
+        updateHiddenInput();
 
-        // Lấy giá trị rating từ biến global
-        const rating = selectedRating;
+        const StarRating = document.getElementById('starRating').value;
 
-        // Tạo đối tượng chứa dữ liệu feedback và gửi yêu cầu AJAX
-        const feedbackData = {
-            Fullname: fullname,
-            feedDescription: feedDescription,
-            feedImage: feedImage,
-            rating: rating
-        };
+        const formData = new FormData();
+        formData.append('fullname', fullname);
+        formData.append('feedDescription', feedDescription);
+        formData.append('feedImage', feedImage);
+        formData.append('StarRating', StarRating);
+        formData.append('orderId', orderId);
 
         // Gửi yêu cầu AJAX
         $.ajax({
             type: 'POST',
             url: '/Feedback/Create',
-            contentType: 'application/json',
-            data: JSON.stringify(feedbackData),
+            data: formData,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
             success: function (response) {
-                if (response.responseText) {
+                if (response.success) {
                     $('#notification1').fadeIn().delay(1000).fadeOut();
                 }
             },
             error: function (xhr, status, error) {
-                console.error(error); // Hiển thị lỗi nếu có
-            },
+                console.error(error);
+            }
         });
     }
-
+    function updateStarOptions(stars) {
+        const selectElement = document.getElementById('ddlRate');
+        stars.forEach(function (star) {
+            const option = document.createElement('option');
+            option.value = star.value;
+            option.textContent = star.label;
+            selectElement.appendChild(option);
+        });
+    }
     function checkSubmit(orderId) {
         // Gửi yêu cầu AJAX để kiểm tra xem feedback đã được submit chưa
         $.ajax({
@@ -391,33 +389,50 @@
             data: { orderId: orderId },
             success: function (response) {
                 if (response.success) {
-                    // Nếu feedback đã được submit, hiển thị thông tin feedback trên form
                     const feedback = response.feedback;
                     const fullname = document.getElementById('fullname').dataset.fullname;
-                    // Đặt giá trị fullname vào input
                     document.getElementById('fullname').value = fullname;
                     document.getElementById('uploadProDes').value = feedback.feedDescription;
-                    // Hiển thị hình ảnh nếu có
-                    if (feedback.feedImageUrl) {
-                        document.getElementById('image').src = '~/Image/feedback.feedUrlImage' + feedback.feedImageUrl;
-                        document.getElementById('image').style.display = 'block'; // Hiển thị hình ảnh
-                    }
 
-                    // Hiển thị rating
-                    highlightStars(feedback.starRating);
-                    // Hiển thị nút Submit để người dùng có thể submit lại feedback đã có
-                    document.getElementById('submitButton').style.display = 'block';
+                    if (response.feedImageUrl) { // Sử dụng feedImageUrl từ phản hồi
+                        document.getElementById('image').src = response.feedImageUrl;
+                        document.getElementById('image').style.display = 'block';
+                    }
+                    document.getElementById('ddlRate').value = feedback.starRating.toString();
+                    displayStars(feedback.starRating); // Hiển thị số sao tương ứng
+                    document.getElementById('submitButton').style.display = 'none'; // Ẩn nút submit
+                    document.getElementById('submitForm').style.display = 'block'; // Hiển thị lại form submit
                 } else {
-                    // Nếu chưa submit, hiển thị form để người dùng nhập feedback mới
                     document.getElementById('submitButton').style.display = 'block';
+                    document.getElementById('submitForm').style.display = 'block'; // Hiển thị lại form submit
                 }
             },
-            error: function (xhr, status, error) {
-                console.error(error); // Hiển thị lỗi nếu có
+            error: function () {
+                // Trường hợp có lỗi hoặc không có phản hồi, gọi lại hàm create
+                submitFeedback(); // Gọi lại hàm create
             }
         });
     }
+    
+    function displayStars(rating) {
+        const starWrapper = document.querySelector('.ratings-wrapper');
 
+        // Xóa bỏ các sao hiện tại (nếu có)
+        while (starWrapper.firstChild) {
+            starWrapper.removeChild(starWrapper.firstChild);
+        }
+
+        // Tạo và thêm các sao mới
+        for (let i = 1; i <= 5; i++) {
+            const star = document.createElement('span');
+            if (i <= rating) {
+                star.innerHTML = '&#9733;'; // Ký tự sao
+            } else {
+                star.innerHTML = '&#9734;'; // Ký tự sao rỗng
+            }
+            starWrapper.appendChild(star);
+        }
+    }
 </script>
 
 

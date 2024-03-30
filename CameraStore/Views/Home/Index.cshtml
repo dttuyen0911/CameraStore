@@ -34,10 +34,10 @@
                     </div>
                 </div>
             }
-        </div> 
-            <!-- /row -->
+        </div>
+        <!-- /row -->
     </div>
-        <!-- /container -->
+    <!-- /container -->
     <section class="product spad">
         <div class="container">
             <div class="row">
@@ -64,12 +64,8 @@
 
                             <div class="product__item__text">
                                 <h6>@product.proName</h6>
-                                <div class="rating">
-                                    <i class="fa fa-star"></i> <!-- Sao đầy -->
-                                    <i class="fa fa-star"></i> <!-- Sao đầy -->
-                                    <i class="fa fa-star"></i> <!-- Sao đầy -->
-                                    <i class="fa fa-star"></i> <!-- Sao đầy -->
-                                    <i class="fa fa-star-o"></i> <!-- Sao rỗng -->
+                                <div class="rating" id="rating-@product.proID">
+                                    <i id="starContainer"></i>
                                 </div>
                                 <div id="addToCartForm">
                                     <a href="#" class="menu-link add-cart" data-controller="Cart" data-action="AddToCart" data-customer-id="@User.Identity.Name" data-product-id="@product.proID" data-quantity="1" data-price="@product.proPrice">
@@ -105,7 +101,7 @@
     z-index: 1000;" class="alert alert-danger" role="alert">
                 This product is currently out of stock. Please choose another product!
             </div>
-        </div> 
+        </div>
     </section>
 
     <!-- Product Section End -->
@@ -137,7 +133,7 @@
 
                             <div class="product__item__text">
                                 <h6>@product.proName</h6>
-                                <div id="addToCartForm"> 
+                                <div id="addToCartForm">
                                     <a href="#" class="menu-link add-cart" data-controller="Cart" data-action="AddToCart" data-customer-id="@User.Identity.Name" data-product-id="@product.proID" data-quantity="1" data-price="@product.proPrice">
                                         + Add To Cart
                                     </a>
@@ -171,41 +167,41 @@
                 </div>
             </div>
             <div class="row product__filter">
-            @{
-                var topSoldProducts = Model.OrderByDescending(p => p.proQuantitySold).Take(6);
-            }
+                @{
+                    var topSoldProducts = Model.OrderByDescending(p => p.proQuantitySold).Take(6);
+                }
 
-            @foreach (var product in topSoldProducts)
-            {
-                <div class="col-lg-4 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
-                    <div class="product__item">
-                        <div class="product__item__pic set-bg">
-                            <a class="menu-link" asp-area="" asp-controller="Home" asp-action="productDetail" asp-route-id="@product.proID">
-                                <img src="~/Image/@product.proUrlImage" style="height:260px;width:300px" alt="">
-                            </a>
-                            <span class="label">@product.proStatus</span>
-                        </div>
-
-                        <div class="product__item__text">
-                            <h6>@product.proName</h6>
-                            <div id="addToCartForm">
-                                    <a href="#" class="menu-link add-cart" data-controller="Cart" data-action="AddToCart" data-customer-id="@User.Identity.Name" data-product-id="@product.proID" data-quantity="1" data-price="@product.proPrice" data-status="@product.proStatus">
-                                    + Add To Cart
+                @foreach (var product in topSoldProducts)
+                {
+                    <div class="col-lg-4 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
+                        <div class="product__item">
+                            <div class="product__item__pic set-bg">
+                                <a class="menu-link" asp-area="" asp-controller="Home" asp-action="productDetail" asp-route-id="@product.proID">
+                                    <img src="~/Image/@product.proUrlImage" style="height:260px;width:300px" alt="">
                                 </a>
+                                <span class="label">@product.proStatus</span>
                             </div>
-                            <!-- Hiển thị giá trị proSale nếu có, ngược lại hiển thị giá trị proPrice -->
-                            @if (product.proSale != null)
-                            {
-                                <h5>$@product.proSale</h5>
-                            }
-                            else
-                            {
-                                <h5>$@product.proPrice</h5>
-                            }
+
+                            <div class="product__item__text">
+                                <h6>@product.proName</h6>
+                                <div id="addToCartForm">
+                                    <a href="#" class="menu-link add-cart" data-controller="Cart" data-action="AddToCart" data-customer-id="@User.Identity.Name" data-product-id="@product.proID" data-quantity="1" data-price="@product.proPrice" data-status="@product.proStatus">
+                                        + Add To Cart
+                                    </a>
+                                </div>
+                                <!-- Hiển thị giá trị proSale nếu có, ngược lại hiển thị giá trị proPrice -->
+                                @if (product.proSale != null)
+                                {
+                                    <h5>$@product.proSale</h5>
+                                }
+                                else
+                                {
+                                    <h5>$@product.proPrice</h5>
+                                }
+                            </div>
                         </div>
                     </div>
-                </div>
-            }
+                }
             </div>
         </div>
     </section>
@@ -257,6 +253,7 @@
     </section>
     <!-- Latest Blog Section End -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
             $('.add-cart').on('click', function (e) {
@@ -274,7 +271,7 @@
                 if (!isAuthenticated) {
                     // Nếu chưa đăng nhập, chuyển hướng sang trang login
                     window.location.href = "/Authentication/Login";
-                } 
+                }
                 else {
                     if (productStatus === "Sold out") {
                         // Hiển thị thông báo nếu sản phẩm đã hết hàng
@@ -305,4 +302,39 @@
             });
         });
     </script>
+    <script>
+        $(document).ready(function () {
+            $('.product__item').each(function () {
+                var productId = $(this).find('.menu-link').data('product-id');
+                var ratingContainer = $(this).find('.rating');
+
+                $.ajax({
+                    type: 'GET',
+                    url: '/Feedback/CalculateAverageRating',
+                    data: { proId: productId },
+                    success: function (data) {
+                        var averageRating = data.averageRating;
+                        var feedbackAccountCount = data.feedbackAccountCount;
+                        displayStars(averageRating, ratingContainer);
+                    },
+                    error: function () {
+                        console.error('Error retrieving average rating');
+                    }
+                });
+
+                function displayStars(rating, container) {
+                    var starHtml = '';
+                    for (var i = 1; i <= 5; i++) {
+                        if (i <= rating) {
+                            starHtml += '<i class="fa fa-star"></i>'; // Sao đầy
+                        } else {
+                            starHtml += '<i class="fa fa-star-o"></i>'; // Sao rỗng
+                        }
+                    }
+                    container.html(starHtml);
+                }
+            });
+        });
+    </script>
+
 </section>
