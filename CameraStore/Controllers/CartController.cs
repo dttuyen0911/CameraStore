@@ -6,16 +6,19 @@ using CameraStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using AspNetCoreHero.ToastNotification.Abstractions;
 
 namespace CameraStore.Controllers
 {
     public class CartController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
-
-        public CartController(ApplicationDbContext dbContext)
+        private readonly INotyfService _notyf;
+        public CartController(ApplicationDbContext dbContext, INotyfService notyf)
         {
             _dbContext = dbContext;
+            _notyf = notyf;
+
         }
         public IActionResult Index()
         {

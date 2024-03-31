@@ -64,8 +64,13 @@
 
                             <div class="product__item__text">
                                 <h6>@product.proName</h6>
-                                <div class="rating" id="rating-@product.proID">
-                                    <i id="starContainer"></i>
+                                <div class="rating" data-pro-id="@product.proID">
+                                    <!-- 5 sao được đặt ẩn để tránh hiển thị trước khi thêm sao từ JavaScript -->
+                                    <i class="fa fa-star" style="display: none;"></i>
+                                    <i class="fa fa-star" style="display: none;"></i>
+                                    <i class="fa fa-star" style="display: none;"></i>
+                                    <i class="fa fa-star" style="display: none;"></i>
+                                    <i class="fa fa-star" style="display: none;"></i>
                                 </div>
                                 <div id="addToCartForm">
                                     <a href="#" class="menu-link add-cart" data-controller="Cart" data-action="AddToCart" data-customer-id="@User.Identity.Name" data-product-id="@product.proID" data-quantity="1" data-price="@product.proPrice">
@@ -304,37 +309,33 @@
     </script>
     <script>
         $(document).ready(function () {
-            $('.product__item').each(function () {
-                var productId = $(this).find('.menu-link').data('product-id');
-                var ratingContainer = $(this).find('.rating');
+            $('.rating').each(function () {
+                var productId = $(this).data('pro-id');
+                var ratingContainer = $(this);
 
                 $.ajax({
                     type: 'GET',
-                    url: '/Feedback/CalculateAverageRating',
-                    data: { proId: productId },
-                    success: function (data) {
-                        var averageRating = data.averageRating;
-                        var feedbackAccountCount = data.feedbackAccountCount;
-                        displayStars(averageRating, ratingContainer);
+                    url: '/Feedback/Calc?proId=' + productId,
+                    success: function (response) {
+                        var averageRating = response.averageRating;
+                        var starsHTML = '';
+
+                        for (var i = 1; i <= 5; i++) {
+                            if (i < averageRating) {
+                                starsHTML += '<i class="fa fa-star" style="color: orange; font-size: 20px;"></i>';
+                            } else {
+                                starsHTML += '<i class="fa fa-star-o" style="color: orange; font-size: 20px;"></i>';
+                            }
+                        }
+
+                        // Thêm HTML của các sao vào trong phần tử rating
+                        ratingContainer.append(starsHTML);
                     },
-                    error: function () {
-                        console.error('Error retrieving average rating');
+                    error: function (xhr, status, error) {
+                        console.error(error);
                     }
                 });
-
-                function displayStars(rating, container) {
-                    var starHtml = '';
-                    for (var i = 1; i <= 5; i++) {
-                        if (i <= rating) {
-                            starHtml += '<i class="fa fa-star"></i>'; // Sao đầy
-                        } else {
-                            starHtml += '<i class="fa fa-star-o"></i>'; // Sao rỗng
-                        }
-                    }
-                    container.html(starHtml);
-                }
             });
         });
     </script>
-
 </section>

@@ -1,4 +1,5 @@
-﻿using CameraStore.Data;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using CameraStore.Data;
 using CameraStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +13,11 @@ namespace CameraStore.Controllers
     public class ProductController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
-        public ProductController(ApplicationDbContext dbContext)
+        private readonly INotyfService _notyf;
+        public ProductController(ApplicationDbContext dbContext, INotyfService notyf)
         {
             _dbContext = dbContext;
+            _notyf = notyf;
         }
         public IActionResult Index()
         {

@@ -1461,9 +1461,9 @@ ol {
 }
 
 .product__item__text .rating i {
-	font-size: 14px;
-	color: #b7b7b7;
-	margin-right: -5px;
+	font-size: 20px;
+    color: #f7941d;
+    margin-right: -5px;
 }
 
 .product__item__text h5 {
@@ -2000,7 +2000,7 @@ ol {
 }
 
 .product__details__text .rating i {
-	font-size: 15px;
+	font-size: 20px;
 	color: #f7941d;
 	display: inline-block;
 	margin-right: -5px;

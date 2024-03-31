@@ -1,4 +1,5 @@
-﻿using CameraStore.Data;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using CameraStore.Data;
 using CameraStore.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,10 +12,11 @@ namespace CameraStore.Controllers
     public class FeedbackController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
-
-        public FeedbackController(ApplicationDbContext dbContext)
+        private readonly INotyfService _notyf;
+        public FeedbackController(ApplicationDbContext dbContext, INotyfService notyf)
         {
             _dbContext = dbContext;
+            _notyf = notyf;
         }
 
         public IActionResult Index()
@@ -77,7 +79,7 @@ namespace CameraStore.Controllers
                 _dbContext.Feedbacks.Add(feedback);
                 _dbContext.SaveChanges();
 
-                return Json(new { success = true, feedImageUrl = feedback.feedUrlImage });
+                return Ok(new { success = true , feedImageUrl = feedback.feedUrlImage });
             }
 
             return View(feedback);
@@ -144,7 +146,49 @@ namespace CameraStore.Controllers
                 return Json(new { AverageRating = 0, FeedbackAccountCount = 0 });
             }
         }
+        [HttpGet]
+        public IActionResult Calc(int proId)
+        {
+            var allFeedbacks = _dbContext.Feedbacks.Where(f => f.proID == proId).ToList();
 
+            if (allFeedbacks.Count > 0)
+            {
+                int totalRatings = allFeedbacks.Sum(f => f.StarRating);
+                double averageRating = (double)totalRatings / allFeedbacks.Count;
 
+                var result = new
+                {
+                    AverageRating = averageRating,
+                };
+
+                return Json(result);
+            }
+            else
+            {
+                return Json(new { AverageRating = 0 });
+            }
+        }
+        [HttpGet]
+        public IActionResult CustomerFeedback(int proId)
+        {
+            var allFeedbacks = _dbContext.Feedbacks.Where(f => f.proID == proId).ToList();
+
+            if (allFeedbacks.Count > 0)
+            {
+                int feedbackAccountCount = allFeedbacks.Select(f => f.customerID).Distinct().Count();
+
+                var result = new
+                {
+                    FeedbackAccountCount = feedbackAccountCount
+                };
+
+                return Json(result);
+            }
+            else
+            {
+                return Json(new {FeedbackAccountCount = 0 });
+            }
+        }
+       
     }
 }

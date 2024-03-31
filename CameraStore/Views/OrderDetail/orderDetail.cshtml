@@ -364,7 +364,7 @@
             contentType: false,
             success: function (response) {
                 if (response.success) {
-                    $('#notification1').fadeIn().delay(1000).fadeOut();
+                    showToast(response.message);
                 }
             },
             error: function (xhr, status, error) {
@@ -403,8 +403,8 @@
                     document.getElementById('submitButton').style.display = 'none'; // Ẩn nút submit
                     document.getElementById('submitForm').style.display = 'block'; // Hiển thị lại form submit
                 } else {
-                    document.getElementById('submitButton').style.display = 'block';
-                    document.getElementById('submitForm').style.display = 'block'; // Hiển thị lại form submit
+                    // Chỉ gọi hàm submitFeedback() khi không có phản hồi thành công
+                    submitFeedback();
                 }
             },
             error: function () {

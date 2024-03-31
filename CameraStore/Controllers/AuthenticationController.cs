@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using CameraStore.Data;
 using CameraStore.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -18,9 +19,11 @@ namespace CameraStore.Controllers
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public AuthenticationController(ApplicationDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+        private readonly INotyfService _notyf;
+        public AuthenticationController(ApplicationDbContext dbContext, IHttpContextAccessor httpContextAccessor, INotyfService notyf)
         {
             _dbContext = dbContext;
+            _notyf = notyf;
             _httpContextAccessor = httpContextAccessor;
         }
 

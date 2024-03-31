@@ -53,7 +53,7 @@
                         <div class="rating" id="productRating">
                             <!-- Các sao sẽ được thêm bởi JavaScript -->
                             <i id="starContainer"></i>
-                            <span id="reviewCount"></span>
+                            <span id="reviewCount" style="font-size: 20px;"></span>
                         </div>
 
                         <p>
@@ -109,8 +109,7 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#tabs-6" role="tab">
-                                    Customer
-                                    Previews(5)
+                                    Feedback<span id="customerFeedback"></span>
                                 </a>
                             </li>
                         </ul>
@@ -127,38 +126,31 @@
                             </div>
                             <div class="tab-pane" id="tabs-6" role="tabpanel">
                                 <div class="product__details__tab__content">
-                                    <div class="product__details__tab__content__item">
-                                        <h5>Products Infomation</h5>
-                                        <p>
-                                            A Pocket PC is a handheld computer, which features many of the same
-                                            capabilities as a modern PC. These handy little devices allow
-                                            individuals to retrieve and store e-mail messages, create a contact
-                                            file, coordinate appointments, surf the internet, exchange text messages
-                                            and more. Every product that is labeled as a Pocket PC must be
-                                            accompanied with specific software to operate the unit and must feature
-                                            a touchscreen and touchpad.
-                                        </p>
-                                        <p>
-                                            As is the case with any new technology product, the cost of a Pocket PC
-                                            was substantial during it’s early release. For approximately $700.00,
-                                            consumers could purchase one of top-of-the-line Pocket PCs in 2003.
-                                            These days, customers are finding that prices have become much more
-                                            reasonable now that the newness is wearing off. For approximately
-                                            $350.00, a new Pocket PC can now be purchased.
-                                        </p>
-                                    </div>
-                                    <div class="product__details__tab__content__item">
-                                        <h5>Material used</h5>
-                                        <p>
-                                            Polyester is deemed lower quality due to its none natural quality’s. Made
-                                            from synthetic materials, not natural like wool. Polyester suits become
-                                            creased easily and are known for not being breathable. Polyester suits
-                                            tend to have a shine to them compared to wool and cotton suits, this can
-                                            make the suit look cheap. The texture of velvet is luxurious and
-                                            breathable. Velvet is a great choice for dinner party jacket and can be
-                                            worn all year round.
-                                        </p>
-                                    </div>
+                                    @foreach (var feedback in Model.Feedbacks)
+                                    {
+                                        <div class="col-12" style="border: outset;border-radius: 15px;">
+                                            <h5>@feedback.Customer.fullname</h5>
+                                            <div class="rating">
+                                                @{
+                                                    for (var i = 1; i <= 5; i++)
+                                                    {
+                                                        if(i <= feedback.StarRating)
+                                                        {
+                                                            <i class="fa fa-star" style="color: orange; font-size: 20px;"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="fa fa-star-o" style="color: orange; font-size: 20px;"></i>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                            <p>@feedback.feedDescription</p>
+                                            <div class="product__item__pic set-bg">
+                                                <img src="~/Image/@feedback.feedUrlImage" style="height: 200px;width: 200px;">
+                                            </div>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -384,9 +376,9 @@
             var starHtml = '';
             for (var i = 1; i <= 5; i++) {
                 if (i <= rating) {
-                    starHtml += '<i class="fa fa-star"></i>'; // Sao đầy
+                    starHtml += '<i class="fa fa-star" style="color: orange; font-size: 20px;"></i>'; // Sao đầy
                 } else {
-                    starHtml += '<i class="fa fa-star-o"></i>'; // Sao rỗng
+                    starHtml += '<i class="fa fa-star-o" style="color: orange; font-size: 20px;"></i>'; // Sao rỗng
                 }
             }
             $('#starContainer').html(starHtml);
@@ -398,3 +390,28 @@
     });
 
 </script>
+<script>
+    $(document).ready(function () {
+        var proID = @Model.proID; // Lấy proID từ Model
+
+        // Gửi yêu cầu AJAX để lấy giá trị trung bình của đánh giá
+        $.ajax({
+            type: 'GET',
+            url: '/Feedback/CustomerFeedback',
+            data: { proId: proID }, // Điều chỉnh tên tham số thành 'proId' thay vì 'proID'
+            success: function (result) {
+                var feedbackAccountCount = result.feedbackAccountCount;
+                displayReviewCount(feedbackAccountCount); // Hiển thị số lượng người dùng đã feedback
+            },
+            error: function () {
+                console.error('Error retrieving average rating');
+            }
+        });
+
+        function displayReviewCount(count) {
+            $('#customerFeedback').text('(' + count + ')');
+        }
+    });
+
+</script>
+

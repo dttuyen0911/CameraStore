@@ -1,7 +1,9 @@
-﻿using CameraStore.Data;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using CameraStore.Data;
 using CameraStore.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Drawing.Printing;
@@ -15,13 +17,14 @@ namespace CameraStore.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _dbContext;
+        private readonly INotyfService _notyf;
 
-        public HomeController(ILogger<HomeController> logger,ApplicationDbContext dbContext)
+        public HomeController(ILogger<HomeController> logger,ApplicationDbContext dbContext, INotyfService notyf)
         {
             _dbContext = dbContext;
             _logger = logger;
+            _notyf = notyf;
         }
-
         public IActionResult Index()
         {
             IEnumerable<Product> products = _dbContext.Products
@@ -203,23 +206,34 @@ namespace CameraStore.Controllers
         }
         public IActionResult productDetail(int id)
         {
-            int userId = Convert.ToInt32(User.Identity.Name);
-
-            var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
-            if (customer != null)
+            int userId;
+            if (User.Identity.IsAuthenticated)
             {
-                ViewBag.FullName = customer.fullname;
+                userId = Convert.ToInt32(User.Identity.Name);
+                var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
+                if (customer != null)
+                {
+                    ViewBag.FullName = customer.fullname;
+                }
+                else
+                {
+                    ViewBag.FullName = "Unknown";
+                }
             }
             else
             {
                 ViewBag.FullName = "Unknown";
             }
+
             if (id == null)
             {
                 return NotFound();
             }
 
-            var product = _dbContext.Products.Find(id);
+            var product = _dbContext.Products
+                                    .Include(p => p.Feedbacks) // Nạp thông tin phản hồi của sản phẩm
+                                    .ThenInclude(f => f.Customer) // Nạp thông tin của khách hàng cho mỗi phản hồi
+                                    .FirstOrDefault(p => p.proID == id);
 
             if (product == null)
             {
