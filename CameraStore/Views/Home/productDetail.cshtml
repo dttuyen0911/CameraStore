@@ -126,31 +126,108 @@
                             </div>
                             <div class="tab-pane" id="tabs-6" role="tabpanel">
                                 <div class="product__details__tab__content">
-                                    @foreach (var feedback in Model.Feedbacks)
-                                    {
-                                        <div class="col-12" style="border: outset;border-radius: 15px;">
-                                            <h5>@feedback.Customer.fullname</h5>
-                                            <div class="rating">
-                                                @{
-                                                    for (var i = 1; i <= 5; i++)
-                                                    {
-                                                        if(i <= feedback.StarRating)
+                                    <div class="row" style="border-radius: 20px;border: outset;margin-bottom: 10px;">
+                                        <div class="col-lg-2 col-md-2" data-pro-id="@Model.proID" style="text-align: center; border-radius: 20px; border: outset; background-color: transparent; cursor: pointer;">
+                                            <span id="feedbackValue" style="display: ruby-text"></span>
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;display:none"></i>
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;display:none"></i>
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;display:none"></i>
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;display:none"></i>
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;display:none"></i>
+                                        </div>
+                                        <button class="col-lg-1 col-md-1 all-button" style="text-align: center; border-radius: 20px; border: outset; background-color: transparent; cursor: pointer;">
+                                            <span style="display: ruby-text;">All star</span>
+                                        </button>
+                                        @{
+                                            int starRatingCount1 = 0; // Khởi tạo biến đếm cho đánh giá sao có giá trị 1
+                                            int starRatingCount2 = 0; // Khởi tạo biến đếm cho đánh giá sao có giá trị 2
+                                            int starRatingCount3 = 0; // Khởi tạo biến đếm cho đánh giá sao có giá trị 3
+                                            int starRatingCount4 = 0; // Khởi tạo biến đếm cho đánh giá sao có giá trị 4
+                                            int starRatingCount5 = 0; // Khởi tạo biến đếm cho đánh giá sao có giá trị 5
+                                        }
+
+                                        @foreach (var item in Model.Feedbacks)
+                                        {
+                                            switch (item.StarRating) // Sử dụng switch để xác định giá trị đánh giá sao
+                                            {
+                                                case 1:
+                                                    starRatingCount1++; // Tăng biến đếm cho đánh giá sao có giá trị 1
+                                                    break;
+                                                case 2:
+                                                    starRatingCount2++; // Tăng biến đếm cho đánh giá sao có giá trị 2
+                                                    break;
+                                                case 3:
+                                                    starRatingCount3++; // Tăng biến đếm cho đánh giá sao có giá trị 3
+                                                    break;
+                                                case 4:
+                                                    starRatingCount4++; // Tăng biến đếm cho đánh giá sao có giá trị 4
+                                                    break;
+                                                case 5:
+                                                    starRatingCount5++; // Tăng biến đếm cho đánh giá sao có giá trị 5
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+                                        }
+                                        <button class="col-lg-1 col-md-1 star-button" data-rating="1" style="text-align: center; border-radius: 20px; border: outset; background-color: transparent; cursor: pointer;">
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;"></i>
+                                            <span style="display: ruby-text;">@starRatingCount1</span>
+                                        </button>
+                                        <button class="col-lg-1 col-md-1 star-button" data-rating="2" style="text-align: center; border-radius: 20px; border: outset; background-color: transparent; cursor: pointer;">
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;"></i>
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;"></i>
+                                            <span style="display: ruby-text;">@starRatingCount2</span>
+                                        </button>
+                                        <button class="col-lg-2 col-md-3 star-button" data-rating="3" style="text-align: center; border-radius: 20px; border: outset; background-color: transparent; cursor: pointer;">
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;"></i>
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;"></i>
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;"></i>
+                                            <span style="display: ruby-text;">@starRatingCount3</span>
+                                        </button>
+                                        <button class="col-lg-2 col-md-3 star-button" data-rating="4" style="text-align: center; border-radius: 20px; border: outset; background-color: transparent; cursor: pointer;">
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;"></i>
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;"></i>
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;"></i>
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;"></i>
+                                            <span style="display: ruby-text;">@starRatingCount4</span>
+                                        </button>
+                                        <button class="col-lg-2 col-md-3 star-button" data-rating="5" style="text-align: center; border-radius: 20px; border: outset; background-color: transparent; cursor: pointer;">
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;"></i>
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;"></i>
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;"></i>
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;"></i>
+                                            <i class="fa fa-star" style="color: orange; font-size: 20px;"></i>
+                                            <span style="display: ruby-text;">@starRatingCount5</span>
+                                        </button>
+                                        
+                                    </div>
+                                    <div id="feedback-container">
+                                        @foreach (var feedback in Model.Feedbacks)
+                                        {
+                                            <div class="col-12 feedback-item" data-rating="@feedback.StarRating" style="border: outset; border-radius: 15px; display: none;">
+                                                <h5>@feedback.Customer.fullname</h5>
+                                                <div class="rating">
+                                                    @{
+                                                        for (var i = 1; i <= 5; i++)
                                                         {
-                                                            <i class="fa fa-star" style="color: orange; font-size: 20px;"></i>
-                                                        }
-                                                        else
-                                                        {
-                                                            <i class="fa fa-star-o" style="color: orange; font-size: 20px;"></i>
+                                                            if (i <= feedback.StarRating)
+                                                            {
+                                                                    <i class="fa fa-star" style="color: orange; font-size: 20px;"></i>
+                                                            }
+                                                            else
+                                                            {
+                                                                    <i class="fa fa-star-o" style="color: orange; font-size: 20px;"></i>
+                                                            }
                                                         }
                                                     }
-                                                }
+                                                </div>
+                                                <p>@feedback.feedDescription</p>
+                                                <div class="product__item__pic set-bg">
+                                                    <img src="~/Image/@feedback.feedUrlImage" style="height: 200px;width: 200px;">
+                                                </div>
                                             </div>
-                                            <p>@feedback.feedDescription</p>
-                                            <div class="product__item__pic set-bg">
-                                                <img src="~/Image/@feedback.feedUrlImage" style="height: 200px;width: 200px;">
-                                            </div>
-                                        </div>
-                                    }
+                                        }
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -364,6 +441,8 @@
             success: function (result) {
                 var averageRating = result.averageRating;
                 var feedbackAccountCount = result.feedbackAccountCount;
+                console.log("Average Rating:", averageRating); // In giá trị rating để kiểm tra
+                console.log("Feedback Account Count:", feedbackAccountCount);
                 displayStars(averageRating); // Hiển thị số sao tương ứng
                 displayReviewCount(feedbackAccountCount); // Hiển thị số lượng người dùng đã feedback
             },
@@ -374,8 +453,10 @@
 
         function displayStars(rating) {
             var starHtml = '';
+            // Sử dụng Math.round() để làm tròn số sao đúng cách
+            var roundedRating = Math.round(rating);
             for (var i = 1; i <= 5; i++) {
-                if (i <= rating) {
+                if (i <= roundedRating) {
                     starHtml += '<i class="fa fa-star" style="color: orange; font-size: 20px;"></i>'; // Sao đầy
                 } else {
                     starHtml += '<i class="fa fa-star-o" style="color: orange; font-size: 20px;"></i>'; // Sao rỗng
@@ -413,5 +494,71 @@
         }
     });
 
+</script>
+<script>
+    $(document).ready(function () {
+        // Đảm bảo bạn lặp qua từng phần tử rating để thực hiện AJAX cho mỗi sản phẩm
+        $('.col-lg-2.col-md-2').each(function () {
+            var ratingContainer = $(this);
+            var productId = $(this).data('pro-id');
+
+            $.ajax({
+                type: 'GET',
+                url: '/Feedback/Calc?proId=' + productId,
+                success: function (response) {
+                    var averageRating = response.averageRating;
+                    var starsHTML = '';
+
+                    for (var i = 1; i <= 5; i++) {
+                        if (i <= averageRating) {
+                            starsHTML += '<i class="fa fa-star" style="color: orange; font-size: 20px;"></i>';
+                        } else {
+                            starsHTML += '<i class="fa fa-star-o" style="color: orange; font-size: 20px;"></i>';
+                        }
+                    }
+
+                    // Thêm HTML của các sao vào trong phần tử rating
+                    $('#feedbackValue', ratingContainer).html(averageRating + ' out of 5');
+                    ratingContainer.append(starsHTML);
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        // Hiển thị tất cả các phản hồi khi trang được tải
+        $(".feedback-item").show();
+
+        // Xử lý sự kiện khi click vào các nút đánh giá sao
+        $(".star-button").click(function () {
+            var rating = $(this).data("rating");
+            var foundFeedback = false; // Biến để kiểm tra xem có phản hồi nào hay không
+
+            $(".feedback-item").hide(); // Ẩn tất cả các phản hồi
+
+            // Hiển thị phản hồi có đánh giá sao tương ứng
+            $(".feedback-item[data-rating='" + rating + "']").each(function () {
+                $(this).show();
+                foundFeedback = true; // Đặt biến thành true nếu có phản hồi được tìm thấy
+            });
+
+            // Nếu không tìm thấy phản hồi, hiển thị thông báo "No feedback"
+            if (!foundFeedback) {
+                $("#no-feedback").show();
+            } else {
+                $("#no-feedback").hide();
+            }
+        });
+
+        // Xử lý sự kiện khi click vào nút "All star"
+        $(".all-button").click(function () {
+            $(".feedback-item").show(); // Hiển thị lại tất cả phản hồi
+            $("#no-feedback").hide(); // Ẩn thông báo "No feedback" nếu đang hiển thị
+        });
+    });
 </script>
 

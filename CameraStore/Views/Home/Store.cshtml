@@ -19,8 +19,9 @@
         </div>
     </div>
 </section>
-<!-- Shop Section Begin -->
-<section class="shop spad">
+<!-- Shop Section Begin --> 
+<section>
+< class="shop spad">
     <div class="container">
         <div class="row">
             <div class="col-lg-3">
@@ -101,7 +102,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-9">
+            <div class="col-lg-9" style="border-style: outset;border-radius: 15px;">
                 <div class="shop__product__option">
                     <div class="row">
                         <div class="col-lg-6 col-md-6 col-sm-6">
@@ -134,12 +135,13 @@
                                 </div>
                                 <div class="product__item__text">
                                     <h6>@product.proName</h6>
-                                    <div class="rating">
-                                        <i class="fa fa-star"></i> <!-- Sao đầy -->
-                                        <i class="fa fa-star"></i> <!-- Sao đầy -->
-                                        <i class="fa fa-star"></i> <!-- Sao đầy -->
-                                        <i class="fa fa-star"></i> <!-- Sao đầy -->
-                                        <i class="fa fa-star-o"></i> <!-- Sao rỗng -->
+                                    <div class="rating" data-pro-id="@product.proID">
+                                        <!-- 5 sao được đặt ẩn để tránh hiển thị trước khi thêm sao từ JavaScript -->
+                                        <i class="fa fa-star" style="display: none;"></i>
+                                        <i class="fa fa-star" style="display: none;"></i>
+                                        <i class="fa fa-star" style="display: none;"></i>
+                                        <i class="fa fa-star" style="display: none;"></i>
+                                        <i class="fa fa-star" style="display: none;"></i>
                                     </div>
                                     <div id="addToCartForm">
                                         <a href="#" class="menu-link add-cart" data-controller="Cart" data-action="AddToCart" data-customer-id="@User.Identity.Name" data-product-id="@product.proID" data-quantity="1" data-price="@product.proPrice" data-status="@product.proStatus">
@@ -186,7 +188,6 @@
             This product is currently out of stock. Please choose another product!
         </div>
     </div>
-</section>
 <!-- Shop Section End -->
 <script>
     @functions {
@@ -261,6 +262,37 @@
                     }
                 });
             }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('.rating').each(function () {
+            var productId = $(this).data('pro-id');
+            var ratingContainer = $(this);
+
+            $.ajax({
+                type: 'GET',
+                url: '/Feedback/Calc?proId=' + productId,
+                success: function (response) {
+                    var averageRating = response.averageRating;
+                    var starsHTML = '';
+
+                    for (var i = 1; i <= 5; i++) {
+                        if (i <= averageRating) {
+                            starsHTML += '<i class="fa fa-star" style="color: orange; font-size: 20px;"></i>';
+                        } else {
+                            starsHTML += '<i class="fa fa-star-o" style="color: orange; font-size: 20px;"></i>';
+                        }
+                    }
+
+                    // Thêm HTML của các sao vào trong phần tử rating
+                    ratingContainer.append(starsHTML);
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
         });
     });
 </script>

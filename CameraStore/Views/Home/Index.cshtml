@@ -138,6 +138,14 @@
 
                             <div class="product__item__text">
                                 <h6>@product.proName</h6>
+                                <div class="rating" data-pro-id="@product.proID">
+                                    <!-- 5 sao được đặt ẩn để tránh hiển thị trước khi thêm sao từ JavaScript -->
+                                    <i class="fa fa-star" style="display: none;"></i>
+                                    <i class="fa fa-star" style="display: none;"></i>
+                                    <i class="fa fa-star" style="display: none;"></i>
+                                    <i class="fa fa-star" style="display: none;"></i>
+                                    <i class="fa fa-star" style="display: none;"></i>
+                                </div>
                                 <div id="addToCartForm">
                                     <a href="#" class="menu-link add-cart" data-controller="Cart" data-action="AddToCart" data-customer-id="@User.Identity.Name" data-product-id="@product.proID" data-quantity="1" data-price="@product.proPrice">
                                         + Add To Cart
@@ -189,6 +197,14 @@
 
                             <div class="product__item__text">
                                 <h6>@product.proName</h6>
+                                <div class="rating" data-pro-id="@product.proID">
+                                    <!-- 5 sao được đặt ẩn để tránh hiển thị trước khi thêm sao từ JavaScript -->
+                                    <i class="fa fa-star" style="display: none;"></i>
+                                    <i class="fa fa-star" style="display: none;"></i>
+                                    <i class="fa fa-star" style="display: none;"></i>
+                                    <i class="fa fa-star" style="display: none;"></i>
+                                    <i class="fa fa-star" style="display: none;"></i>
+                                </div>
                                 <div id="addToCartForm">
                                     <a href="#" class="menu-link add-cart" data-controller="Cart" data-action="AddToCart" data-customer-id="@User.Identity.Name" data-product-id="@product.proID" data-quantity="1" data-price="@product.proPrice" data-status="@product.proStatus">
                                         + Add To Cart
@@ -321,7 +337,7 @@
                         var starsHTML = '';
 
                         for (var i = 1; i <= 5; i++) {
-                            if (i < averageRating) {
+                            if (i <= averageRating) {
                                 starsHTML += '<i class="fa fa-star" style="color: orange; font-size: 20px;"></i>';
                             } else {
                                 starsHTML += '<i class="fa fa-star-o" style="color: orange; font-size: 20px;"></i>';
