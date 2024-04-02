@@ -1,4 +1,4 @@
-﻿@model dynamic
+﻿@model List<dynamic>
 @{
     ViewData["Title"] = "Top Products Chart";
     Layout = "~/Views/Shared/_OwnerLayout.cshtml";
@@ -11,7 +11,6 @@
 </div>
 
 @section scripts {
-    <script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <script>
         $(document).ready(function () {
@@ -20,24 +19,12 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function (data) {
-                    var productIds = data.labels;
-                    var quantities = data.quantities;
-
-                    // Khai báo một mảng để lưu trữ tên sản phẩm
-                    var productNames = [];
-
-                    // Lặp qua từng ID sản phẩm và truy vấn tên sản phẩm từ server
-                    for (var i = 0; i < productIds.length; i++) {
-                        $.ajax({
-                            url: '@Url.Action("GetProductName", "Product")' + '?productId=' + productIds[i],
-                            type: 'GET',
-                            dataType: 'json',
-                            async: false,
-                            success: function (productName) {
-                                productNames.push(productName);
-                            }
-                        });
-                    }
+                    var productNames = data.map(function (item) {
+                        return item.ProductName;
+                    });
+                    var quantities = data.map(function (item) {
+                        return item.Quantity;
+                    });
 
                     var ctx = document.getElementById('top-products-chart').getContext('2d');
                     var topProductsChart = new Chart(ctx, {
@@ -78,5 +65,4 @@
             });
         });
     </script>
-
 }

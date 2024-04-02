@@ -1,1 +1,222 @@
-﻿
+﻿@model List<CameraStore.Models.OrderDetail>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_OwnerLayout.cshtml";
+}
+@{
+    // Tính tổng số đơn hàng
+    var totalOrders = Model.Select(od => od.orderID).Distinct().Count();
+
+    // Tính tổng doanh thu
+    var totalRevenue = Model.Sum(od => od.Order.totalAmount);
+
+    // Tính tổng số sản phẩm đã bán
+    var totalProductsSold = Model.Sum(od => od.quantity);
+}
+
+<div class="row" style="text-align: center;border-radius: 10px;border-style: ridge;margin: 25px;">
+    <div class="col-lg-4 col-md-4" style="border-right: double;background: #ffe3ff;">
+        Order
+        <div>
+            Total order: @totalOrders
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-4" style="border-right: double;background: #ffe3ff;">
+        Revenue
+        <div>
+            Total revenue: @totalRevenue
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-4" style="border-right: double;background: #ffe3ff;">
+        Product
+        <div>
+            Total products sold: @totalProductsSold
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-6">
+        <div id="pie-chart-container1">
+            <canvas id="top-products-chart1"></canvas>
+        </div>
+    </div>
+
+    <div class="col-6">
+        <div id="pie-chart-container2">
+            <canvas id="payment-method-chart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div id="pie-chart-container3">
+            <canvas id="order-count-chart"></canvas>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/adapters/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: '@Url.Action("GetTopProducts", "Statistical")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    var productNames1 = data.map(function (item) {
+                        return item.productName;
+                    });
+                    var quantities1 = data.map(function (item) {
+                        return item.quantity;
+                    });
+
+                    var ctx1 = document.getElementById('top-products-chart1').getContext('2d');
+                    var topProductsChart1 = new Chart(ctx1, {
+                        type: 'pie',
+                        data: {
+                            labels: productNames1,
+                            datasets: [{
+                                label: 'Top Products',
+                                data: quantities1,
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.5)',
+                                    'rgba(54, 162, 235, 0.5)',
+                                    'rgba(255, 205, 86, 0.5)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 205, 86, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Top 3 best seller'
+                                }
+                            }
+                        }
+                    });
+                        
+                }
+            });
+        });
+        $(document).ready(function () {
+            $.ajax({
+                url: '@Url.Action("PaymentMethodCount", "Statistical")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    var labels = [];
+                    var counts = [];
+
+                    // Duyệt qua dữ liệu và lấy các nhãn và số lượng
+                    data.forEach(function (item) {
+                        labels.push(item.paymentMethod);
+                        counts.push(item.count);
+                    });
+
+                    // Tạo biểu đồ pie
+                    var ctx = document.getElementById('payment-method-chart').getContext('2d');
+                    var paymentMethodChart = new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                data: counts,
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.5)',
+                                    'rgba(54, 162, 235, 0.5)',
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Payment Method Distribution'
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+        });
+        $(document).ready(function () {
+            $.ajax({
+                url: '@Url.Action("GetOrderCountsCurrentMonth", "Statistical")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    var dates = [];
+                    var counts = [];
+
+                    data.forEach(function (item) {
+                        // Chuyển đổi ngày tháng thành đối tượng Date
+                        var date = new Date(item.date);
+                        dates.push(date.toISOString().slice(0, 10)); // Lấy ngày dưới dạng chuỗi YYYY-MM-DD
+                        counts.push(item.count);
+                    });
+
+                    const chartConfig = {
+                        type: 'line',
+                        data: {
+                            labels: dates,
+                            datasets: [{
+                                label: 'Order Counts',
+                                data: counts,
+                                fill: false,
+                                borderColor: 'rgb(75, 192, 192)',
+                                tension: 0.1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Order Counts for Current Month'
+                                },
+                                legend: {
+                                    display: false
+                                }
+                            }, scales: {
+                                y: {
+                                    suggestedMin: 0
+                                }
+                            }
+                        }
+                    };
+
+                    var ctx = document.getElementById('order-count-chart').getContext('2d');
+                    var orderCountChart = new Chart(ctx, chartConfig);
+                }
+            });
+        });
+
+    </script>
+}

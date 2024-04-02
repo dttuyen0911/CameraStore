@@ -2,7 +2,14 @@
 
 @{
     ViewData["Title"] = "Index";
-    Layout = "~/Views/Shared/_EmployeeLayout.cshtml";
+    if (User.IsInRole("Owner"))
+    {
+        Layout = "~/Views/Shared/_OwnerLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_EmployeeLayout.cshtml";
+    }
 }
 <div class="content-wrapper">
     <div class="container-xxl flex-grow-1 container-p-y">
@@ -37,8 +44,4 @@
             </div>
         </div>
     </div>
-</div>
-<div class="buy-now">
-    <a asp-controller="Feedback" asp-action="Create"
-       class="btn btn-primary btn-buy-now">Add new Feedback</a>
 </div>

@@ -15,23 +15,55 @@ namespace CameraStore.Controllers
         }
         public IActionResult Index()
         {
-            return View();
+            // Lấy danh sách các đơn hàng chi tiết từ cơ sở dữ liệu
+            var orderDetails = _dbContext.OrderDetails.Include(od => od.Order).ToList();
+
+            return View(orderDetails);
         }
-		public IActionResult GetTopProducts()
-		{
-			var topProducts = _dbContext.OrderDetails
-				.GroupBy(od => od.proID)
-				.Select(g => new { ProductId = g.Key, Quantity = g.Sum(od => od.quantity) })
-				.OrderByDescending(x => x.Quantity)
-				.Take(3)
-				.ToList();
 
-			// Chuyển đổi dữ liệu sang định dạng cần thiết
-			var labels = topProducts.Select(p => p.ProductId.ToString()).ToList();
-			var quantities = topProducts.Select(p => p.Quantity).ToList();
+        public IActionResult GetTopProducts()
+        {
+            var orderDetails = _dbContext.OrderDetails.Include(od => od.Order).ToList();
+            var topProducts = _dbContext.OrderDetails
+                .GroupBy(od => od.Product)
+                .Select(g => new { ProductName = g.Key.proName, Quantity = g.Sum(od => od.quantity) })
+                .OrderByDescending(x => x.Quantity)
+                .Take(3)
+                .ToList();
 
-			// Trả về dữ liệu dưới dạng JSON
-			return Json(new { labels = labels, quantities = quantities });
-		}
-	}
+            // Trả về dữ liệu dưới dạng JSON
+            return Json(topProducts);
+        }
+        public IActionResult PaymentMethodCount()
+        {
+            var paymentMethodCounts = _dbContext.Orders
+                .Where(o => o.paymentMethod != null) // Chỉ lấy những đơn hàng có phương thức thanh toán được xác định
+                .GroupBy(o => o.paymentMethod)
+                .Select(g => new { paymentMethod = g.Key, Count = g.Count() })
+                .ToList();
+
+            return Json(paymentMethodCounts);
+        }
+        public IActionResult GetOrderCountsCurrentMonth()
+        {
+            var today = DateTime.Today;
+            var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
+            var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+            var dates = Enumerable.Range(0, (lastDayOfMonth - firstDayOfMonth).Days + 1)
+                .Select(offset => firstDayOfMonth.AddDays(offset))
+                .ToList();
+
+            var orderCounts = dates.Select(date =>
+                new
+                {
+                    Date = date,
+                    Count = _dbContext.Orders
+                        .Count(o => o.orderDate.Date == date && o.IsDelivered == true)
+                }).ToList();
+
+            return Json(orderCounts);
+        }
+
+    }
 }

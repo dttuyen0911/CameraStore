@@ -281,11 +281,11 @@ namespace CameraStore.Controllers
                     }
                     _dbContext.SaveChanges();
 
-                    return RedirectToAction("Index", "Order");
+                    return RedirectToAction("viewOrder", "OrderDetail");
                 }
 
             }
-            return RedirectToAction("Index", "Order");
+            return RedirectToAction("viewOrder", "OrderDetail");
 
         }
         public IActionResult Confirm(int ?orderId)

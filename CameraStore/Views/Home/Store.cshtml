@@ -21,17 +21,18 @@
 </section>
 <!-- Shop Section Begin --> 
 <section>
-< class="shop spad">
+<div class="shop spad">
     <div class="container">
         <div class="row">
-            <div class="col-lg-3">
+            <div class="col-lg-2">
                 <div class="shop__sidebar">
-                    <div class="shop__sidebar__search">
-                        <form action="#">
-                            <input type="text" placeholder="Search...">
-                            <button type="submit"><span class="icon_search"></span></button>
-                        </form>
-                    </div>
+                        <div class="shop__sidebar__search">
+                            <form id="searchForm" action="@Url.Action("Search", "Home")" method="post">
+                                <input id="searchInput" name="keyword" type="text" placeholder="Search...">
+                                <button type="submit"><span class="icon_search"></span></button>
+                            </form>
+                        </div>
+
                     <div class="shop__sidebar__accordion">
                         <div class="accordion" id="accordionExample">
                             <div class="card">
@@ -102,7 +103,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-9" style="border-style: outset;border-radius: 15px;">
+            <div class="col-lg-10" style="border-style: outset;border-radius: 15px;">
                 <div class="shop__product__option">
                     <div class="row">
                         <div class="col-lg-6 col-md-6 col-sm-6">
@@ -122,37 +123,46 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    @foreach (var product in Model)
-                    {
-                        <div class="col-lg-4 col-md-6 col-sm-6">
-                            <div class="product__item sale">
-                                <div class="product__item__pic set-bg">
-                                    <a class="menu-link" asp-area="" asp-controller="Home" asp-action="productDetail" asp-route-id="@product.proID">
-                                        <img src="~/Image/@product.proUrlImage" style="height:260px;width:300px" alt="">
-                                    </a>
-                                    <span class="label">@product.proStatus</span>
-                                </div>
-                                <div class="product__item__text">
-                                    <h6>@product.proName</h6>
-                                    <div class="rating" data-pro-id="@product.proID">
-                                        <!-- 5 sao được đặt ẩn để tránh hiển thị trước khi thêm sao từ JavaScript -->
-                                        <i class="fa fa-star" style="display: none;"></i>
-                                        <i class="fa fa-star" style="display: none;"></i>
-                                        <i class="fa fa-star" style="display: none;"></i>
-                                        <i class="fa fa-star" style="display: none;"></i>
-                                        <i class="fa fa-star" style="display: none;"></i>
-                                    </div>
-                                    <div id="addToCartForm">
-                                        <a href="#" class="menu-link add-cart" data-controller="Cart" data-action="AddToCart" data-customer-id="@User.Identity.Name" data-product-id="@product.proID" data-quantity="1" data-price="@product.proPrice" data-status="@product.proStatus">
-                                            + Add To Cart
+                    <div class="row">
+                        @foreach (var product in Model)
+                        {
+                            <div class="col-lg-4 col-md-6 col-sm-6">
+                                <div class="product__item sale">
+                                    <div class="product__item__pic set-bg">
+                                        <a class="menu-link" asp-area="" asp-controller="Home" asp-action="productDetail" asp-route-id="@product.proID">
+                                            <img src="~/Image/@product.proUrlImage" style="height:260px;width:300px" alt="">
                                         </a>
+                                        <span class="label">@product.proStatus</span>
                                     </div>
-                                    <h5>$@product.proPrice</h5>
+                                    <div class="product__item__text">
+                                        <h6>@product.proName</h6>
+                                        <div class="rating" data-pro-id="@product.proID">
+                                            <!-- 5 sao được đặt ẩn để tránh hiển thị trước khi thêm sao từ JavaScript -->
+                                            <i class="fa fa-star" style="display: none;"></i>
+                                            <i class="fa fa-star" style="display: none;"></i>
+                                            <i class="fa fa-star" style="display: none;"></i>
+                                            <i class="fa fa-star" style="display: none;"></i>
+                                            <i class="fa fa-star" style="display: none;"></i>
+                                        </div>
+                                        <div id="addToCartForm">
+                                            <a href="#" class="menu-link add-cart" data-controller="Cart" data-action="AddToCart" data-customer-id="@User.Identity.Name" data-product-id="@product.proID" data-quantity="1" data-price="@product.proPrice" data-status="@product.proStatus">
+                                                + Add To Cart
+                                            </a>
+                                        </div>
+                                        <h5>$@product.proPrice</h5>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    }
+                        }
+
+                        @if (!Model.Any())
+                        {
+                            <div class="col-12">
+                                <div class="no-data">
+                                    No data
+                                </div>
+                            </div>
+                        }
                     </div>
                 <div class="row">
                     <div class="col-lg-12">
@@ -188,7 +198,10 @@
             This product is currently out of stock. Please choose another product!
         </div>
     </div>
+</div>
 <!-- Shop Section End -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     @functions {
     List<string> GetPriceRanges(int maxPrice)
@@ -216,7 +229,6 @@
         document.getElementById("filterForm").submit();
     }
 </script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
         $('.add-cart').on('click', function (e) {
@@ -296,4 +308,44 @@
         });
     });
 </script>
+    <script>
+        function searchProducts(event) {
+            event.preventDefault(); // Ngăn chặn gửi form mặc định
+
+            var input, filter, products, product, productName, i, txtValue;
+            input = document.getElementById('searchInput');
+            filter = input.value.toUpperCase();
+            products = document.getElementsByClassName('product__item');
+
+            if (filter === "") {
+                // Hiển thị tất cả sản phẩm nếu không có dữ liệu nhập vào
+                for (i = 0; i < products.length; i++) {
+                    products[i].style.display = "";
+                }
+                document.querySelector('.no-data').style.display = 'none'; // Ẩn thông báo "No data"
+            } else {
+                var anyProductDisplayed = false;
+                for (i = 0; i < products.length; i++) {
+                    product = products[i];
+                    productName = product.querySelector('.product__item__text h6');
+                    if (productName) {
+                        txtValue = productName.textContent || productName.innerText;
+                        if (txtValue.toUpperCase().includes(filter)) {
+                            product.style.display = ""; // Hiển thị sản phẩm nếu chứa từ khóa
+                            anyProductDisplayed = true; // Đánh dấu đã tìm thấy ít nhất một sản phẩm
+                        } else {
+                            product.style.display = "none"; // Ẩn sản phẩm nếu không chứa từ khóa
+                        }
+                    }
+                }
+
+                // Hiển thị hoặc ẩn thông báo "No data" dựa trên kết quả tìm kiếm
+                var noDataMessage = document.querySelector('.no-data');
+                noDataMessage.style.display = anyProductDisplayed ? 'none' : '';
+            }
+        }
+
+    </script>
+
+
 </section>

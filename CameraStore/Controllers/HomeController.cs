@@ -48,6 +48,49 @@ namespace CameraStore.Controllers
 
             return View(products); ;
         }
+        [HttpPost]
+        public IActionResult Search(string keyword)
+        {
+            IEnumerable<Product> products;
+
+            if (string.IsNullOrEmpty(keyword))
+            {
+                // Nếu từ khóa là null hoặc rỗng, lấy tất cả sản phẩm
+                products = _dbContext.Products
+                    .Include(c => c.Category)
+                    .Include(s => s.Supplier)
+                    .ToList();
+            }
+            else
+            {
+                // Tìm kiếm sản phẩm theo từ khóa
+                products = _dbContext.Products
+                    .Include(c => c.Category)
+                    .Include(s => s.Supplier)
+                    .Where(p => p.proName.Contains(keyword))
+                    .ToList();
+            }
+
+            // Kiểm tra nếu không có sản phẩm, trả về thông báo "No data"
+            if (!products.Any())
+            {
+                return Content("No data");
+            }
+            var allCategories = _dbContext.Categories
+                  .Select(c => c.cateName)
+                  .Distinct()
+                  .ToList();
+            var allStatus = _dbContext.Products
+                    .Select(p => p.proStatus)
+                    .Distinct()
+                    .ToList();
+            ViewBag.AllStatus = allStatus;
+            ViewBag.AllCategories = allCategories;
+            ViewBag.MaxPrice = products.Max(p => p.proPrice);
+            // Trả về một phần view chứa danh sách sản phẩm
+            return PartialView("Store", products);
+        }
+
 
         public IActionResult Privacy()
         {
@@ -87,12 +130,6 @@ namespace CameraStore.Controllers
             var product = _dbContext.Products.ToList().AsEnumerable();
 
             return View((customer, category, supplier, product));
-        }
-        public IActionResult Search(string searchTerm)
-        {
-            var products = _dbContext.Products.Where(p => p.proName.Contains(searchTerm)).ToList();
-
-            return View("Index", products);
         }
         public IActionResult recommenedProduct()
         { 

@@ -106,7 +106,7 @@
                         </a>
                     </li>
                     <li class="menu-item">
-                        <a class="menu-link" asp-area="" asp-controller="Statistical" asp-action="GetTopProducts">
+                        <a class="menu-link" asp-area="" asp-controller="Statistical" asp-action="Index">
                             <i class="menu-icon tf-icons bx bx-chart"></i>
                             <div data-i18n="Boxicons">Report / Statistical</div>
                         </a>
@@ -164,5 +164,6 @@
 
         <!-- Place this tag in your head or just before your close body tag. -->
         <script async defer src="https://buttons.github.io/buttons.js"></script>
+        @RenderSection("scripts", required: false)
 </body>
 </html>
