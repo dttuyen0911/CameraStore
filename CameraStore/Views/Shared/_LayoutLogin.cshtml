@@ -20,5 +20,7 @@
     <!-- JS -->
     <script src="~/authentication/vendor/jquery/jquery.min.js"></script>
     <script src="~/authentication/js/main.js"></script>
+    @await Component.InvokeAsync("Notyf")
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

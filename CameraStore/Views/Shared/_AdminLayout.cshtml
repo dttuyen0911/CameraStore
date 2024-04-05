@@ -126,7 +126,8 @@
         <!-- endbuild -->
         <!-- Vendors JS -->
         <script src="~/AdminLayout/vendor/libs/apex-charts/apexcharts.js"></script>
-
+        @await Component.InvokeAsync("Notyf")
+        @RenderSection("Scripts", required: false)
         <!-- Main JS -->
         <script src="~/AdminLayout/js/main.js"></script>
 

@@ -28,6 +28,7 @@ namespace CameraStore.Models
         public virtual ICollection<Feedback>? Feedbacks { get; set; }
         public virtual ICollection<Cart>? Carts { get; set; }
         public virtual ICollection<Order>? Orders { get; set; }
+
         public Customer()
         {
             createAt = DateTime.Now;

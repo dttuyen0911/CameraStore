@@ -49,9 +49,5 @@ namespace CameraStore.ViewComponents
             ViewBag.CartItemCount = 0;
             return View(); // Trả về partial view mặc định nếu không có người dùng đăng nhập
         }
-
-
-
-
     }
 }

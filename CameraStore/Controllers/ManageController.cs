@@ -1,4 +1,5 @@
 ﻿using CameraStore.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,12 +16,15 @@ namespace CameraStore.Controllers
         {
             return View();
         }
+        [Authorize(Policy = "AdminPolicy")]
+
         public IActionResult DashboardAdmin()
         {
             var customers = _dbContext.Customers.ToList().AsEnumerable();
             var roles = _dbContext.Roles.ToList().AsEnumerable();
             return View((customers, roles));
         }
+        [Authorize(Policy = "EmployeePolicy")]
         public IActionResult DashboardEmployee()
         {
             var product = _dbContext.Products.ToList().AsEnumerable();
@@ -31,6 +35,8 @@ namespace CameraStore.Controllers
             var feedback = _dbContext.Feedbacks.ToList().AsEnumerable();
             return View((product, category,supplier,cart,order,feedback));
         }
+        [Authorize(Policy = "OwnerPolicy")]
+
         public IActionResult DashboardOwner()
         {
             var product = _dbContext.Products.ToList().AsEnumerable();

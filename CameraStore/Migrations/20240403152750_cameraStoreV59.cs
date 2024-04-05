@@ -5,7 +5,7 @@
 namespace CameraStore.Migrations
 {
     /// <inheritdoc />
-    public partial class cameraStoreV52 : Migration
+    public partial class cameraStoreV59 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

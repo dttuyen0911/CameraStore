@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CameraStore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240401172218_cameraStoreV53")]
-    partial class cameraStoreV53
+    [Migration("20240404032426_cameraStoreV61")]
+    partial class cameraStoreV61
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -102,6 +102,37 @@ namespace CameraStore.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("CameraStore.Models.Chatbot", b =>
+                {
+                    b.Property<int>("ChatID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChatID"));
+
+                    b.Property<string>("chatName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("chatTelephone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("chatTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("isSend")
+                        .HasColumnType("bit");
+
+                    b.HasKey("ChatID");
+
+                    b.ToTable("Chatbots");
+                });
+
             modelBuilder.Entity("CameraStore.Models.Customer", b =>
                 {
                     b.Property<int>("customerID")
@@ -149,8 +180,8 @@ namespace CameraStore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("feedID"));
 
-                    b.Property<decimal>("StarRating")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("StarRating")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("createDate")
                         .HasColumnType("datetime2");

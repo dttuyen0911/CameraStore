@@ -146,6 +146,8 @@
         <script src="~/Plusgin/tables/js/datatable/dataTables.bootstrap4.min.js"></script>
         <script src="~/Plusgin/tables/js/datatable-init/datatable-basic.min.js"></script>
         <script src="~/AdminLayout/vendor/js/menu.js"></script>
+        @await Component.InvokeAsync("Notyf")
+        @RenderSection("Scripts", required: false)
         <!-- endbuild -->
         <!-- Vendors JS -->
         <script src="~/AdminLayout/vendor/libs/apex-charts/apexcharts.js"></script>

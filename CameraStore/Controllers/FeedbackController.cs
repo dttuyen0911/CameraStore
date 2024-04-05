@@ -1,6 +1,7 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using CameraStore.Data;
 using CameraStore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,13 +19,13 @@ namespace CameraStore.Controllers
             _dbContext = dbContext;
             _notyf = notyf;
         }
-
+        [Authorize(Policy = "EmployeePolicy")]
         public IActionResult Index()
         {
             IEnumerable<Feedback> feedbacks = _dbContext.Feedbacks.ToList();
             return View(feedbacks);
         }
-
+        
         public IActionResult Create(int orderID)
         {
             OrderDetail orderDetail = _dbContext.OrderDetails.FirstOrDefault(od => od.orderID == orderID);
@@ -44,6 +45,7 @@ namespace CameraStore.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public IActionResult Create([FromForm] Feedback feedback, IFormFile feedImage, [FromForm] int StarRating, int orderId)
         {
             if (ModelState.IsValid)
@@ -86,6 +88,7 @@ namespace CameraStore.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult CheckSubmit(int orderId)
         {
             OrderDetail orderDetail = _dbContext.OrderDetails

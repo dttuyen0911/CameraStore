@@ -24,36 +24,35 @@
     <link rel="stylesheet" href="~/cameraStoreLayout/css/owl.carousel.min.css" type="text/css">
     <link rel="stylesheet" href="~/cameraStoreLayout/css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="~/cameraStoreLayout/css/style.css" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @await Component.InvokeAsync("Notyf")
-    @RenderSection("Scripts", required: false)
+
 </head>
 
 <body>
     <header>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-1 col-md-1">
-                <div class="header__logo">
-                    <a asp-area="" asp-controller="Home" asp-action="Index"><img src="~/image/logo1.png" alt=""></a>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-1 col-md-1">
+                    <div class="header__logo">
+                        <a asp-area="" asp-controller="Home" asp-action="Index"><img src="~/image/logo1.png" alt=""></a>
+                    </div>
                 </div>
-            </div>
-            <div class="col-lg-4 col-md-4">
-                <nav class="header__menu mobile-menu">
-                    <ul>
+                <div class="col-lg-4 col-md-4">
+                    <nav class="header__menu mobile-menu">
+                        <ul>
                             <li>
                                 <a class="menu-link" asp-area="" asp-controller="Home" asp-action="Store">Shop</a>
-                         </li>
-                            <li><a asp-area ="" asp-controller="Home" asp-action="AboutUs">About us</a></li>
+                            </li>
+                            <li><a asp-area="" asp-controller="Home" asp-action="AboutUs">About us</a></li>
                             <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contacts</a></li>
-                    </ul>
-                </nav>
-            </div>
+                        </ul>
+                    </nav>
+                </div>
                 <div class="col-lg-3 col-md-3">
                     <div class="header__menu mobile-menu">
                         <input id="searchInput" type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
                         <div class="menus">
-
                         </div>
                     </div>
                 </div>
@@ -73,8 +72,8 @@
                         }
                     </div>
                 </div>
-                    <div class="col-lg-3 col-md-3">
-                        <div class="header__nav__option">
+                <div class="col-lg-3 col-md-3">
+                    <div class="header__nav__option">
                         <img src="~/cameraStoreLayout/img/icon/user.png" alt="" style="margin-left: 10px;width:30px;height:30px;display:block">
                         @if (User.Identity.IsAuthenticated)
                         {
@@ -116,7 +115,7 @@
                                         <i class="fa fa-book" aria-hidden="true"></i><a asp-area="" asp-controller="OrderDetail" asp-action="viewOrder">Order</a>
                                     </li>
                                     <li>
-                                        <i class="fa fa-comment" aria-hidden="true"></i><a href="#">Message</a>
+                                        <i class="fa fa-comment" aria-hidden="true"></i><a asp-area="" asp-controller="Message" asp-action="Index">Message</a>
                                     </li>
                                     <li>
                                         <i class="fa fa-sign-out" aria-hidden="true"></i><a asp-area="" asp-controller="Authentication" asp-action="Logout">Logout</a>
@@ -134,17 +133,94 @@
                             </ul>
                         </div>
 
-                        </div>
+                    </div>
                 </div>
             </div>
-        <div class="canvas__open"><i class="fa fa-bars"></i></div>
-    </div>
+            <div class="canvas__open"><i class="fa fa-bars"></i></div>
+        </div>
     </header>
-       @RenderBody()
+    @RenderBody()
     <!-- chatbot -->
-    <div class ="chat_icon">
-        <i class=" fa fa-comments" aria-hidden="true"></i>
-    </div>
+    @if (User.Identity.IsAuthenticated)
+    {
+        @if (User.IsInRole("Customer"))
+        {
+            <div class="chat_icon" id="chatIcon">
+                <i class="fa fa-comments" aria-hidden="true"></i>
+            </div>
+            <div class="chatbot-container" id="chatBox">
+                <div id="header">
+                    <h4 b-hsukbasm6h="" style="text-align: center;">
+                        Chat with us
+                    </h4>
+                </div>
+                <div id="chatbot">
+                    <div id="conversation">
+                        <div class="chatbot-message">
+                            <p class="chatbot-text">👋 Hi, let us know if you have any questions. We're happy to help!</p>
+                            <span class="message-time"></span>
+                        </div>
+                    </div>
+                    <form id="input-form">
+                        <message-container>
+                            <input id="input-field" type="text" placeholder="Type your message here">
+                            <button id="submit-button" type="submit">
+                                <i class="fas fa-paper-plane"></i> <!-- Icon "send" từ Font Awesome -->
+                            </button>
+                        </message-container>
+                    </form>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="chat_icon" id="chatIcon" display="none">
+                <i class="fa fa-comments" aria-hidden="true"></i>
+            </div>
+        }
+
+    }
+    else
+    {
+        <div class="chat_icon" id="chatIcon">
+            <i class="fa fa-comments" aria-hidden="true"></i>
+        </div>
+        <div class="chatbot-container" id="chatBox">
+            <div id="header">
+                <h4 b-hsukbasm6h="" style="text-align: center;">
+                    Chat with us
+                </h4>
+            </div>
+            <div id="chatbot">
+                <div id="conversation">
+                    <!-- Hiển thị form nhập thông tin người dùng nếu chưa đăng nhập -->
+                    <div id="userInputForm" style="text-align: center;">
+                        <!-- Form nhập user name và telephone -->
+                        <input id="input-name" type="text" placeholder="Enter your full name" style="display: block; margin: 0 auto 10px;">
+                        <input id="input-phone" type="text" placeholder="Enter your phone number" style="display: block; margin: 0 auto 10px;">
+                        <button id="submit-user-info" style="display: block; margin: 0 auto;">Submit</button>
+                    </div>
+                    <!-- Chat-bot message sẽ không được hiển thị -->
+                    <div class="chatbot-message" style="display: none;">
+                        <p class="chatbot-text">👋 Hi, let us know if you have any questions. We're happy to help!</p>
+                        <span class="message-time"></span>
+                    </div>
+                </div>
+                <div id="message-container" style="display: none;">
+                    <!-- Form chat -->
+                    <form id="input-form">
+                        <message-container>
+                            <input id="input-field" type="text" placeholder="Type your message here">
+                            <button id="submit-button" type="submit">
+                                <i class="fas fa-paper-plane"></i> <!-- Icon "send" từ Font Awesome -->
+                            </button>
+                        </message-container>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+
 
     <!-- Footer Section Begin -->
     <footer class="footer">
@@ -153,7 +229,7 @@
                 <div class="col-lg-4 col-md-5 col-sm-5">
                     <div class="footer__widget">
                         <h6>CAMERA STORE</h6>
-                        <p>Camera Store is a place specializing in providing quality cameras and accessories from used to new products. Our products have been carefully inspected before being delivered to your hands. Our store's motto is "Customer satisfaction is our success".</p>                        
+                        <p>Camera Store is a place specializing in providing quality cameras and accessories from used to new products. Our products have been carefully inspected before being delivered to your hands. Our store's motto is "Customer satisfaction is our success".</p>
                         <a href="#"><img src="../cameraStoreLayout/img/payment.png" alt=""></a>
                         <ul class="footer-links">
                             <li><a href="#"><i class="fa fa-map-marker"></i>Ninh Kieu District, Can Tho City </a></li>
@@ -213,23 +289,117 @@
     <script src="~/cameraStoreLayout/js/owl.carousel.min.js"></script>
     <script src="~/cameraStoreLayout/js/main.js"></script>
     <script type="text/javascript" scr=""></script>
+    <script src="chatbot.js"></script>
+    @await Component.InvokeAsync("Notyf")
     @RenderSection("Scripts", required: false)
-    @section scripts {
     <script>
-        // Lắng nghe sự kiện nhập liệu trong hộp tìm kiếm
-        document.getElementById('searchInput').addEventListener('input', function () {
-            // Lấy giá trị từ hộp tìm kiếm
-            var searchTerm = this.value;
+        document.addEventListener("DOMContentLoaded", function () {
+            var userInputForm = document.getElementById("userInputForm");
+            var messageContainer = document.getElementById("message-container");
+            var chatbotMessage = document.querySelector("#conversation .chatbot-message");
 
-            // Gửi yêu cầu tìm kiếm bằng Ajax
-            $.ajax({
-                url: '@Url.Action("Search", "Product")',
-                type: 'GET',
-                data: { searchTerm: searchTerm },
-                success: function (data) {
-                    // Hiển thị kết quả tìm kiếm trong overlay
-                    $('#searchResultsOverlay').html(data);
-                    $('#searchResultsOverlay').show(); // Hiển thị overlay
+            document.getElementById("submit-user-info").addEventListener("click", function (event) {
+                event.preventDefault();
+
+                var formData = new FormData();
+                formData.append("chatName", document.getElementById("input-name").value.trim());
+                formData.append("chatTelephone", document.getElementById("input-phone").value.trim());
+
+                fetch("/Message/Create", {
+                    method: "POST",
+                    body: formData
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Xử lý phản hồi từ server nếu cần
+                        console.log(data);
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                    });
+
+                // Ẩn form nhập user name và telephone
+                userInputForm.style.display = "none";
+                // Hiển thị form chat
+                messageContainer.style.display = "block";
+                // Hiển thị chatbot message
+                chatbotMessage.style.display = "block";
+            });
+        });
+    </script>
+    <script>
+        var isChatboxVisible = false;
+        var conversationHistory = []; // Mảng để lưu trữ lịch sử cuộc trò chuyện
+
+        document.getElementById("chatIcon").addEventListener("click", function () {
+            var chatBox = document.getElementById("chatBox");
+            if (isChatboxVisible) {
+                chatBox.style.display = "none";
+            } else {
+                chatBox.style.display = "block";
+            }
+            isChatboxVisible = !isChatboxVisible;
+        });
+
+        document.getElementById("input-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+            var userInput = document.getElementById("input-field").value;
+            sendMessage(userInput); // Gửi tin nhắn từ người dùng
+            document.getElementById("input-field").value = ""; // Xóa nội dung trong input field
+            replyMessage(); // Trả lời tin nhắn từ chatbot
+        });
+        function getCurrentTime() {
+            var now = new Date();
+            var hours = now.getHours().toString().padStart(2, "0"); // Thêm số 0 phía trước nếu cần
+            var minutes = now.getMinutes().toString().padStart(2, "0"); // Thêm số 0 phía trước nếu cần
+            return hours + ":" + minutes;
+        }
+
+        function sendMessage(message) {
+            var conversation = document.getElementById("conversation");
+            var userMessage = document.createElement("div");
+            userMessage.classList.add("user-message");
+            userMessage.innerHTML = '<p class="user-text">' + message + '</p>';
+            // Thêm thời gian hiện tại vào tin nhắn từ user
+            userMessage.innerHTML += '<p class="message-time">' + getCurrentTime() + '</p>';
+            conversation.appendChild(userMessage);
+            // Lưu tin nhắn từ người dùng vào lịch sử cuộc trò chuyện
+            conversationHistory.push({ sender: "user", message: message, time: getCurrentTime() });
+        }
+
+        function replyMessage() {
+            var conversation = document.getElementById("conversation");
+            var chatbotMessage = document.createElement("div");
+            chatbotMessage.classList.add("chatbot-message");
+            chatbotMessage.innerHTML = '<p class="chatbot-text">I received your message. I will reply shortly.</p>';
+            // Thêm thời gian hiện tại vào tin nhắn từ chatbot
+            chatbotMessage.innerHTML += '<p class="message-time">' + getCurrentTime() + '</p>';
+            conversation.appendChild(chatbotMessage);
+            // Lưu tin nhắn từ chatbot vào lịch sử cuộc trò chuyện
+            conversationHistory.push({ sender: "chatbot", message: "I received your message. I will reply shortly.", time: getCurrentTime() });
+        }
+    </script>
+    @section scripts {
+        <script>
+            // Lắng nghe sự kiện nhập liệu trong hộp tìm kiếm
+            document.getElementById('searchInput').addEventListener('input', function () {
+                // Lấy giá trị từ hộp tìm kiếm
+                var searchTerm = this.value;
+
+                // Gửi yêu cầu tìm kiếm bằng Ajax
+                $.ajax({
+                    url: '@Url.Action("Search", "Product")',
+                    type: 'GET',
+                    data: { searchTerm: searchTerm },
+                    success: function (data) {
+                        // Hiển thị kết quả tìm kiếm trong overlay
+                        $('#searchResultsOverlay').html(data);
+                        $('#searchResultsOverlay').show(); // Hiển thị overlay
                     }, error: function () {
                         // Xử lý lỗi nếu có
                     }

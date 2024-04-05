@@ -1,11 +1,14 @@
 ﻿using CameraStore.Data;
 using CameraStore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
 
 namespace CameraStore.Controllers
 {
+    [Authorize(Policy = "EmployeeOwner")]
+
     public class SupplierController : Controller
     {
         private readonly ApplicationDbContext _dbContext;

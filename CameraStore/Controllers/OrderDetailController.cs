@@ -1,12 +1,14 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using CameraStore.Data;
 using CameraStore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace CameraStore.Controllers
 {
+    [Authorize]
     public class OrderDetailController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
@@ -16,6 +18,7 @@ namespace CameraStore.Controllers
             _dbContext = dbContext;
             _notyf = notyf;
         }
+        [Authorize(Policy = "EmployeePolicy")]
         public IActionResult Index(int ?id)
         {
             if (id == null)

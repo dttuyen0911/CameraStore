@@ -1,13 +1,11 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using CameraStore.Data;
 using CameraStore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
-using System.Drawing.Printing;
-using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -19,7 +17,7 @@ namespace CameraStore.Controllers
         private readonly ApplicationDbContext _dbContext;
         private readonly INotyfService _notyf;
 
-        public HomeController(ILogger<HomeController> logger,ApplicationDbContext dbContext, INotyfService notyf)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext dbContext, INotyfService notyf)
         {
             _dbContext = dbContext;
             _logger = logger;
@@ -131,10 +129,7 @@ namespace CameraStore.Controllers
 
             return View((customer, category, supplier, product));
         }
-        public IActionResult recommenedProduct()
-        { 
-            return View();
-        }
+        [Authorize]
         public IActionResult settingAccount()
         {
             int userId = Convert.ToInt32(User.Identity.Name);
@@ -152,6 +147,7 @@ namespace CameraStore.Controllers
             }
         }
         [HttpPost]
+        [Authorize]
         public IActionResult ChangeInfo(Customer updatedCustomer)
         {
             // Lấy thông tin khách hàng hiện tại từ cơ sở dữ liệu
@@ -162,7 +158,8 @@ namespace CameraStore.Controllers
             }
             if (updatedCustomer.email == null || updatedCustomer.fullname == null || updatedCustomer.telephone == null)
             {
-                return Ok(new { success = false });// Trả về thông báo lỗi nếu mật khẩu hiện tại không đúng
+                _notyf.Error("Please fill in all required fields in the Account.");
+                return Ok();
             }
             // Cập nhật thông tin của khách hàng trong cơ sở dữ liệu
             existingCustomer.email = updatedCustomer.email;
@@ -171,18 +168,18 @@ namespace CameraStore.Controllers
 
             // Lưu thay đổi vào cơ sở dữ liệu
             _dbContext.SaveChanges();
-
-            return Ok(new { success = true });
+            _notyf.Success("Information updated successfully.");
+            return Ok();
         }
 
 
         private bool IsEmailUnique(string email, int? customerId = null)
-            {
-                var existingCustomer = _dbContext.Customers
-                    .FirstOrDefault(c => c.email == email && c.customerID != customerId);
+        {
+            var existingCustomer = _dbContext.Customers
+                .FirstOrDefault(c => c.email == email && c.customerID != customerId);
 
-                return existingCustomer == null;
-            }
+            return existingCustomer == null;
+        }
         private bool IsValidEmail(string email)
         {
             try
@@ -196,6 +193,7 @@ namespace CameraStore.Controllers
             }
         }
         [HttpPost]
+        [Authorize]
         public IActionResult ChangePassword(int customerID, string currentPassword, string newPassword)
         {
             var existingCustomer = _dbContext.Customers.FirstOrDefault(c => c.customerID == customerID);
@@ -207,18 +205,19 @@ namespace CameraStore.Controllers
 
             if (string.IsNullOrEmpty(currentPassword) || string.IsNullOrEmpty(newPassword))
             {
-                return BadRequest("Please provide both current and new passwords."); // Trả về thông báo lỗi nếu trường mật khẩu trống
+                _notyf.Error("Please provide both current and new passwords.");
             }
 
             if (existingCustomer.password != GetMD5(currentPassword))
             {
-                return Ok(new { success = false });// Trả về thông báo lỗi nếu mật khẩu hiện tại không đúng
+                _notyf.Error("Incorrect current password or an error occurred.");
+                return Ok();// Trả về thông báo lỗi nếu mật khẩu hiện tại không đúng
             }
 
             existingCustomer.password = GetMD5(newPassword);
             _dbContext.SaveChanges();
-
-            return Ok(new { success = true });
+            _notyf.Success("Password changed successfully.");
+            return Ok();
         }
 
 
@@ -277,7 +276,12 @@ namespace CameraStore.Controllers
                 return NotFound();
             }
 
-            return View(product);
+            var recommendedProductList = GetRecommendedProducts(product.proID);
+
+            // Truyền cả sản phẩm hiện tại và danh sách sản phẩm được đề xuất vào view dưới dạng một đối tượng Tuple
+            var model = new Tuple<Product, List<Product>>(product, recommendedProductList);
+
+            return View(model);
         }
         public IActionResult Store(string selectedStatus, string[] selectedCategories, string sortByPrice = "Recommended", int page = 1, int pageSize = 10)
         {
@@ -338,5 +342,50 @@ namespace CameraStore.Controllers
 
             return View(paginatedProducts);
         }
+        private List<Product> GetRecommendedProducts(int productId)
+        {
+            int userId = 0; // Sử dụng giá trị mặc định cho userId nếu người dùng không đăng nhập
+
+            // Tiếp tục lấy lịch sử mua hàng của người dùng nếu có
+            var userPurchases = _dbContext.Orders
+                .Where(o => o.customerID == userId)
+                .SelectMany(o => o.orderdetails.Select(od => od.proID))
+                .ToList();
+
+            // Tìm các người dùng khác đã mua các sản phẩm tương tự
+            var similarUsers = _dbContext.Orders
+                .Where(o => o.customerID != userId && o.orderdetails.Any(od => userPurchases.Contains(od.proID)))
+                .Select(o => o.customerID)
+                .Distinct()
+                .ToList();
+
+            // Tìm các sản phẩm được mua nhiều nhất bởi các người dùng tương tự
+            var mostPurchasedProducts = _dbContext.Orders
+                .Where(o => similarUsers.Contains(o.customerID))
+                .SelectMany(o => o.orderdetails)
+                .GroupBy(od => od.proID)
+                .OrderByDescending(g => g.Count())
+                .Take(9) // Điều chỉnh số lượng sản phẩm gợi ý tùy ý
+                .Select(g => g.Key)
+                .ToList();
+
+            // Tìm sản phẩm được phản hồi tốt nhất
+            var topRatedProducts = _dbContext.Products
+                 .Where(p => p.Feedbacks.Any()) // Chỉ lấy sản phẩm có phản hồi
+                 .OrderByDescending(p => p.Feedbacks.Average(f => f.StarRating)) // Sắp xếp theo đánh giá trung bình
+                 .Take(5) // Lấy 5 sản phẩm phản hồi tốt nhất
+                 .ToList();
+
+            var topRatedProductIds = topRatedProducts.Select(p => p.proID).ToList();
+
+            // Kết hợp danh sách các sản phẩm được đề xuất từ lịch sử mua hàng và sản phẩm được phản hồi tốt nhất
+            var recommendedProducts = _dbContext.Products
+                .Where(p => mostPurchasedProducts.Contains(p.proID) || topRatedProductIds.Contains(p.proID) && p.proID != productId) // Sử dụng Contains() để so sánh danh sách proID
+                .Take(6 - topRatedProducts.Count) // Bổ sung thêm các sản phẩm được phản hồi tốt nhất để đảm bảo tổng số sản phẩm là 6
+                .ToList();
+
+            return recommendedProducts;
+        }
+
     }
 }

@@ -20,6 +20,8 @@ namespace CameraStore.Controllers
             _notyf = notyf;
 
         }
+        [Authorize(Policy = "EmployeePolicy")]
+
         public IActionResult Index()
         {
             IEnumerable<Cart> cart = _dbContext.Carts.ToList();
@@ -39,6 +41,7 @@ namespace CameraStore.Controllers
         }
        
         [HttpPost]
+        [Authorize]
         // Sử dụng Authorize attribute để chỉ cho phép người dùng đã đăng nhập truy cập hành động này
         public IActionResult AddToCart(int productId, int quantity, decimal price)
         {
@@ -118,6 +121,7 @@ namespace CameraStore.Controllers
             return Json(new { productId = productId, quantity = quantity, price = price });
         }
         [HttpPost]
+        [Authorize]
         // Cập nhật số lượng sản phẩm trong giỏ hàng
         public IActionResult UpdateCart(int cartId, int proId, int quantity)
         {
@@ -192,6 +196,7 @@ namespace CameraStore.Controllers
             return Json(new { subtotal = subtotal });
         }
         [HttpPost]
+        [Authorize]
         public IActionResult RemoveCart(int cartId, int proId)
         {
             var cartDetail = _dbContext.CartDetails.FirstOrDefault(cd => cd.cartID == cartId && cd.proID == proId);
@@ -250,9 +255,6 @@ namespace CameraStore.Controllers
 
             return Ok();
         }
-
-
-
     }
 }
 

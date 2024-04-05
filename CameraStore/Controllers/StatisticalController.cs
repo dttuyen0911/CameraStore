@@ -1,11 +1,14 @@
 ﻿using CameraStore.Data;
 using CameraStore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace CameraStore.Controllers
 {
+    [Authorize(Policy = "OwnerPolicy")]
+
     public class StatisticalController : Controller
     {
         private readonly ApplicationDbContext _dbContext;

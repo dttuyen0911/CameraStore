@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CameraStore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240401193445_cameraStoreV55")]
-    partial class cameraStoreV55
+    [Migration("20240404031744_cameraStoreV60")]
+    partial class cameraStoreV60
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -100,6 +100,42 @@ namespace CameraStore.Migrations
                     b.HasKey("cateID");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("CameraStore.Models.Chatbot", b =>
+                {
+                    b.Property<int>("ChatID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChatID"));
+
+                    b.Property<string>("chatName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("chatTelephone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("chatTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("customerID")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("isSend")
+                        .HasColumnType("bit");
+
+                    b.HasKey("ChatID");
+
+                    b.HasIndex("customerID");
+
+                    b.ToTable("Chatbots");
                 });
 
             modelBuilder.Entity("CameraStore.Models.Customer", b =>
@@ -396,6 +432,17 @@ namespace CameraStore.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("CameraStore.Models.Chatbot", b =>
+                {
+                    b.HasOne("CameraStore.Models.Customer", "Customer")
+                        .WithMany("Chatbots")
+                        .HasForeignKey("customerID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
             modelBuilder.Entity("CameraStore.Models.Customer", b =>
                 {
                     b.HasOne("CameraStore.Models.Role", "Role")
@@ -488,6 +535,8 @@ namespace CameraStore.Migrations
             modelBuilder.Entity("CameraStore.Models.Customer", b =>
                 {
                     b.Navigation("Carts");
+
+                    b.Navigation("Chatbots");
 
                     b.Navigation("Feedbacks");
 

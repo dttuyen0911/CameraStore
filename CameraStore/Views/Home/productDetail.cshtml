@@ -1,4 +1,4 @@
-﻿@model CameraStore.Models.Product
+﻿@model Tuple<Product, List<Product>>
 
 @{
     ViewData["Title"] = "productDetail";
@@ -30,7 +30,7 @@
                     <div class="tab-content">
                         <div class="tab-pane active" id="tabs-1" role="tabpanel">
                             <div class="product__details__pic__item">
-                                <img src="~/Image/@Model.proUrlImage" alt="" style="height:500px;width:700px">
+                                <img src="~/Image/@Model.Item1.proUrlImage" alt="" style="height:500px;width:700px">
                             </div>
                         </div>
                     </div>
@@ -38,18 +38,18 @@
                 <!-- Product Description Column -->
                 <div class="col-lg-5 col-md-5" style="background:#ffffff">
                     <div class="product__details__text">
-                        <h3>@Model.proName.ToUpper()</h3>
-                        @if (Model.proSale == Model.proPrice)
+                        <h3>@Model.Item1.proName.ToUpper()</h3>
+                        @if (Model.Item1.proSale == Model.Item1.proPrice)
                         {
-                            <h4 style="color:#ff0000">Price: $@Model.proSale</h4>
+                            <h4 style="color:#ff0000">Price: $@Model.Item1.proSale</h4>
                         }
                         else
                         {
-                            <h4 style="color:#ff0000">Price: @Model.proSale <span>$@Model.proPrice</span></h4>
+                            <h4 style="color:#ff0000">Price: @Model.Item1.proSale <span>$@Model.Item1.proPrice</span></h4>
                         }                        
-                        <h4>Status: @Model.proStatus</h4>
-                        <h4>Quantity: @Model.proQuantity</h4>
-                        <h4>Sold: @Model.proQuantitySold</h4>
+                        <h4>Status: @Model.Item1.proStatus</h4>
+                        <h4>Quantity: @Model.Item1.proQuantity</h4>
+                        <h4>Sold: @Model.Item1.proQuantitySold</h4>
                         <div class="rating" id="productRating">
                             <!-- Các sao sẽ được thêm bởi JavaScript -->
                             <i id="starContainer"></i>
@@ -57,20 +57,20 @@
                         </div>
 
                         <p>
-                            @Model.proDescription
+                            @Model.Item1.proDescription
                         </p>
                         <a href="#tabs-5">Read More</a>
                         <div class="product__details__cart__option">
                             <div style="margin-bottom: 10px;">
-                                <input type="number" value="1" min="0" max="@Model.proQuantity">
+                                <input type="number" value="1" min="0" max="@Model.Item1.proQuantity">
                             </div>
                             <div class="quantity">
                                 <form class="add-to-cart-form" method="post" action="@Url.Action("AddToCart", "Cart")">
                                     <input type="hidden" name="customerId" value="@User.Identity.Name" />
-                                    <input type="hidden" name="productId" value="@Model.proID" />
+                                    <input type="hidden" name="productId" value="@Model.Item1.proID" />
                                     <input type="hidden" name="quantity" value="1" />
-                                    <input type="hidden" name="status" value="@Model.proStatus" />
-                                    <input type="hidden" name="price" value="@Model.proPrice" />
+                                    <input type="hidden" name="status" value="@Model.Item1.proStatus" />
+                                    <input type="hidden" name="price" value="@Model.Item1.proPrice" />
                                     <button type="submit" class="primary-btn">Add To Cart</button>
                                 </form>
                                 </div>
@@ -119,7 +119,7 @@
                                     <div class="product__details__tab__content__item">
                                         <h5>Products Infomation</h5>
                                         <p>
-                                            @Model.proDescription
+                                            @Model.Item1.proDescription
                                         </p>
                                     </div>
                                 </div>
@@ -127,7 +127,7 @@
                             <div class="tab-pane" id="tabs-6" role="tabpanel">
                                 <div class="product__details__tab__content">
                                     <div class="row" style="border-radius: 20px;border: outset;margin-bottom: 10px;">
-                                        <div class="col-lg-2 col-md-2" data-pro-id="@Model.proID" style="text-align: center; border-radius: 20px; border: outset; background-color: transparent; cursor: pointer;">
+                                        <div class="col-lg-2 col-md-2" data-pro-id="@Model.Item1.proID" style="text-align: center; border-radius: 20px; border: outset; background-color: transparent; cursor: pointer;">
                                             <span id="feedbackValue" style="display: ruby-text"></span>
                                             <i class="fa fa-star" style="color: orange; font-size: 20px;display:none"></i>
                                             <i class="fa fa-star" style="color: orange; font-size: 20px;display:none"></i>
@@ -146,7 +146,7 @@
                                             int starRatingCount5 = 0; // Khởi tạo biến đếm cho đánh giá sao có giá trị 5
                                         }
 
-                                        @foreach (var item in Model.Feedbacks)
+                                        @foreach (var item in Model.Item1.Feedbacks)
                                         {
                                             switch (item.StarRating) // Sử dụng switch để xác định giá trị đánh giá sao
                                             {
@@ -202,7 +202,7 @@
                                         
                                     </div>
                                     <div id="feedback-container">
-                                        @foreach (var feedback in Model.Feedbacks)
+                                        @foreach (var feedback in Model.Item1.Feedbacks)
                                         {
                                             <div class="col-12 feedback-item" data-rating="@feedback.StarRating" style="border: outset; border-radius: 15px; display: none;">
                                                 <h5>@feedback.Customer.fullname</h5>
@@ -247,147 +247,49 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
-                <div class="product__item">
-                    <div class="product__item__pic set-bg" data-setbg="../cameraStoreLayout/img/product/product-1.jpg">
-                        <span class="label">New</span>
-                        <ul class="product__hover">
-                            <li><a href="#"><img src="../cameraStoreLayout/img/icon/heart.png" alt=""></a></li>
-                            <li><a href="#"><img src="../cameraStoreLayout/img/icon/compare.png" alt=""> <span>Compare</span></a></li>
-                            <li><a href="#"><img src="../cameraStoreLayout/img/icon/search.png" alt=""></a></li>
-                        </ul>
-                    </div>
-                    <div class="product__item__text">
-                        <h6>Piqué Biker Jacket</h6>
-                        <a href="#" class="add-cart">+ Add To Cart</a>
-                        <div class="rating">
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
+            @foreach (var recommendedProduct in Model.Item2)
+            {
+                <div class="col-lg-4 col-md-6 col-sm-6 col-md-6 col-sm-6 mix new-arrivals">
+                    <div class="product__item">
+                        <div class="product__item__pic set-bg">
+                            <a class="menu-link" asp-area="" asp-controller="Home" asp-action="productDetail" asp-route-id="@recommendedProduct.proID">
+                                <img src="~/Image/@recommendedProduct.proUrlImage" style="height:260px;width:300px" alt="">
+                            </a>
+                            <span class="label">@recommendedProduct.proStatus</span>
                         </div>
-                        <h5>$67.24</h5>
-                        <div class="product__color__select">
-                            <label for="pc-1">
-                                <input type="radio" id="pc-1">
-                            </label>
-                            <label class="active black" for="pc-2">
-                                <input type="radio" id="pc-2">
-                            </label>
-                            <label class="grey" for="pc-3">
-                                <input type="radio" id="pc-3">
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
-                <div class="product__item">
-                    <div class="product__item__pic set-bg" data-setbg="../cameraStoreLayout/img/product/product-2.jpg">
-                        <ul class="product__hover">
-                            <li><a href="#"><img src="../cameraStoreLayout/img/icon/heart.png" alt=""></a></li>
-                            <li><a href="#"><img src="../cameraStoreLayout/img/icon/compare.png" alt=""> <span>Compare</span></a></li>
-                            <li><a href="#"><img src="../cameraStoreLayout/img/icon/search.png" alt=""></a></li>
-                        </ul>
-                    </div>
-                    <div class="product__item__text">
-                        <h6>Piqué Biker Jacket</h6>
-                        <a href="#" class="add-cart">+ Add To Cart</a>
-                        <div class="rating">
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                        </div>
-                        <h5>$67.24</h5>
-                        <div class="product__color__select">
-                            <label for="pc-4">
-                                <input type="radio" id="pc-4">
-                            </label>
-                            <label class="active black" for="pc-5">
-                                <input type="radio" id="pc-5">
-                            </label>
-                            <label class="grey" for="pc-6">
-                                <input type="radio" id="pc-6">
-                            </label>
+
+                        <div class="product__item__text">
+                            <h6>@recommendedProduct.proName</h6>
+                            <div class="starRating" data-pro-id="@recommendedProduct.proID">
+                                <!-- 5 sao được đặt ẩn để tránh hiển thị trước khi thêm sao từ JavaScript -->
+                                <i class="fa fa-star" style="display: none;"></i>
+                                <i class="fa fa-star" style="display: none;"></i>
+                                <i class="fa fa-star" style="display: none;"></i>
+                                <i class="fa fa-star" style="display: none;"></i>
+                                <i class="fa fa-star" style="display: none;"></i>
+                            </div>
+                            <div id="addToCartForm">
+                                <a href="#" class="menu-link add-cart" data-controller="Cart" data-action="AddToCart" data-customer-id="@User.Identity.Name" data-product-id="@recommendedProduct.proID" data-quantity="1" data-price="@recommendedProduct.proPrice">
+                                    + Add To Cart
+                                </a>
+                            </div>
+                            <!-- Hiển thị giá trị proSale nếu có, ngược lại hiển thị giá trị proPrice -->
+                            @if (@recommendedProduct.proSale != null)
+                            {
+                                <h5>$@recommendedProduct.proSale</h5>
+                            }
+                            else
+                            {
+                                <h5>$@recommendedProduct.proPrice</h5>
+                            }
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
-                <div class="product__item sale">
-                    <div class="product__item__pic set-bg" data-setbg="../cameraStoreLayout/img/product/product-3.jpg">
-                        <span class="label">Sale</span>
-                        <ul class="product__hover">
-                            <li><a href="#"><img src="../cameraStoreLayout/img/icon/heart.png" alt=""></a></li>
-                            <li><a href="#"><img src="../cameraStoreLayout/img/icon/compare.png" alt=""> <span>Compare</span></a></li>
-                            <li><a href="#"><img src="../cameraStoreLayout/img/icon/search.png" alt=""></a></li>
-                        </ul>
-                    </div>
-                    <div class="product__item__text">
-                        <h6>Multi-pocket Chest Bag</h6>
-                        <a href="#" class="add-cart">+ Add To Cart</a>
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star-o"></i>
-                        </div>
-                        <h5>$43.48</h5>
-                        <div class="product__color__select">
-                            <label for="pc-7">
-                                <input type="radio" id="pc-7">
-                            </label>
-                            <label class="active black" for="pc-8">
-                                <input type="radio" id="pc-8">
-                            </label>
-                            <label class="grey" for="pc-9">
-                                <input type="radio" id="pc-9">
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-6 col-sm-6">
-                <div class="product__item">
-                    <div class="product__item__pic set-bg" data-setbg="../cameraStoreLayout/img/product/product-4.jpg">
-                        <ul class="product__hover">
-                            <li><a href="#"><img src="../cameraStoreLayout/img/icon/heart.png" alt=""></a></li>
-                            <li><a href="#"><img src="../cameraStoreLayout/img/icon/compare.png" alt=""> <span>Compare</span></a></li>
-                            <li><a href="#"><img src="../cameraStoreLayout/img/icon/search.png" alt=""></a></li>
-                        </ul>
-                    </div>
-                    <div class="product__item__text">
-                        <h6>Diagonal Textured Cap</h6>
-                        <a href="#" class="add-cart">+ Add To Cart</a>
-                        <div class="rating">
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                        </div>
-                        <h5>$60.9</h5>
-                        <div class="product__color__select">
-                            <label for="pc-10">
-                                <input type="radio" id="pc-10">
-                            </label>
-                            <label class="active black" for="pc-11">
-                                <input type="radio" id="pc-11">
-                            </label>
-                            <label class="grey" for="pc-12">
-                                <input type="radio" id="pc-12">
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            }
         </div>
     </div>
 </section>
+
 <!-- Related Section End -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -431,7 +333,7 @@
 </script>
 <script>
     $(document).ready(function () {
-        var proID = @Model.proID; // Lấy proID từ Model
+        var proID = @Model.Item1.proID; // Lấy proID từ Model
 
         // Gửi yêu cầu AJAX để lấy giá trị trung bình của đánh giá
         $.ajax({
@@ -473,7 +375,7 @@
 </script>
 <script>
     $(document).ready(function () {
-        var proID = @Model.proID; // Lấy proID từ Model
+        var proID = @Model.Item1.proID; // Lấy proID từ Model
 
         // Gửi yêu cầu AJAX để lấy giá trị trung bình của đánh giá
         $.ajax({
@@ -558,6 +460,37 @@
         $(".all-button").click(function () {
             $(".feedback-item").show(); // Hiển thị lại tất cả phản hồi
             $("#no-feedback").hide(); // Ẩn thông báo "No feedback" nếu đang hiển thị
+        });
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('.starRating').each(function () {
+            var productId = $(this).data('pro-id');
+            var starRatingContainer = $(this);
+
+            $.ajax({
+                type: 'GET',
+                url: '/Feedback/Calc?proId=' + productId,
+                success: function (response) {
+                    var averageRating = response.averageRating;
+                    var starsHTML = '';
+
+                    for (var i = 1; i <= 5; i++) {
+                        if (i <= averageRating) {
+                            starsHTML += '<i class="fa fa-star" style="color: orange; font-size: 20px;"></i>';
+                        } else {
+                            starsHTML += '<i class="fa fa-star-o" style="color: orange; font-size: 20px;"></i>';
+                        }
+                    }
+
+                    // Thêm HTML của các sao vào trong phần tử rating
+                    starRatingContainer.append(starsHTML);
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
         });
     });
 </script>

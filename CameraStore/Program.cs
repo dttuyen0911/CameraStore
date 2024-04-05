@@ -9,7 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationDbContext")));
-builder.Services.AddNotyf(config => { config.DurationInSeconds = 10; config.IsDismissable = true; config.Position = NotyfPosition.BottomCenter; });
+builder.Services.AddNotyf(config => { 
+    config.DurationInSeconds = 10; 
+    config.IsDismissable = true; 
+    config.Position = NotyfPosition.TopRight; 
+});
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {

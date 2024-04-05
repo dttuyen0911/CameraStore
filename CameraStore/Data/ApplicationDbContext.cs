@@ -22,6 +22,10 @@ namespace CameraStore.Data
         public DbSet<Role> Roles { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartDetails> CartDetails { get; set; }
+        public DbSet<Chatbot> Chatbots { get; set; }
+        public DbSet<contentChatbot> contentChatbots { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<OrderDetail>().HasKey(m => new { m.orderID, m.proID });
@@ -56,6 +60,14 @@ namespace CameraStore.Data
                 .HasOne(od => od.Product)
                 .WithMany(p => p.orderdetails)
                 .HasForeignKey(od => od.proID)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<contentChatbot>()
+            .HasKey(cc => cc.chatID); // Thiết lập khóa chính cho contentChatbot
+
+            modelBuilder.Entity<contentChatbot>()
+                .HasOne(cc => cc.Chatbots)
+                .WithMany(c => c.ContentChatbots)
+                .HasForeignKey(cc => cc.chatID)
                 .OnDelete(DeleteBehavior.Cascade);
 
         }

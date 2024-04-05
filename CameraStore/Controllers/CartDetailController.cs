@@ -1,6 +1,7 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using CameraStore.Data;
 using CameraStore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,7 +19,7 @@ namespace CameraStore.Controllers
             _dbContext = dbContext;
             _notyf = notyf;
         }
-
+        [Authorize(Policy = "EmployeePolicy")]
         public IActionResult Index(int? id)
         {
             if (id == null)
@@ -32,7 +33,7 @@ namespace CameraStore.Controllers
                 .ToList();
             return View(cartDetails);
         }
-
+        [Authorize]
         public IActionResult Cart()
         {
             var customerId = User.FindFirst(ClaimTypes.Name)?.Value; // Lấy ID của người dùng từ cookie
