@@ -19,8 +19,8 @@ namespace CameraStore.Controllers
             _dbContext = dbContext;
             _notyf = notyf;
         }
-        [Authorize(Policy = "EmployeePolicy")]
-        [Authorize(Policy = "OwnerPolicy")]
+        [Authorize(Policy = "OwnerOrEmployeePolicy")]
+
         public IActionResult Index()
         {
             IEnumerable<Feedback> feedbacks = _dbContext.Feedbacks.ToList();
@@ -81,8 +81,8 @@ namespace CameraStore.Controllers
 
                 _dbContext.Feedbacks.Add(feedback);
                 _dbContext.SaveChanges();
-
-                return Ok(new { success = true , feedImageUrl = feedback.feedUrlImage });
+                _notyf.Success("Thanks for feedback");
+                return Ok();
             }
 
             return View(feedback);

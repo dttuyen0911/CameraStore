@@ -35,6 +35,27 @@
             transform: translateY(-50%);
             cursor: pointer;
         }
+
+    .icon-container {
+        position: relative;
+        display: inline-block;
+    }
+
+        .icon-container i {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 5px; /* Điều chỉnh khoảng cách giữa icon và label */
+        }
+
+    .toggle-password {
+        position: absolute;
+        right: 10px; /* Điều chỉnh khoảng cách giữa icon và input */
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+    }
+
 </style>
 <!-- Sign up form -->
 <section class="signup">
@@ -45,33 +66,30 @@
                 <form method="post" asp-controller="Authentication" asp-action="Register" enctype="multipart/form-data" class="register-form" id="login-form">
                     <div class="form-group">
                         <span asp-validation-for="fullname"></span>
-                        <label asp-for="fullname" for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
                         <input type="text" asp-for="fullname" name="fullname" id="fullname" placeholder="Full name" />
                     </div>
                     <div class="form-group">
                         <span asp-validation-for="email"></span>
-                        <label asp-for="email" for="your_name"><i class="zmdi zmdi-account material-icons-name"></i></label>
                         <input type="text" asp-for="email" name="email" id="email" placeholder="Your Email" />
                     </div>
 
                     <div class="form-group">
-                        <label asp-for="password" for="your_pass"><i class="zmdi zmdi-lock"></i></label>
+                        <span asp-validation-for="password" class="text-danger"></span>
                         <div class="input-with-icon">
                             <input type="password" asp-for="password" name="password" id="password" placeholder="Password" />
                             <span class="toggle-password">
                                 <i class="fa fa-eye" id="toggleCurrentPassword"></i>
                             </span>
                         </div>
-                        <span asp-validation-for="password" class="text-danger"></span>
                     </div>
+
                     <div class="form-group">
                         <span asp-validation-for="telephone"></span>
-                        <label asp-for="telephone" for="telephone"><i class="zmdi zmdi-phone"></i></label>
                         <input type="number" asp-for="telephone" name="telephone" id="telephone" placeholder="Telephone" />
                     </div>
-                    <div class="form-group">
-                        <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />
-                        <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree all statements in  <a href="#" class="term-service">Terms of service</a></label>
+                    <div>
+                        <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" checked />
+                        <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree to all statements in <a asp-controller="Authentication" asp-action="Terms" class="term-service">Terms of service</a></label>
                     </div>
                     <div class="form-group form-button">
                         <input type="submit" name="signup" id="signup" class="form-submit" value="Register" />
@@ -97,5 +115,22 @@
             this.classList.toggle("fa-eye");
             this.classList.toggle("fa-eye-slash");
         });
+    });
+</script>
+<script>
+    function validateForm() {
+        var agreeTermCheckbox = document.getElementById("agree-term");
+        if (!agreeTermCheckbox.checked) {
+            alert("Please agree to the terms of service.");
+            return false; // Ngăn form từ việc submit
+        }
+        return true; // Cho phép form được submit
+    }
+
+    // Gọi hàm validateForm() khi nhấn nút register
+    document.getElementById("register-button").addEventListener("click", function (event) {
+        if (!validateForm()) {
+            event.preventDefault(); // Ngăn mặc định hành động của nút submit
+        }
     });
 </script>

@@ -114,11 +114,7 @@
                                     Credit Card
                                     <input type="radio" name="paymentMethod" id="creditCard" value="creditCard">
                                     <span class="checkmark"></span>
-                                </label>
-                                
-                            </div>
-                            <div>
-
+                                </label>                                
                             </div>
                             <form id="payment-form" >
                                 <div id="card-element" style="display:none">
@@ -149,13 +145,38 @@
             cardElement.style.display = 'none'; 
             submit.style.display = 'none';
         }
+        document.getElementById('paymentMethod').value = paymentMethod;
     }
 </script>
 <script>
-    function handlePaymentSelection(paymentMethod) {
-            document.getElementById('paymentMethod').value = paymentMethod;
-        
-    }
+    document.getElementById('submit').addEventListener('click', function () {
+        var selectedProductIds = ''; // Chuỗi chứa các id của sản phẩm được chọn, bạn có thể cập nhật logic để lấy id từ form hoặc nơi khác
+
+        // Gửi yêu cầu POST đến action StripePayment bên OrderController
+        fetch('/StripePayment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                selectedProductIds: selectedProductIds // Truyền danh sách id sản phẩm được chọn
+            })
+        })
+            .then(response => {
+                // Kiểm tra kết quả phản hồi và xử lý nếu cần
+                if (response.ok) {
+                    return response.json(); // Trả về dữ liệu JSON nếu kết quả là OK
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            })
+            .then(data => {
+                // Xử lý dữ liệu trả về nếu cần
+            })
+            .catch(error => {
+                console.error('There was an error!', error);
+            });
+    });
 </script>
 @section Scripts {
     <script src="https://js.stripe.com/v3/"></script>

@@ -20,8 +20,8 @@ namespace CameraStore.Controllers
             _notyf = notyf;
 
         }
-        [Authorize(Policy = "EmployeePolicy")]
-        [Authorize(Policy = "OwnerPolicy")]
+        [Authorize(Policy = "OwnerOrEmployeePolicy")]
+
         public IActionResult Index()
         {
             IEnumerable<Cart> cart = _dbContext.Carts.ToList();
@@ -116,6 +116,7 @@ namespace CameraStore.Controllers
                 return NotFound(); // Trả về 404 nếu không tìm thấy sản phẩm
             }
             _dbContext.SaveChanges();
+            _notyf.Success("Add to cart successfully.");
 
             // Trả về thông tin sản phẩm đã thêm vào giỏ hàng dưới dạng JSON
             return Json(new { productId = productId, quantity = quantity, price = price });
@@ -242,7 +243,8 @@ namespace CameraStore.Controllers
 
             cart.cartQuantityTotal -= cartDetail.quantity; // Cập nhật lại tổng số lượng sản phẩm trong giỏ hàng
             _dbContext.CartDetails.Remove(cartDetail);
-            _dbContext.SaveChanges(); 
+            _dbContext.SaveChanges();
+            _notyf.Success("Remove product successfully.");
 
             // Kiểm tra xem giỏ hàng có trống sau khi xóa sản phẩm không
             var remainingCartDetails = _dbContext.CartDetails.Where(cd => cd.cartID == cartId).ToList();

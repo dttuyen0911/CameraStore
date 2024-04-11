@@ -58,6 +58,11 @@ builder.Services.AddAuthorization(options =>
         policy.RequireAuthenticatedUser();
         policy.RequireRole("Owner");
     });
+    options.AddPolicy("OwnerOrEmployeePolicy", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("Owner", "Employee");
+    });
 });
 
 var app = builder.Build();

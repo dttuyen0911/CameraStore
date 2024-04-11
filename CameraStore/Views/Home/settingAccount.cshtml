@@ -150,6 +150,7 @@
     Please fill in all required fields in the Account.
 </div>
 
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
@@ -237,19 +238,21 @@
     document.addEventListener('DOMContentLoaded', function () {
         var tabs = document.querySelectorAll('.list-group-item');
 
+        var fullname = $('#fullname');
+        var email = $('#email');
+        var telephone = $('#telephone');
+
         tabs.forEach(function (tab) {
             tab.addEventListener('click', function (event) {
                 var target = event.target.getAttribute('href');
+                var valid = true; // Biến để kiểm tra xem có lỗi không
 
+                // Kiểm tra xem người dùng cố gắng chuyển từ tab "Account" sang tab "Password"
                 if (target === '#password') {
-                    var fullname = $('#fullname').val().trim();
-                    var email = $('#email').val().trim();
-                    var telephone = $('#telephone').val().trim();
-
-                    // Kiểm tra giá trị của các trường điều khiển
-                    if (!fullname || !email || !telephone) {
-                        alert("Please fill in all required fields in the 'Account' tab.");
-                        event.preventDefault();
+                    if (!fullname.val().trim() || !email.val().trim() || !telephone.val().trim()) {
+                        valid = false; // Đặt valid thành false nếu có lỗi
+                        $('#notification6').fadeIn().delay(1000).fadeOut();
+                        event.preventDefault(); // Chặn chuyển đổi tab
                         return;
                     }
                 }

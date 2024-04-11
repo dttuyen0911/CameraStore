@@ -145,7 +145,7 @@
         left: 50%;
         transform: translate(-50%, -50%);
         z-index: 1000;" class="alert alert-danger" role="alert">
-        The product has been successfully deleted to the cart!
+        Please select at least one product before proceeding to checkout.
     </div>
 </section>
 <!-- Shopping Cart Section End -->
@@ -185,7 +185,7 @@
 
         // Kiểm tra xem có sản phẩm nào được chọn không
         if (selectedProductIds.length === 0) {
-            alert("Please select at least one product before proceeding to checkout.");
+            $('#notification1').fadeIn().delay(1000).fadeOut();
             return false; // Ngăn form được submit nếu không có sản phẩm nào được chọn
         }
 
@@ -197,8 +197,6 @@
 
         return true; // Cho phép form được submit
     }
-
-
 
     function updateCart(cartId, proId, quantity) {
         // Perform update cart operation here using Ajax
@@ -223,7 +221,6 @@
             type: "POST",
             data: { cartId: cartId, proId: proId }, // Sửa tên tham số từ 'productId' thành 'cartId'
             success: function () {
-                $('#notification1').fadeIn().delay(1000).fadeOut();
                 // Xóa phần tử trực tiếp từ DOM
                 $('tr[data-cart-id="' + cartId + '"]').remove();;
             },

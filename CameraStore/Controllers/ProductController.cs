@@ -10,8 +10,8 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CameraStore.Controllers
 {
-    [Authorize(Policy = "EmployeePolicy")]
-    [Authorize(Policy = "OwnerPolicy")]
+    [Authorize(Policy = "OwnerOrEmployeePolicy")]
+
     public class ProductController : Controller
     {
         private readonly ApplicationDbContext _dbContext;

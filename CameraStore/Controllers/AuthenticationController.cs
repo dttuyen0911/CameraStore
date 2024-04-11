@@ -9,8 +9,11 @@ using CameraStore.Data;
 using CameraStore.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
+using Customer = CameraStore.Models.Customer;
 
 namespace CameraStore.Controllers
 {
@@ -26,7 +29,10 @@ namespace CameraStore.Controllers
             _notyf = notyf;
             _httpContextAccessor = httpContextAccessor;
         }
-
+        public IActionResult Terms()
+        {
+            return View();
+        }
         public IActionResult Register()
         {
             return View();
@@ -47,6 +53,8 @@ namespace CameraStore.Controllers
 
                     _dbContext.Customers.Add(customer);
                     _dbContext.SaveChanges();
+                    _notyf.Success("Register successfully.");
+
                     return RedirectToAction("Login");
                 }
                 else
@@ -102,6 +110,7 @@ namespace CameraStore.Controllers
                     };
 
                     HttpContext.SignInAsync("Cookies", principal, authProperties).Wait(); // Sign in the user
+                    _notyf.Success("Login successfully.");
 
                     return RedirectToAction("Index", "Home"); // Redirect after successful login
                 }
@@ -144,6 +153,59 @@ namespace CameraStore.Controllers
                 // Trường hợp không có phiên hoặc không khả dụng, chuyển hướng người dùng về trang chính
                 return RedirectToAction("Index", "Home");
             }
+        }
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ForgotPassword(string email)
+        {
+            var customer = _dbContext.Customers.FirstOrDefault(c => c.email == email);
+            if (customer != null)
+            {
+                TempData["CustomerId"] = customer.customerID;
+                return RedirectToAction("ForgotPassword2");
+            }
+            else
+            {
+                _notyf.Warning("Email does not exist. Please enter another email.");
+                return View();
+            }
+        }
+        public IActionResult ForgotPassword2()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult ForgotPassword2(string newPassword, string confirmPassword, int customerId)
+        {
+            var existingCustomer = _dbContext.Customers.FirstOrDefault(c => c.customerID == customerId);
+
+            if (existingCustomer == null)
+            {
+                return NotFound(); // Trả về kết quả không thành công nếu không tìm thấy khách hàng
+            }
+
+            if (string.IsNullOrEmpty(newPassword) || string.IsNullOrEmpty(confirmPassword))
+            {
+                _notyf.Error("Please provide both new and current passwords.");
+                return View(); // Giữ người dùng ở trang hiện tại khi có lỗi
+            }
+
+            if (newPassword != confirmPassword)
+            {
+                _notyf.Error("New password and confirm password do not match.");
+                return View(); // Giữ người dùng ở trang hiện tại khi có lỗi
+            }
+            else
+            {
+                existingCustomer.password = GetMD5(newPassword);
+                _dbContext.SaveChanges();
+                _notyf.Success("Password changed successfully.");
+            }
+            return RedirectToAction("Login");
         }
     }
 }

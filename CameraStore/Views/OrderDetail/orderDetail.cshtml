@@ -252,7 +252,7 @@
                                                     else
                                                     {
                                                         <div class="d-flex justify-content-between pt-2">
-                                                            <p class="fw-bold mb-0">Please pay @item.unitPrice when receiving goods</p>
+                                                            <p class="fw-bold mb-0">Please pay @item.Order.totalAmount when receiving goods</p>
                                                         </div>
                                                     }
 
@@ -270,20 +270,7 @@
         </div>
     </div>
 </section>
-<div id="notification" style="display: none; position: fixed;
-	                top: 50%;
-	                left: 50%;
-	                transform: translate(-50%, -50%);
-	                z-index: 1000;" class="alert alert-success" role="alert">
-    Congratulations on successfully receiving the goods, don't forget to leave me a feedback.
-</div>
-<div id="notification1" style="display: none; position: fixed;
-	                top: 50%;
-	                left: 50%;
-	                transform: translate(-50%, -50%);
-	                z-index: 1000;" class="alert alert-success" role="alert">
-    Thanks for feedback.
-</div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
@@ -295,19 +282,13 @@
             $.ajax({
                 url: '/Order/Received',
                 type: 'POST',
-                data: { orderId: orderId },
-                success: function (response) {
-                    if (response.success) {
-                        $('#notification').fadeIn().delay(1000).fadeOut();
-
-                    } else {
-                        console.log("Received action failed.");
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log(error);
+                data: { orderId: orderId }
+            }).done(function (response) {
+                // Xử lý kết quả thành công
+                if (response.success) {
+                    // Hiển thị thông báo Notyf
+                    _notyf.success(""Congratulations on successfully receiving the goods, don't forget to leave me a feedback."");
                 }
-            });
         });
     });
 </script>
@@ -354,22 +335,22 @@
         formData.append('StarRating', StarRating);
         formData.append('orderId', orderId);
 
-        // Gửi yêu cầu AJAX
         $.ajax({
             type: 'POST',
             url: '/Feedback/Create',
             data: formData,
             dataType: 'json',
             processData: false,
-            contentType: false,
-            success: function (response) {
-                if (response.success) {
-                    showToast(response.message);
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error(error);
+            contentType: false
+        }).done(function (response) {
+            // Xử lý kết quả thành công
+            if (response.success) {
+                // Hiển thị thông báo Notyf
+                _notyf.success("Thanks for feedback");
             }
+        }).fail(function (xhr, status, error) {
+            // Xử lý lỗi
+            console.error(xhr.responseText);
         });
     }
     function updateStarOptions(stars) {
@@ -413,7 +394,7 @@
             }
         });
     }
-    
+
     function displayStars(rating) {
         const starWrapper = document.querySelector('.ratings-wrapper');
 

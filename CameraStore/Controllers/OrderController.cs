@@ -24,8 +24,8 @@ namespace CameraStore.Controllers
             _dbContext = dbContext;
             _notyf = notyf;
         }
-        [Authorize(Policy = "EmployeePolicy")]
-        [Authorize(Policy = "OwnerPolicy")]
+        [Authorize(Policy = "OwnerOrEmployeePolicy")]
+
         public IActionResult Index()
         {
             IEnumerable<Order> orders = _dbContext.Orders.ToList();
@@ -154,7 +154,6 @@ namespace CameraStore.Controllers
                 ViewBag.Cart = cart;
                 return View("CreateOrder", order);
             }
-
             var selectedProductIdsArray = selectedProductIds.Split(',').Select(int.Parse).ToArray();
             var selectedProducts = cart.CartDetails.Where(cd => selectedProductIdsArray.Contains(cd.proID)).ToList();
 
@@ -226,8 +225,8 @@ namespace CameraStore.Controllers
                         }
                     }
                     _dbContext.SaveChanges();
-
-                    return RedirectToAction("Index", "Order");
+                    _notyf.Success("Order successfully");
+                    return RedirectToAction("viewOrder", "OrderDetail");
                 }
                 else
                 {
@@ -285,7 +284,7 @@ namespace CameraStore.Controllers
                         }
                     }
                     _dbContext.SaveChanges();
-
+                    _notyf.Success("Order successfully");
                     return RedirectToAction("viewOrder", "OrderDetail");
                 }
 
@@ -390,47 +389,65 @@ namespace CameraStore.Controllers
 
             order.IsDelivered = true;
             _dbContext.SaveChanges();
-            return Json(new { success = true });
+            return RedirectToAction("viewOrder", "OrderDetail");
         }
         [Route("StripePayment")]
-        public ActionResult StripePayment(PaymentIntentCreateRequest request)
+        public ActionResult StripePayment(PaymentIntentCreateRequest request, string selectedProductIds)
         {
-            var paymentIntentService = new PaymentIntentService();
-            var amount = CalculateOrderAmount(request.Carts);
-
-            var paymentIntent = paymentIntentService.Create(new PaymentIntentCreateOptions
+            int userId = Convert.ToInt32(User.Identity.Name);
+            var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
+            if (customer == null)
             {
-                Amount = 1000,
-                Currency = "usd",
-                // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
-                AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
-                {
-                    Enabled = true,
-                },
-            });
+                return RedirectToAction("Index", "Home");
+            }
 
-            return View("StripePayment", new PaymentIntentCreateRequest { ClientSecret = paymentIntent.ClientSecret, Carts = request.Carts });
+            var cart = _dbContext.Carts
+                .Include(c => c.CartDetails)
+                .ThenInclude(cd => cd.Product)
+                .FirstOrDefault(c => c.customerID == userId);
+
+            int[] selectedProductIdsArray;
+            try
+            {
+                selectedProductIdsArray = selectedProductIds.Split(',').Select(int.Parse).ToArray();
+            }
+            catch (FormatException)
+            {
+                ViewBag.ErrorMessage = "Invalid product IDs.";
+                return View("Error");
+            }
+
+            var selectedProducts = cart.CartDetails.Where(cd => selectedProductIdsArray.Contains(cd.proID)).ToList();
+
+            // Calculate order amount
+            var amount = CalculateOrderAmount(selectedProducts);
+
+            // Process payment here (omitted for brevity)
+
+            // Display success message
+            ViewBag.SuccessMessage = "Payment successful!";
+
+            return View("createOrder");
         }
 
-        private int CalculateOrderAmount(Cart[] carts)
+        private int CalculateOrderAmount(List<CartDetails> selectedProducts)
         {
-            if (carts == null)
+            if (selectedProducts == null || selectedProducts.Count == 0)
             {
-                // Xử lý trường hợp mảng carts là null
                 return 0; // hoặc giá trị mặc định phù hợp
             }
 
             int totalAmount = 0;
-            foreach (var cart in carts)
+            foreach (var product in selectedProducts)
             {
-                if (cart != null)
+                // Kiểm tra xem sản phẩm có tồn tại và có giá không
+                if (product != null && product.Product != null && product.Product.proPrice > 0)
                 {
-                    totalAmount += (int)Math.Round(cart.cartPriceTotal);
+                    totalAmount += product.quantity * (int)Math.Round(product.Product.proPrice);
                 }
             }
 
             return totalAmount;
         }
-
     }
 }

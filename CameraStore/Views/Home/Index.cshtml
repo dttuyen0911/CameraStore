@@ -92,13 +92,6 @@
                 }
             </div>
 
-            <div id="notification" style="display: none; position: fixed;
-	        top: 50%;
-	        left: 50%;
-	        transform: translate(-50%, -50%);
-	        z-index: 1000;" class="alert alert-success" role="alert">
-                The product has been successfully added to the cart!
-            </div>
             <div id="notification1" style="display: none; position: fixed;
     top: 50%;
     left: 50%;
@@ -259,14 +252,6 @@
                             productId: productId,
                             quantity: quantity,
                             price: price
-                        },
-                        success: function (response) {
-                            // Hiển thị thông báo khi thêm vào giỏ hàng thành công
-                            $('#notification').fadeIn().delay(1000).fadeOut(); // Hiển thị div và sau đó ẩn nó sau 2 giây
-                        },
-                        error: function (xhr, status, error) {
-                            // Xử lý lỗi nếu có
-                            console.error('Lỗi: ' + error);
                         }
                     });
                 }
