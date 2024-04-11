@@ -115,16 +115,20 @@
                                     <input type="radio" name="paymentMethod" id="creditCard" value="creditCard">
                                     <span class="checkmark"></span>
                                 </label>
-                                <form id="payment-form">
-                                    <div id="card-element">
-                                        <!-- A Stripe Element will be inserted here. -->
-                                    </div>
-                                    <!-- Used to display form errors. -->
-                                    <div id="card-errors" role="alert"></div>
-
-                                    <button id="submit">Submit Payment</button>
-                                </form>
+                                
                             </div>
+                            <div>
+
+                            </div>
+                            <form id="payment-form" >
+                                <div id="card-element" style="display:none">
+                                    <!-- A Stripe Element will be inserted here. -->
+                                </div>
+
+                                <!-- Used to display form errors. -->
+                                <div id="card-errors" role="alert"></div>
+                                <button type="submit" id="submit" style="display:none">Submit Payment</button>
+                            </form>
                         </div>
                     </div>
                  </div>
@@ -137,7 +141,18 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     function handlePaymentSelection(paymentMethod) {
-
+        var cardElement = document.getElementById('card-element');
+        if (paymentMethod === 'creditCard') {
+            cardElement.style.display = 'block';
+            submit.style.display='block'// Hiển thị card-element nếu paymentMethod là 'creditCard'
+        } else {
+            cardElement.style.display = 'none'; 
+            submit.style.display = 'none';
+        }
+    }
+</script>
+<script>
+    function handlePaymentSelection(paymentMethod) {
             document.getElementById('paymentMethod').value = paymentMethod;
         
     }
