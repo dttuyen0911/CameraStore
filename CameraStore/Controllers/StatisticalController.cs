@@ -62,7 +62,7 @@ namespace CameraStore.Controllers
                 {
                     Date = date,
                     Count = _dbContext.Orders
-                        .Count(o => o.orderDate.Date == date && o.IsDelivered == true)
+                        .Count(o => o.orderDate.Date == date && o.orderStatus == true)
                 }).ToList();
 
             return Json(orderCounts);

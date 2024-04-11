@@ -1,8 +1,10 @@
 using AspNetCoreHero.ToastNotification;
 using AspNetCoreHero.ToastNotification.Extensions;
 using CameraStore.Data;
+using CameraStore.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,10 +22,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Authentication/Login";
         options.AccessDeniedPath = "/Authentication/Error";
     });
-
+builder.Services.Configure<PaymentIntentCreateRequest>(builder.Configuration.GetSection("Stripe"));
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddMvc().AddNewtonsoftJson();
 builder.Services.AddSession(options =>
 {
     options.Cookie.Name = ".YourApp.Session";
@@ -59,6 +62,7 @@ builder.Services.AddAuthorization(options =>
 
 var app = builder.Build();
 
+StripeConfiguration.ApiKey = "sk_test_51P3fJLF7FOWXnm57tBhVroVz0lg3TyEAyfIfUMj3b9q136FVxeEMtn31hmUvJsXZA6lBpbSp0ODQNdfF6vb1Bp9Q00XxTFtlwd";
 // Configure middleware
 if (!app.Environment.IsDevelopment())
 {
@@ -71,7 +75,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<String>();
 app.UseAuthentication();
 app.UseSession();
 app.UseAuthorization();

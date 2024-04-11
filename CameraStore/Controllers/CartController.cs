@@ -21,7 +21,7 @@ namespace CameraStore.Controllers
 
         }
         [Authorize(Policy = "EmployeePolicy")]
-
+        [Authorize(Policy = "OwnerPolicy")]
         public IActionResult Index()
         {
             IEnumerable<Cart> cart = _dbContext.Carts.ToList();

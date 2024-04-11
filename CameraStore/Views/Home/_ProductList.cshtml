@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Product>
+
+@{
+    ViewData["Title"] = "Store";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    @foreach (var product in Model)
+    {
+        <div class="col-lg-4 col-md-6 col-sm-6">
+            <div class="product__item sale">
+                <div class="product__item__pic set-bg">
+                    <a class="menu-link" asp-area="" asp-controller="Home" asp-action="productDetail" asp-route-id="@product.proID">
+                        <img src="~/Image/@product.proUrlImage" style="height:260px;width:300px" alt="">
+                    </a>
+                    <span class="label">@product.proStatus</span>
+                </div>
+                <div class="product__item__text">
+                    <h6>@product.proName</h6>
+                    <div class="rating" data-pro-id="@product.proID">
+                        <!-- 5 sao được đặt ẩn để tránh hiển thị trước khi thêm sao từ JavaScript -->
+                        <i class="fa fa-star" style="display: none;"></i>
+                        <i class="fa fa-star" style="display: none;"></i>
+                        <i class="fa fa-star" style="display: none;"></i>
+                        <i class="fa fa-star" style="display: none;"></i>
+                        <i class="fa fa-star" style="display: none;"></i>
+                    </div>
+                    <div id="addToCartForm">
+                        <a href="#" class="menu-link add-cart" data-controller="Cart" data-action="AddToCart" data-customer-id="@User.Identity.Name" data-product-id="@product.proID" data-quantity="1" data-price="@product.proPrice" data-status="@product.proStatus">
+                            + Add To Cart
+                        </a>
+                    </div>
+                    <h5>$@product.proPrice</h5>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="col-12">
+            <div class="no-data">
+                No data
+            </div>
+        </div>
+    }
+</div>

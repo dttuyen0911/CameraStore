@@ -8,7 +8,7 @@ using Microsoft.Win32;
 namespace CameraStore.Controllers
 {
     [Authorize(Policy = "EmployeeOwner")]
-
+    [Authorize(Policy = "OwnerPolicy")]
     public class SupplierController : Controller
     {
         private readonly ApplicationDbContext _dbContext;

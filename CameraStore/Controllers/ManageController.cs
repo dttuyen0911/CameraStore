@@ -25,6 +25,7 @@ namespace CameraStore.Controllers
             return View((customers, roles));
         }
         [Authorize(Policy = "EmployeePolicy")]
+        [Authorize(Policy = "OwnerPolicy")]
         public IActionResult DashboardEmployee()
         {
             var product = _dbContext.Products.ToList().AsEnumerable();

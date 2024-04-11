@@ -1,0 +1,55 @@
+﻿@model CameraStore.Models.PaymentIntentCreateRequest
+@{
+    ViewData["Title"] = "Payment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Stripe Payment</h2>
+
+<form id="payment-form">
+    <div id="card-element">
+        <!-- A Stripe Element will be inserted here. -->
+    </div>
+    <!-- Used to display form errors. -->
+    <div id="card-errors" role="alert"></div>
+
+    <button id="submit">Submit Payment</button>
+</form>
+
+@section Scripts {
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        var stripe = Stripe("pk_test_51P3fJLF7FOWXnm57uko7u0rgJwB7FxhDTsJB31RSYcf2BspkDR06WJzHB6ZlzVAA5DxHwOEj8rTJTBDuIvsUMNOT00SSsAP3aq");
+        var elements = stripe.elements();
+
+        var style = {
+            base: {
+                color: '#32325d',
+                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                fontSmoothing: 'antialiased',
+                fontSize: '16px',
+                '::placeholder': {
+                    color: '#aab7c4'
+                }
+            },
+            invalid: {
+                color: '#fa755a',
+                iconColor: '#fa755a'
+            }
+        };
+
+        var card = elements.create('card', { style: style });
+        card.mount('#card-element');
+
+        card.on('change', function (event) {
+            var displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        var form = document.getElementById('payment-form');
+    </script>
+}

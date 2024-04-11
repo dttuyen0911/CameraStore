@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 namespace CameraStore.Controllers
 {
     [Authorize(Policy = "EmployeePolicy")]
-
+    [Authorize(Policy = "OwnerPolicy")]
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _dbContext;

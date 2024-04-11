@@ -4,6 +4,38 @@
     ViewData["Title"] = "Login";
     Layout = "~/Views/Shared/_LayoutLogin.cshtml";
 }
+<style>
+    .form-group {
+        position: relative;
+    }
+
+        .form-group label {
+            position: absolute;
+            left: 10px; /* Điều chỉnh vị trí của icon zmdi-lock */
+            top: 50%; /* Đưa icon zmdi-lock vào giữa theo chiều cao */
+            transform: translateY(-50%);
+        }
+
+        .form-group input {
+            padding-left: 30px; /* Để tạo khoảng trống bên trái cho icon zmdi-lock */
+        }
+
+    .input-with-icon {
+        position: relative;
+    }
+
+        .input-with-icon input {
+            padding-right: 35px; /* Để tạo khoảng trống phía bên phải cho icon mắt */
+        }
+
+        .input-with-icon .toggle-password {
+            position: absolute;
+            right: 10px; /* Điều chỉnh vị trí của icon mắt */
+            top: 50%; /* Đưa icon mắt vào giữa theo chiều cao */
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+</style>
 
 <!-- Sing in  Form -->
 <section class="sign-in">
@@ -24,13 +56,13 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="password" for="your_pass"><i class="zmdi zmdi-lock"></i></label>
-                        <input type="password" asp-for="password" name="password" id="password" placeholder="Password" />
-                        <span asp-validation-for="password" class="text-danger"></span>
-                        <div class="input-group-append">
-                            <span class="input-group-text toggle-password">
+                        <div class="input-with-icon">
+                            <input type="password" asp-for="password" name="password" id="password" placeholder="Password" />
+                            <span class="toggle-password">
                                 <i class="fa fa-eye" id="toggleCurrentPassword"></i>
                             </span>
                         </div>
+                        <span asp-validation-for="password" class="text-danger"></span>
                     </div>
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div class="form-group">
@@ -53,7 +85,19 @@
         </div>
     </div>
 </section>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const togglePassword = document.querySelector("#toggleCurrentPassword");
+        const passwordInput = document.querySelector("#password");
 
+        togglePassword.addEventListener("click", function () {
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
+            this.classList.toggle("fa-eye");
+            this.classList.toggle("fa-eye-slash");
+        });
+    });
+</script>
 <script>
     // Hàm để lưu trữ mật khẩu vào localStorage khi người dùng nhấn vào nút đăng nhập
     $(document).ready(function () {

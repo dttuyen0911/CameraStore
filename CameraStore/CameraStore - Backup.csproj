@@ -10,7 +10,6 @@
     <PackageReference Include="AspNetCoreHero.ToastNotification" Version="1.1.0" />
     <PackageReference Include="BCrypt.Net" Version="0.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.TagHelpers" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="8.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
@@ -26,7 +25,6 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
-    <Folder Include="Views\CheckoutApi\" />
   </ItemGroup>
 
   <ItemGroup>

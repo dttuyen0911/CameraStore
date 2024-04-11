@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
+using Stripe.Issuing;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -23,6 +25,7 @@ namespace CameraStore.Controllers
             _notyf = notyf;
         }
         [Authorize(Policy = "EmployeePolicy")]
+        [Authorize(Policy = "OwnerPolicy")]
         public IActionResult Index()
         {
             IEnumerable<Order> orders = _dbContext.Orders.ToList();
@@ -388,6 +391,45 @@ namespace CameraStore.Controllers
             order.IsDelivered = true;
             _dbContext.SaveChanges();
             return Json(new { success = true });
+        }
+        [Route("StripePayment")]
+        public ActionResult StripePayment(PaymentIntentCreateRequest request)
+        {
+            var paymentIntentService = new PaymentIntentService();
+            var amount = CalculateOrderAmount(request.Carts);
+
+            var paymentIntent = paymentIntentService.Create(new PaymentIntentCreateOptions
+            {
+                Amount = 1000,
+                Currency = "usd",
+                // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+                AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
+                {
+                    Enabled = true,
+                },
+            });
+
+            return View("StripePayment", new PaymentIntentCreateRequest { ClientSecret = paymentIntent.ClientSecret, Carts = request.Carts });
+        }
+
+        private int CalculateOrderAmount(Cart[] carts)
+        {
+            if (carts == null)
+            {
+                // Xử lý trường hợp mảng carts là null
+                return 0; // hoặc giá trị mặc định phù hợp
+            }
+
+            int totalAmount = 0;
+            foreach (var cart in carts)
+            {
+                if (cart != null)
+                {
+                    totalAmount += (int)Math.Round(cart.cartPriceTotal);
+                }
+            }
+
+            return totalAmount;
         }
 
     }

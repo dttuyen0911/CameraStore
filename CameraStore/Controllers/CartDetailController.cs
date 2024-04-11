@@ -20,6 +20,7 @@ namespace CameraStore.Controllers
             _notyf = notyf;
         }
         [Authorize(Policy = "EmployeePolicy")]
+        [Authorize(Policy = "OwnerPolicy")]
         public IActionResult Index(int? id)
         {
             if (id == null)
