@@ -50,10 +50,17 @@
     </div>
 </div>
 
-<div class="row">
+<div class="row" style="margin-top: 20px;">
     <div class="col-12">
         <div id="pie-chart-container3">
             <canvas id="order-count-chart"></canvas>
+        </div>
+    </div>
+</div>
+<div class="row" style="margin-top: 20px;">
+    <div class="col-12">
+        <div id="pie-chart-container4">
+            <canvas id="account-chart"></canvas>
         </div>
     </div>
 </div>
@@ -206,7 +213,9 @@
                                 }
                             }, scales: {
                                 y: {
-                                    suggestedMin: 0
+                                    suggestedMin: 0,
+                                    stepSize: 1,
+                                    precision: 0 // Chỉ hiển thị số nguyên trên trục Y
                                 }
                             }
                         }
@@ -214,6 +223,66 @@
 
                     var ctx = document.getElementById('order-count-chart').getContext('2d');
                     var orderCountChart = new Chart(ctx, chartConfig);
+                }
+            });
+        });
+        $(document).ready(function () {
+            $.ajax({
+                url: '@Url.Action("GetRevenueByMonth", "Statistical")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    var months = [];
+                    var revenues = [];
+
+                    data.forEach(function (item) {
+                        months.push(item.month);
+                        revenues.push(item.totalRevenue);
+                    });
+
+                    const chartConfig = {
+                        type: 'line',
+                        data: {
+                            labels: months,
+                            datasets: [{
+                                label: 'Total Revenue',
+                                data: revenues,
+                                fill: false,
+                                borderColor: 'rgb(75, 192, 192)',
+                                tension: 0.1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Total Revenue by Month'
+                                },
+                                legend: {
+                                    display: false
+                                }
+                            }, scales: {
+                                y: {
+                                    suggestedMin: 0,
+                                    stepSize: 100, // Điều chỉnh bước giữa các giá trị trên trục Y tùy thuộc vào tỷ lệ của dữ liệu
+                                    title: {
+                                        display: true,
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: '2024'
+                                    }
+                                }
+                            }
+                        }
+                    };
+
+                    var ctx = document.getElementById('account-chart').getContext('2d');
+                    var revenueChart = new Chart(ctx, chartConfig);
                 }
             });
         });

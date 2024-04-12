@@ -27,10 +27,7 @@
             <div class="col-lg-2">
                     <div class="shop__sidebar">
                         <div class="shop__sidebar__search">
-                            <form id="searchForm" action="@Url.Action("searchByName", "Home")" method="post">
-                                <input id="searchInput" name="searchQuery" type="text" placeholder="Search...">
-                                <button type="submit"><span class="icon_search"></span></button>
-                            </form>
+                        <input id="searchInput" type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
                         </div>
 
                         <div class="shop__sidebar__accordion">
@@ -394,5 +391,54 @@
         });
     });
 </script>
+<script>
+        $(document).ready(function () {
+            // Lắng nghe sự kiện khi người dùng nhập vào input
+            $("#searchInput").on("input", function () {
+                // Lấy giá trị nhập vào input
+                var searchQuery = $(this).val().trim();
 
+                // Kiểm tra nếu input rỗng thì gọi hàm hiển thị tất cả sản phẩm
+                if (searchQuery === "") {
+                    showAllProducts();
+                } else {
+                    // Gọi action searchByName của Home Controller bằng AJAX
+                    searchProductsByName(searchQuery);
+                }
+            });
+        });
+
+        function showAllProducts() {
+            // Gửi request AJAX để hiển thị tất cả sản phẩm
+            $.ajax({
+                type: "POST",
+                url: "/Home/searchByName",
+                data: { searchQuery: "" }, // Gửi một searchQuery rỗng
+                success: function (response) {
+                    // Nạp dữ liệu sản phẩm vào phần tử chứa
+                    $("#productList").html(response);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Request failed. Status: " + status);
+                }
+            });
+        }
+
+        function searchProductsByName(searchQuery) {
+            // Gửi request AJAX
+            $.ajax({
+                type: "POST",
+                url: "/Home/searchByName",
+                data: { searchQuery: searchQuery },
+                success: function (response) {
+                    // Nạp dữ liệu sản phẩm vào phần tử chứa
+                    $("#productList").html(response);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Request failed. Status: " + status);
+                }
+            });
+        }
+
+</script>
 </section>

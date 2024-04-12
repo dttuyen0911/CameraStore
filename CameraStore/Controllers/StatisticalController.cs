@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Globalization;
 
 namespace CameraStore.Controllers
 {
@@ -67,6 +68,47 @@ namespace CameraStore.Controllers
 
             return Json(orderCounts);
         }
+        public IActionResult GetRevenueByMonth()
+        {
+            int currentYear = DateTime.Now.Year;
+
+            var revenueByMonth = new List<object>();
+
+            for (int month = 1; month <= 12; month++)
+            {
+                var firstDayOfMonth = new DateTime(currentYear, month, 1);
+                var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+                var totalPrice = _dbContext.Orders
+                    .Where(o => o.orderDate >= firstDayOfMonth && o.orderDate <= lastDayOfMonth && o.orderStatus == true)
+                    .Sum(o => o.totalAmount);
+
+                revenueByMonth.Add(new { Month = CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(month), TotalRevenue = totalPrice });
+            }
+
+            return Json(revenueByMonth);
+        }
+        public IActionResult GetAccountCountsByMonth()
+        {
+            int currentYear = DateTime.Now.Year;
+
+            var accountCountsByMonth = new List<object>();
+
+            for (int month = 1; month <= 12; month++)
+            {
+                var firstDayOfMonth = new DateTime(currentYear, month, 1);
+                var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
+
+                var accountCount = _dbContext.Customers
+                    .Where(a => a.createAt >= firstDayOfMonth && a.createAt <= lastDayOfMonth)
+                    .Count();
+
+                accountCountsByMonth.Add(new { Month = CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(month), AccountCount = accountCount });
+            }
+
+            return Json(accountCountsByMonth);
+        }
+
 
     }
 }

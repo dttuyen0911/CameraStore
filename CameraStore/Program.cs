@@ -5,6 +5,9 @@ using CameraStore.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
+using Twilio;
+using Twilio.Clients;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +28,12 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 builder.Services.Configure<PaymentIntentCreateRequest>(builder.Configuration.GetSection("Stripe"));
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
-
+builder.Services.AddScoped<ITwilioRestClient>(provider =>
+{
+    var accountSid = builder.Configuration.GetValue<string>("Twilio:AccountSid");
+    var authToken = builder.Configuration.GetValue<string>("Twilio:AuthToken");
+    return new TwilioRestClient(accountSid, authToken);
+});
 builder.Services.AddMvc().AddNewtonsoftJson();
 builder.Services.AddSession(options =>
 {

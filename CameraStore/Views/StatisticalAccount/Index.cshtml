@@ -1,0 +1,82 @@
+﻿@model List<CameraStore.Models.Customer>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row" style="margin-top: 20px;">
+    <div class="col-12">
+        <div id="pie-chart-container4">
+            <canvas id="count-account-chart"></canvas>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/adapters/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: '@Url.Action("GetAccountCountsByMonth", "StatisticalAccount")',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    var months = [];
+                    var counts = [];
+
+                    data.forEach(function (item) {
+                        months.push(item.month);
+                        counts.push(item.accountCount);
+                    });
+
+                    const chartConfig = {
+                        type: 'bar',
+                        data: {
+                            labels: months,
+                            datasets: [{
+                                label: 'Account Counts',
+                                data: counts, // Sửa từ 'revenues' thành 'counts'
+                                fill: false,
+                                borderColor: 'rgb(75, 192, 192)',
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Account Counts by Month'
+                                },
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    suggestedMin: 0,
+                                    stepSize: 1,
+                                    title: {
+                                        display: true,
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                    }
+                                }
+                            }
+                        }
+                    };
+
+                    var ctx = document.getElementById('count-account-chart').getContext('2d');
+                    var accountCountChart = new Chart(ctx, chartConfig);
+                }
+            });
+        });
+
+
+    </script>
+}

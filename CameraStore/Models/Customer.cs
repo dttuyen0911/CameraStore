@@ -20,7 +20,7 @@ namespace CameraStore.Models
         [RegularExpression(@"^\d{10,11}$", ErrorMessage = "Telephone must be 10 or 11 digits")]
         public string? telephone { get; set; }
         [Required(ErrorMessage = "Address of account is not null")]
-        public DateTime? createAt { get; set; }
+        public DateTime createAt { get; set; }
         [Required]
         [ForeignKey("Role")]
         public int roleID { get; set; }

@@ -1,0 +1,47 @@
+﻿<h2>Send OTP</h2>
+
+<div id="message"></div>
+
+<form id="sendOtpForm" action="@Url.Action("SendOtp", "Sms")" method="post">
+    <div class="form-group">
+        <label for="phoneNumber">Phone Number:</label>
+        <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="Enter your phone number" required>
+        <!-- Thêm thuộc tính "required" để đảm bảo người dùng nhập số điện thoại -->
+    </div>
+
+    <button type="submit" class="btn btn-primary">Send OTP</button>
+</form>
+
+@section scripts {
+    <script>
+        $(function () {
+            $('#sendOtpForm').submit(function (e) {
+                e.preventDefault();
+
+                var phoneNumber = $('#phoneNumber').val();
+
+                // Kiểm tra số điện thoại có hợp lệ không (ví dụ: không rỗng)
+                if (!phoneNumber) {
+                    $('#message').html('<div class="alert alert-danger">Please enter a phone number.</div>');
+                    return;
+                }
+
+                $.ajax({
+                    url: '@Url.Action("SendOtp", "Sms")',
+                    type: 'POST',
+                    data: { phoneNumber: phoneNumber },
+                    success: function (result) {
+                        if (result.success) {
+                            $('#message').html('<div class="alert alert-success">' + result.message + '</div>');
+                        } else {
+                            $('#message').html('<div class="alert alert-danger">' + result.message + '</div>');
+                        }
+                    },
+                    error: function () {
+                        $('#message').html('<div class="alert alert-danger">An error occurred while sending OTP. Please try again later.</div>');
+                    }
+                });
+            });
+        });
+    </script>
+}
