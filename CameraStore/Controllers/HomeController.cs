@@ -47,49 +47,23 @@ namespace CameraStore.Controllers
             return View(products); ;
         }
         [HttpPost]
-        public IActionResult Search(string keyword)
+        public IActionResult searchByName(string searchQuery)
         {
-            IEnumerable<Product> products;
+            IQueryable<Product> productsQuery = _dbContext.Products.Include(c => c.Category);
 
-            if (string.IsNullOrEmpty(keyword))
+            // Kiểm tra xem searchQuery có tồn tại không
+            if (!string.IsNullOrEmpty(searchQuery))
             {
-                // Nếu từ khóa là null hoặc rỗng, lấy tất cả sản phẩm
-                products = _dbContext.Products
-                    .Include(c => c.Category)
-                    .Include(s => s.Supplier)
-                    .ToList();
-            }
-            else
-            {
-                // Tìm kiếm sản phẩm theo từ khóa
-                products = _dbContext.Products
-                    .Include(c => c.Category)
-                    .Include(s => s.Supplier)
-                    .Where(p => p.proName.Contains(keyword))
-                    .ToList();
+                // Tách các từ trong searchQuery và loại bỏ các khoảng trắng thừa
+                var keywords = searchQuery.Trim().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                // Lọc các sản phẩm có tên chứa từ khóa nào đó trong danh sách từ khóa
+                productsQuery = productsQuery.Where(p => keywords.Any(keyword => p.proName.Contains(keyword)));
             }
 
-            // Kiểm tra nếu không có sản phẩm, trả về thông báo "No data"
-            if (!products.Any())
-            {
-                return Content("No data");
-            }
-            var allCategories = _dbContext.Categories
-                  .Select(c => c.cateName)
-                  .Distinct()
-                  .ToList();
-            var allStatus = _dbContext.Products
-                    .Select(p => p.proStatus)
-                    .Distinct()
-                    .ToList();
-            ViewBag.AllStatus = allStatus;
-            ViewBag.AllCategories = allCategories;
-            ViewBag.MaxPrice = products.Max(p => p.proPrice);
-            // Trả về một phần view chứa danh sách sản phẩm
-            return PartialView("Store", products);
+            var products = productsQuery.ToList();
+            return PartialView("_ProductList", products);
         }
-
-
         public IActionResult Privacy()
         {
             return View();
@@ -283,7 +257,7 @@ namespace CameraStore.Controllers
 
             return View(model);
         }
-        public IActionResult Store(string selectedStatus, string[] selectedCategories, string sortByPrice = "Recommended", int page = 1, int pageSize = 10)
+        public IActionResult Store(  int page = 1, int pageSize = 10)
         {
             var categoriesDict = new Dictionary<string, int>();
             var status = new Dictionary<string, int>();
@@ -311,25 +285,6 @@ namespace CameraStore.Controllers
             }
             IQueryable<Product> productsQuery = _dbContext.Products
                 .Include(c => c.Category);
-            if (selectedCategories != null && selectedCategories.Length > 0)
-            {
-                productsQuery = productsQuery.Where(p => selectedCategories.Contains(p.Category.cateName));
-            }
-            if (!string.IsNullOrEmpty(selectedStatus))
-            {
-                productsQuery = productsQuery.Where(p => p.proStatus == selectedStatus);
-            }
-            switch (sortByPrice)
-            {
-                case "LowToHigh":
-                    productsQuery = productsQuery.OrderBy(p => p.proPrice);
-                    break;
-                case "HighToLow":
-                    productsQuery = productsQuery.OrderByDescending(p => p.proPrice);
-                    break;
-                default:
-                    break;
-            }
 
             var products = productsQuery.ToList();
 
@@ -386,6 +341,53 @@ namespace CameraStore.Controllers
 
             return recommendedProducts;
         }
+        public IActionResult getFilterCategory(string[] selectedCategories)
+        {
+            IQueryable<Product> productsQuery = _dbContext.Products
+                .Include(c => c.Category);
 
+            // Check if selectedCategories is not null and contains items
+            if (selectedCategories != null && selectedCategories.Length > 0)
+            {
+                productsQuery = productsQuery.Where(p => selectedCategories.Contains(p.Category.cateName));
+            }
+
+            var products = productsQuery.ToList();
+            return PartialView("_ProductList", products);
+        }
+        public IActionResult getFilterStatus(string selectedStatus)
+        {
+            IQueryable<Product> productsQuery = _dbContext.Products
+                .Include(c => c.Category);
+
+            // Check if selectedStatus is not null or empty
+            if (!string.IsNullOrEmpty(selectedStatus))
+            {
+                productsQuery = productsQuery.Where(p => p.proStatus == selectedStatus);
+            }
+
+            var products = productsQuery.ToList();
+            return PartialView("_ProductList", products);
+        }
+
+        public IActionResult sortByPrice(string sortByPrice = "Recommended")
+        {
+            IQueryable<Product> productsQuery = _dbContext.Products
+                .Include(c => c.Category);
+            switch (sortByPrice)
+            {
+                case "LowToHigh":
+                    productsQuery = productsQuery.OrderBy(p => p.proPrice);
+                    break;
+                case "HighToLow":
+                    productsQuery = productsQuery.OrderByDescending(p => p.proPrice);
+                    break;
+                default:
+                    break;
+            }
+
+            var products = productsQuery.ToList();
+            return PartialView("_ProductList", products);
+        }
     }
 }

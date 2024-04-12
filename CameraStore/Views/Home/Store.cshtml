@@ -25,83 +25,80 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-2">
-                <div class="shop__sidebar">
+                    <div class="shop__sidebar">
                         <div class="shop__sidebar__search">
-                            <form id="searchForm" action="@Url.Action("Search", "Home")" method="post">
-                                <input id="searchInput" name="keyword" type="text" placeholder="Search...">
+                            <form id="searchForm" action="@Url.Action("searchByName", "Home")" method="post">
+                                <input id="searchInput" name="searchQuery" type="text" placeholder="Search...">
                                 <button type="submit"><span class="icon_search"></span></button>
                             </form>
                         </div>
 
-                    <div class="shop__sidebar__accordion">
-                        <div class="accordion" id="accordionExample">
-                            <div class="card">
-                                <div class="card-heading">
-                                    <a data-toggle="collapse" data-target="#collapseOne">Categories</a>
-                                </div>
-                                <div id="collapseOne" class="collapse show" data-parent="#accordionExample">
-                                    <div class="card-body">
-                                        <div class="shop__sidebar__categories">
-                                            <ul class="nice-scroll">
-                                                <form id="filterForm" asp-controller="Home" asp-action="Store" method="get">
+                        <div class="shop__sidebar__accordion">
+                            <div class="accordion" id="accordionExample">
+                                <div class="card">
+                                    <div class="card-heading">
+                                        <a data-toggle="collapse" data-target="#collapseCategories">Categories</a>
+                                    </div>
+                                    <div id="collapseCategories" class="collapse show" data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            <div class="shop__sidebar__categories">
+                                                <ul class="nice-scroll">
                                                     @foreach (var category in ViewBag.AllCategories)
                                                     {
-                                                    <li>
-                                                        <input type="checkbox" id="@("checkbox_" + category)" name="selectedCategories" value="@category" class="categoryCheckbox" onchange="submitForm()" />
-                                                        <label for="@("checkbox_" + category)">@category</label>
-                                                    </li>
+                                                        <li>
+                                                            <input type="checkbox" id="@("checkbox_" + category)" name="selectedCategories" value="@category" class="categoryCheckbox" />
+                                                            <label for="@("checkbox_" + category)">@category</label>
+                                                        </li>
                                                     }
-                                                </form>
-                                            </ul>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-heading">
-                                    <a data-toggle="collapse" data-target="#collapseOne">Status</a>
-                                </div>
-                                <div id="collapseOne" class="collapse show" data-parent="#accordionExample">
-                                    <div class="card-body">
-                                        <div class="shop__sidebar__categories">
-                                            <ul class="nice-scroll">
-                                                <form id="filterForm" asp-controller="Home" asp-action="Store" method="get">
-                                                @foreach (var status in ViewBag.AllStatus)
-                                                {
-                                                    <li>
-                                                        <input type="checkbox" id="@("checkbox_" + status)" name="selectedStatus" value="@status" onchange="this.form.submit()" />
-                                                        <label for="@("checkbox_status_" + status)">@status</label>
-                                                    </li>
-                                                }
-                                                </form>
-                                            </ul>
+
+                                <div class="card">
+                                    <div class="card-heading">
+                                        <a data-toggle="collapse" data-target="#collapseStatus">Status</a>
+                                    </div>
+                                    <div id="collapseStatus" class="collapse show" data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            <div class="shop__sidebar__categories">
+                                                <ul class="nice-scroll">
+                                                    @foreach (var status in ViewBag.AllStatus)
+                                                    {
+                                                        <li>
+                                                            <input type="checkbox" id="@("checkbox_status_" + status)" name="selectedStatus" value="@status" class="statusCheckbox" />
+                                                            <label for="@("checkbox_status_" + status)">@status</label>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="card">
-                                <div class="card-heading">
-                                    <a data-toggle="collapse" data-target="#collapseThree">Filter Price</a>
-                                </div>
-                                <div id="collapseThree" class="collapse show" data-parent="#accordionExample">
-                                    <div class="card-body">
-                                        <div class="shop__sidebar__price">
-                                            <ul>
-                                                @foreach (var priceRange in GetPriceRanges((int)ViewBag.MaxPrice))
-                                                {
-                                                    <li>
-                                                        <input type="checkbox" id="@("checkbox_" + priceRange)" />
-                                                        <label for="@("checkbox_" + priceRange)">@priceRange</label>
-                                                    </li>
-                                                }
-                                            </ul>
+                                <div class="card">
+                                    <div class="card-heading">
+                                        <a data-toggle="collapse" data-target="#collapseThree">Filter Price</a>
+                                    </div>
+                                    <div id="collapseThree" class="collapse show" data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            <div class="shop__sidebar__price">
+                                                <ul>
+                                                    @foreach (var priceRange in GetPriceRanges((int)ViewBag.MaxPrice))
+                                                    {
+                                                        <li>
+                                                            <input type="checkbox" id="@("checkbox_" + priceRange)" />
+                                                            <label for="@("checkbox_" + priceRange)">@priceRange</label>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
             </div>
             <div class="col-lg-10" style="border-style: outset;border-radius: 15px;">
                 <div class="shop__product__option">
@@ -123,7 +120,7 @@
                         </div>
                     </div>
                 </div>
-                    <div class="row">
+                    <div class="row" id="productList">
                         @foreach (var product in Model)
                         {
                             <div class="col-lg-4 col-md-6 col-sm-6">
@@ -221,14 +218,103 @@
 <script>
     function sortProducts() {
         var sortByPrice = document.getElementById("sortByPrice").value;
-        window.location.href = "/Home/Store?sortByPrice=" + sortByPrice;
+            $.ajax({
+                url: "/Home/sortByPrice",
+                type: "GET",
+                data: {
+                    sortByPrice: sortByPrice
+                },
+                success: function (data) {
+                    $("#productList").html(data);
+                }
+            });
     }
 </script>
 <script>
-    function submitForm() {
-        document.getElementById("filterForm").submit();
-    }
-</script>
+        $(document).ready(function () {
+            $(".statusCheckbox").change(function () {
+                updateProductList();
+            });
+
+            function updateProductList() {
+                var selectedStatus = $(".statusCheckbox:checked").val();
+
+                // Check if no checkboxes are checked
+                if (!selectedStatus) {
+                    // Load all products
+                    $.ajax({
+                        url: "/Home/getFilterStatus",
+                        type: "GET",
+                        data: {},
+                        success: function (data) {
+                            $("#productList").html(data);
+                        },
+                        error: function () {
+                            alert("Đã xảy ra lỗi khi tải sản phẩm.");
+                        }
+                    });
+                } else {
+                    // Load filtered products
+                    $.ajax({
+                        url: "/Home/getFilterStatus",
+                        type: "GET",
+                        data: {
+                            selectedStatus: selectedStatus
+                        },
+                        success: function (data) {
+                            $("#productList").html(data);
+                        },
+                        error: function () {
+                            alert("Đã xảy ra lỗi khi tải sản phẩm.");
+                        }
+                    });
+                }
+            }
+        });
+        $(document).ready(function () {
+            $(".categoryCheckbox").change(function () {
+                updateProductList();
+            });
+
+            function updateProductList() {
+                var selectedCategories = [];
+                $(".categoryCheckbox:checked").each(function () {
+                    selectedCategories.push($(this).val());
+                });
+                var selectedCategoriesString = selectedCategories.join(',');
+                // Check if no checkboxes are checked
+                if (selectedCategories.length === 0) {
+                    // Load all products
+                    $.ajax({
+                        url: "/Home/getFilterCategory",
+                        type: "GET",
+                        data: {},
+                        success: function (data) {
+                            $("#productList").html(data);
+                        },
+                        error: function () {
+                            alert("Đã xảy ra lỗi khi tải sản phẩm.");
+                        }
+                    });
+                } else {
+                    // Load filtered products
+                    $.ajax({
+                        url: "/Home/getFilterCategory",
+                        type: "GET",
+                        data: {
+                            selectedCategories: selectedCategoriesString, // Truyền array chứa các category được chọn
+                        },
+                        success: function (data) {
+                            $("#productList").html(data);
+                        },
+                        error: function () {
+                            alert("Đã xảy ra lỗi khi tải sản phẩm.");
+                        }
+                    });
+                }
+            }
+        });
+    </script>
 <script>
     $(document).ready(function () {
         $('.add-cart').on('click', function (e) {
@@ -308,44 +394,5 @@
         });
     });
 </script>
-<script>
-        function searchProducts(event) {
-            event.preventDefault(); // Ngăn chặn gửi form mặc định
-
-            var input, filter, products, product, productName, i, txtValue;
-            input = document.getElementById('searchInput');
-            filter = input.value.toUpperCase();
-            products = document.getElementsByClassName('product__item');
-
-            if (filter === "") {
-                // Hiển thị tất cả sản phẩm nếu không có dữ liệu nhập vào
-                for (i = 0; i < products.length; i++) {
-                    products[i].style.display = "";
-                }
-                document.querySelector('.no-data').style.display = 'none'; // Ẩn thông báo "No data"
-            } else {
-                var anyProductDisplayed = false;
-                for (i = 0; i < products.length; i++) {
-                    product = products[i];
-                    productName = product.querySelector('.product__item__text h6');
-                    if (productName) {
-                        txtValue = productName.textContent || productName.innerText;
-                        if (txtValue.toUpperCase().includes(filter)) {
-                            product.style.display = ""; // Hiển thị sản phẩm nếu chứa từ khóa
-                            anyProductDisplayed = true; // Đánh dấu đã tìm thấy ít nhất một sản phẩm
-                        } else {
-                            product.style.display = "none"; // Ẩn sản phẩm nếu không chứa từ khóa
-                        }
-                    }
-                }
-
-                // Hiển thị hoặc ẩn thông báo "No data" dựa trên kết quả tìm kiếm
-                var noDataMessage = document.querySelector('.no-data');
-                noDataMessage.style.display = anyProductDisplayed ? 'none' : '';
-            }
-        }
-
-    </script>
-
 
 </section>
