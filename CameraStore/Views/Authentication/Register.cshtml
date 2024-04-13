@@ -56,6 +56,59 @@
         cursor: pointer;
     }
 
+    .popup-container {
+        color: #f2f2f2;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 500px;
+        height: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+        .popup-container.active {
+            opacity: 1;
+            pointer-events: auto;
+            transition: .4s ease;
+        }
+
+        .popup-container .popup-box {
+            background: #a29c9c;
+            border-radius: 6px;
+            box-shadow: 0 0 10px rgba(0,0,0,.1);
+            padding: 30px;
+            transform: scale(0);
+        }
+
+        .popup-container.active .popup-box {
+            transform: scale(1);
+            transition: .4s ease;
+            transition-delay: .25s;
+        }
+
+    .popup-box h1 {
+        color: #333;
+        line-height: 1;
+    }
+
+    .popup-box .close-btn {
+        width: 100%;
+        height: 45px;
+        background: #6e78ff;
+        border-radius: 6px;
+        border: none;
+        outline: none;
+        box-shadow: 0 0 10px rgba(0,0,0,.1);
+        cursor: pointer;
+        font-size: 18px;
+        color: #f2f2f2;
+        font-weight: 500;
+    }
 </style>
 <!-- Sign up form -->
 <section class="signup">
@@ -85,16 +138,17 @@
 
                     <div class="form-group">
                         <span asp-validation-for="telephone"></span>
-                        <input type="number" asp-for="telephone" name="telephone" id="telephone" placeholder="Telephone" />
+                        <input type="text" asp-for="telephone" name="telephone" id="telephone" placeholder="Telephone" />
                     </div>
                     <div>
                         <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" checked />
-                        <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree to all statements in <a asp-controller="Authentication" asp-action="Terms" class="term-service">Terms of service</a></label>
+                        <label for="agree-term" class="label-agree-term">I agree to all statements in <a asp-controller="Authentication" asp-action="Terms" class="term-service">Terms of service</a></label>
                     </div>
                     <div class="form-group form-button">
-                        <input type="submit" name="signup" id="signup" class="form-submit" value="Register" />
+                        <input type="submit" name="signup" id="signup" class="form-submit open-popup" value="Register" />
                     </div>
                 </form>
+
             </div>
             <div class="signup-image">
                 <figure><img src="images/signup-image.jpg" alt="sign up image"></figure>
@@ -116,21 +170,16 @@
             this.classList.toggle("fa-eye-slash");
         });
     });
-</script>
-<script>
-    function validateForm() {
-        var agreeTermCheckbox = document.getElementById("agree-term");
-        if (!agreeTermCheckbox.checked) {
-            alert("Please agree to the terms of service.");
-            return false; // Ngăn form từ việc submit
-        }
-        return true; // Cho phép form được submit
-    }
 
-    // Gọi hàm validateForm() khi nhấn nút register
-    document.getElementById("register-button").addEventListener("click", function (event) {
-        if (!validateForm()) {
-            event.preventDefault(); // Ngăn mặc định hành động của nút submit
+   
+    form.addEventListener('submit', (event) => {
+        event.preventDefault(); // Ngăn chặn hành động mặc định của form
+        const agreeTermCheckbox = document.getElementById('agree-term');
+
+        if ( !agreeTermCheckbox.checked) {
+            alert("please check!");
         }
+
     });
+
 </script>

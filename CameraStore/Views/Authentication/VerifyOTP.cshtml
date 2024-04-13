@@ -1,0 +1,34 @@
+﻿@model CameraStore.Models.Customer
+
+@{
+    ViewData["Title"] = "Verify OTP";
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+<!-- Verify OTP form -->
+<section class="signup">
+    <div class="container">
+        <div class="signup-content">
+            <div class="signup-form">
+                <h2 class="form-title">Verify OTP</h2>
+                <h3>The OTP code has been sent to your email, please check your email and enter the OTP. The OTP code is valid for 24 hours</h3>
+                <form method="post" asp-controller="Authentication" asp-action="VerifyOTP" class="verify-otp-form" id="verify-otp-form">
+                    <div class="form-group">
+                        <input type="text" id="otp" name="otp" placeholder="Enter OTP" />
+                    </div>
+                    <p>I haven't received the OTP code yet<a asp-area="" asp-controller="Authentication" asp-action="Login" class="signup-image-link">Please send OTP again</a></p>
+                    
+
+                    <div class="form-group form-button">
+                        <input type="submit" name="confirm" id="confirm" class="form-submit" value="Confirm" />
+                    </div>
+                </form>
+            </div>
+            <div class="signup-image">
+                <figure><img src="images/signup-image.jpg" alt="sign up image"></figure>
+                <a asp-area="" asp-controller="Authentication" asp-action="Login" class="signup-image-link">I am already member</a>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="signup-image-link"><i class="zmdi zmdi-home"></i>Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+</section>

@@ -6,6 +6,7 @@
     <meta name="description" content="Camera Store">
     <meta name="keywords" content="Male_Fashion, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Cameras Digital Store</title>
 
@@ -25,6 +26,7 @@
     <link rel="stylesheet" href="~/cameraStoreLayout/css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="~/cameraStoreLayout/css/style.css" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
     <script src="~/js/site.js" asp-append-version="true"></script>
 
 </head>
@@ -141,7 +143,19 @@
     </header>
     @RenderBody()
     <!-- chatbot -->
-    @if (User.Identity.IsAuthenticated)
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    <div class="messenger-container">
+        <df-messenger intent="WELCOME"
+                      chat-title="CameraStore"
+                      agent-id="ffdf5442-0f05-451c-90f5-39016670592a"
+                      language-code="en"
+                      chat-icon="https://icon-library.com/icon/icon-for-chat-21.html">
+        </df-messenger>
+    </div>
+
+
+
+    @* @if (User.Identity.IsAuthenticated)
     {
         @if (User.IsInRole("Customer"))
         {
@@ -219,7 +233,7 @@
                 </div>
             </div>
         </div>
-    }
+    } *@
 
 
     <!-- Footer Section Begin -->
@@ -292,128 +306,8 @@
     <script src="chatbot.js"></script>
     @await Component.InvokeAsync("Notyf")
     @RenderSection("Scripts", required: false)
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            var userInputForm = document.getElementById("userInputForm");
-            var messageContainer = document.getElementById("message-container");
-            var chatbotMessage = document.querySelector("#conversation .chatbot-message");
-
-            document.getElementById("submit-user-info").addEventListener("click", function (event) {
-                event.preventDefault();
-
-                var formData = new FormData();
-                formData.append("chatName", document.getElementById("input-name").value.trim());
-                formData.append("chatTelephone", document.getElementById("input-phone").value.trim());
-
-                fetch("/Message/Create", {
-                    method: "POST",
-                    body: formData
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        // Xử lý phản hồi từ server nếu cần
-                        console.log(data);
-                    })
-                    .catch(error => {
-                        console.error("Error:", error);
-                    });
-
-                // Ẩn form nhập user name và telephone
-                userInputForm.style.display = "none";
-                // Hiển thị form chat
-                messageContainer.style.display = "block";
-                // Hiển thị chatbot message
-                chatbotMessage.style.display = "block";
-            });
-        });
-    </script>
-    <script>
-        var isChatboxVisible = false;
-        var conversationHistory = []; // Mảng để lưu trữ lịch sử cuộc trò chuyện
-
-        document.getElementById("chatIcon").addEventListener("click", function () {
-            var chatBox = document.getElementById("chatBox");
-            if (isChatboxVisible) {
-                chatBox.style.display = "none";
-            } else {
-                chatBox.style.display = "block";
-            }
-            isChatboxVisible = !isChatboxVisible;
-        });
-
-        document.getElementById("input-form").addEventListener("submit", function (event) {
-            event.preventDefault();
-            var userInput = document.getElementById("input-field").value;
-            sendMessage(userInput); // Gửi tin nhắn từ người dùng
-            document.getElementById("input-field").value = ""; // Xóa nội dung trong input field
-            replyMessage(); // Trả lời tin nhắn từ chatbot
-        });
-        function getCurrentTime() {
-            var now = new Date();
-            var hours = now.getHours().toString().padStart(2, "0"); // Thêm số 0 phía trước nếu cần
-            var minutes = now.getMinutes().toString().padStart(2, "0"); // Thêm số 0 phía trước nếu cần
-            return hours + ":" + minutes;
-        }
-
-        function sendMessage(message) {
-            var conversation = document.getElementById("conversation");
-            var userMessage = document.createElement("div");
-            userMessage.classList.add("user-message");
-            userMessage.innerHTML = '<p class="user-text">' + message + '</p>';
-            // Thêm thời gian hiện tại vào tin nhắn từ user
-            userMessage.innerHTML += '<p class="message-time">' + getCurrentTime() + '</p>';
-            conversation.appendChild(userMessage);
-            // Lưu tin nhắn từ người dùng vào lịch sử cuộc trò chuyện
-            conversationHistory.push({ sender: "user", message: message, time: getCurrentTime() });
-        }
-
-        function replyMessage() {
-            var conversation = document.getElementById("conversation");
-            var chatbotMessage = document.createElement("div");
-            chatbotMessage.classList.add("chatbot-message");
-            chatbotMessage.innerHTML = '<p class="chatbot-text">I received your message. I will reply shortly.</p>';
-            // Thêm thời gian hiện tại vào tin nhắn từ chatbot
-            chatbotMessage.innerHTML += '<p class="message-time">' + getCurrentTime() + '</p>';
-            conversation.appendChild(chatbotMessage);
-            // Lưu tin nhắn từ chatbot vào lịch sử cuộc trò chuyện
-            conversationHistory.push({ sender: "chatbot", message: "I received your message. I will reply shortly.", time: getCurrentTime() });
-        }
-    </script>
-    @section scripts {
-        <script>
-            // Lắng nghe sự kiện nhập liệu trong hộp tìm kiếm
-            document.getElementById('searchInput').addEventListener('input', function () {
-                // Lấy giá trị từ hộp tìm kiếm
-                var searchTerm = this.value;
-
-                // Gửi yêu cầu tìm kiếm bằng Ajax
-                $.ajax({
-                    url: '@Url.Action("Search", "Product")',
-                    type: 'GET',
-                    data: { searchTerm: searchTerm },
-                    success: function (data) {
-                        // Hiển thị kết quả tìm kiếm trong overlay
-                        $('#searchResultsOverlay').html(data);
-                        $('#searchResultsOverlay').show(); // Hiển thị overlay
-                    }, error: function () {
-                        // Xử lý lỗi nếu có
-                    }
-                });
-            });
-
-            // Ẩn overlay khi người dùng click ra ngoài
-            $(document).click(function (event) {
-                if (!$(event.target).closest('#searchResultsOverlay, #searchInput').length) {
-                    $('#searchResultsOverlay').hide(); // Ẩn overlay
-                }
-            });
-        </script>
-    }
+  
+    
 </body>
 
 </html>

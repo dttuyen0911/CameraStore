@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Mail;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -14,6 +16,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
 using Customer = CameraStore.Models.Customer;
+using Newtonsoft.Json;
 
 namespace CameraStore.Controllers
 {
@@ -37,7 +40,6 @@ namespace CameraStore.Controllers
         {
             return View();
         }
-
         [HttpPost]
         public IActionResult Register(Customer customer)
         {
@@ -45,17 +47,30 @@ namespace CameraStore.Controllers
             {
                 var memberRole = _dbContext.Roles.FirstOrDefault(r => r.name == "Member");
                 customer.createAt = DateTime.Now;
-                if (memberRole != null)
+                var existingEmail = _dbContext.Customers.Any(c => c.email == customer.email);
+                var existingPhone = _dbContext.Customers.Any(c => c.telephone == customer.telephone);
+
+                if (existingEmail)
                 {
-                    customer.password = GetMD5(customer.password);
-                    // Gán vai trò mặc định là "Member" cho tài khoản mới
-                    customer.roleID = memberRole.roleID; // Đây là giả sử tên cột chứa ID của vai trò trong đối tượng Customer là RoleID, điều này có thể thay đổi tùy theo thiết kế cơ sở dữ liệu của bạn
+                    _notyf.Error("Email already exists, please enter another email");
+                }
+                else if (existingPhone)
+                {
+                    _notyf.Error("Telephone number already exists, please enter another telephone number");
+                }
+                else if (memberRole != null)
+                {
+                    Random rnd = new Random();
+                    string otp = rnd.Next(100000, 999999).ToString();
 
-                    _dbContext.Customers.Add(customer);
-                    _dbContext.SaveChanges();
-                    _notyf.Success("Register successfully.");
+                    // Gửi mã OTP qua email
+                    SendOTPByEmail(customer.email, otp, customer.fullname);
 
-                    return RedirectToAction("Login");
+                    // Lưu thông tin vào Session
+                    HttpContext.Session.SetString("OTP", otp);
+                    HttpContext.Session.SetString("Customer", JsonConvert.SerializeObject(customer));
+
+                    return RedirectToAction("VerifyOTP");
                 }
                 else
                 {
@@ -63,6 +78,80 @@ namespace CameraStore.Controllers
                 }
             }
             return View(customer);
+        }
+        public IActionResult VerifyOTP()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult VerifyOTP(string otp)
+        {
+            if (HttpContext.Session.Keys.Contains("OTP") && HttpContext.Session.Keys.Contains("Customer"))
+            {
+                string sessionOTP = HttpContext.Session.GetString("OTP");
+                var customerJson = HttpContext.Session.GetString("Customer");
+                var customer = JsonConvert.DeserializeObject<Customer>(customerJson);
+
+
+                if (otp == sessionOTP)
+                {
+                    // Mã OTP hợp lệ, lưu thông tin người dùng vào CSDL
+                    var memberRole = _dbContext.Roles.FirstOrDefault(r => r.name == "Member");
+                    if (memberRole != null)
+                    {
+                        customer.password = GetMD5(customer.password);
+                        customer.roleID = memberRole.roleID;
+                        _dbContext.Customers.Add(customer);
+                        _dbContext.SaveChanges();
+                        _notyf.Success("Register successfully.");
+
+                        return RedirectToAction("Login");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Default role 'Member' not found.");
+                    }
+                }
+                else
+                {
+                    _notyf.Error("Invalid OTP, please enter OTP again");
+                }
+
+                // Nếu mã OTP không hợp lệ, hiển thị lại trang đăng ký để hiển thị popup
+                return View("VerifyOTP", customer);
+            }
+            else
+            {
+                // TempData không chứa giá trị cần thiết, xử lý ở đây
+                return View("VerifyOTP");
+            }
+        }
+
+        private void SendOTPByEmail(string email, string otp, string fullname)
+        {
+            try
+            {
+                // Tạo đối tượng MailMessage
+                MailMessage mail = new MailMessage();
+                mail.From = new MailAddress("tuyendtgcc200226@fpt.edu.vn"); // Địa chỉ email của bạn
+                mail.To.Add(email); // Địa chỉ email của người nhận
+                mail.Subject = "CAMERA DIGITAL STORE"; // Tiêu đề email
+                mail.Body = $"Dear {fullname}, This is your authentication code, please do not share it with anyone. Your authentication code is: {otp}"; // Nội dung email
+
+                // Cấu hình SMTP client
+                SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587); // SMTP server và cổng của Gmail
+                smtp.EnableSsl = true;
+                smtp.UseDefaultCredentials = false;
+                smtp.Credentials = new NetworkCredential("tuyendtgcc200226@fpt.edu.vn", "sscjzesgdqvbwjaf"); // Thay thế bằng email và mật khẩu của bạn
+
+                // Gửi email
+                smtp.Send(mail);
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi khi gửi email
+                Console.WriteLine("Failed to send email. Error: " + ex.Message);
+            }
         }
         public IActionResult Login()
         {
