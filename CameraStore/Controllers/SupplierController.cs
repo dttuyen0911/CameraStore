@@ -1,4 +1,5 @@
-﻿using CameraStore.Data;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using CameraStore.Data;
 using CameraStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +13,12 @@ namespace CameraStore.Controllers
     public class SupplierController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
-        public SupplierController(ApplicationDbContext dbContext)
+        private readonly INotyfService _notyf;
+
+        public SupplierController(ApplicationDbContext dbContext, INotyfService notyf)
         {
             _dbContext = dbContext;
+            _notyf = notyf;
         }
         public IActionResult Index()
         {
@@ -32,6 +36,7 @@ namespace CameraStore.Controllers
             {
                 _dbContext.Suppliers.Add(sup);
                 _dbContext.SaveChanges();
+                _notyf.Success("Create supplier sucessfully");
                 return RedirectToAction("Index");
             }
             return View(sup);
@@ -53,6 +58,7 @@ namespace CameraStore.Controllers
                 sup.supID = id;
                 _dbContext.Suppliers.Update(sup);
                 _dbContext.SaveChanges();
+                _notyf.Success("Edit supplier sucessfully");
                 return RedirectToAction("Index");
             }
             return View(sup);
@@ -66,6 +72,7 @@ namespace CameraStore.Controllers
             }
             _dbContext.Suppliers.Remove(obj);
             _dbContext.SaveChanges();
+            _notyf.Success("Delete supplier sucessfully");
             return RedirectToAction("Index");
         }
         public IActionResult detailSup(int? id)

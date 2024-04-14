@@ -1,4 +1,5 @@
-﻿using CameraStore.Data;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using CameraStore.Data;
 using CameraStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,9 +10,12 @@ namespace CameraStore.Controllers
     public class RoleController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
-        public RoleController(ApplicationDbContext dbContext)
+        private readonly INotyfService _notyf;
+
+        public RoleController(ApplicationDbContext dbContext, INotyfService notyf)
         {
             _dbContext = dbContext;
+            _notyf = notyf;
         }
         public IActionResult Index()
         {
@@ -29,6 +33,7 @@ namespace CameraStore.Controllers
             {
                 _dbContext.Roles.Add(obj);
                 _dbContext.SaveChanges();
+                _notyf.Success("Create role successfully");
                 return RedirectToAction("Index");
             }
             return View(obj);
@@ -51,6 +56,7 @@ namespace CameraStore.Controllers
                 obj.roleID = id;
                 _dbContext.Roles.Update(obj);
                 _dbContext.SaveChanges();
+                _notyf.Success("Edit role successfully");
                 return RedirectToAction("Index");
             }
             return View(obj);
@@ -65,6 +71,7 @@ namespace CameraStore.Controllers
             }
             _dbContext.Roles.Remove(obj);
             _dbContext.SaveChanges();
+            _notyf.Success("Delete role successfully");
             return RedirectToAction("Index");
         }
         public IActionResult detailRole(int? id)

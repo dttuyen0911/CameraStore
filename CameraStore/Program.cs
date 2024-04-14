@@ -25,15 +25,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Authentication/Login";
         options.AccessDeniedPath = "/Authentication/Error";
     });
-builder.Services.Configure<PaymentIntentCreateRequest>(builder.Configuration.GetSection("Stripe"));
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<ITwilioRestClient>(provider =>
-{
-    var accountSid = builder.Configuration.GetValue<string>("Twilio:AccountSid");
-    var authToken = builder.Configuration.GetValue<string>("Twilio:AuthToken");
-    return new TwilioRestClient(accountSid, authToken);
-});
+
 builder.Services.AddMvc().AddNewtonsoftJson();
 builder.Services.AddSession(options =>
 {

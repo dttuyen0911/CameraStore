@@ -81,8 +81,8 @@ namespace CameraStore.Controllers
 
                 _dbContext.Feedbacks.Add(feedback);
                 _dbContext.SaveChanges();
-                _notyf.Success("Thanks for feedback");
-                return Ok();
+                return Json(new { success = true, message = "Thanks for feedback!" });
+
             }
 
             return View(feedback);

@@ -69,7 +69,6 @@ namespace CameraStore.Controllers
                     // Lưu thông tin vào Session
                     HttpContext.Session.SetString("OTP", otp);
                     HttpContext.Session.SetString("Customer", JsonConvert.SerializeObject(customer));
-
                     return RedirectToAction("VerifyOTP");
                 }
                 else
@@ -79,6 +78,35 @@ namespace CameraStore.Controllers
             }
             return View(customer);
         }
+        private string GenerateOTP()
+        {
+            Random rnd = new Random();
+            return rnd.Next(100000, 999999).ToString();
+        }
+        [HttpPost]
+        public IActionResult ResendOTP()
+        {
+            if (HttpContext.Session.Keys.Contains("Customer"))
+            {
+                var customerJson = HttpContext.Session.GetString("Customer");
+                var customer = JsonConvert.DeserializeObject<Customer>(customerJson);
+                var email = customer.email;
+
+                // Gửi lại mã OTP qua email
+                // Đây là nơi gửi lại OTP mới mà không cần kiểm tra giá trị cũ
+                var otp = GenerateOTP();
+                SendOTPByEmail(email, otp, customer.fullname);
+
+                _notyf.Success("OTP sent again successfully.");
+
+                return Json(new { success = true, message = "OTP sent again successfully." });
+            }
+            else
+            {
+                return Json(new { success = false, message = "Customer data not found in session." });
+            }
+        }
+
         public IActionResult VerifyOTP()
         {
             return View();
@@ -125,6 +153,36 @@ namespace CameraStore.Controllers
                 // TempData không chứa giá trị cần thiết, xử lý ở đây
                 return View("VerifyOTP");
             }
+        }
+        public IActionResult VerifyOTPForgot()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult VerifyOTPForgot(string otp)
+        {
+            if (HttpContext.Session.Keys.Contains("OTP") && HttpContext.Session.Keys.Contains("Customer"))
+            {
+                string sessionOTP = HttpContext.Session.GetString("OTP");
+                var customerJson = HttpContext.Session.GetString("Customer");
+                var customer = JsonConvert.DeserializeObject<Customer>(customerJson);
+
+                if (otp == sessionOTP)
+                {
+                    _notyf.Success("Verify OTP successfully.");
+
+                    return RedirectToAction("ForgotPassword2");
+                }
+                else
+                {
+                    _notyf.Error("Invalid OTP, please enter OTP again");
+                }
+
+                // Nếu mã OTP không hợp lệ, hiển thị lại trang đăng ký để hiển thị popup
+                return View("VerifyOTPForgot", customer);
+            }
+            _notyf.Error("Customer data not found. Please try again.");
+            return View("ForgotPassword");
         }
 
         private void SendOTPByEmail(string email, string otp, string fullname)
@@ -243,6 +301,7 @@ namespace CameraStore.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
+        [HttpGet]
         public IActionResult ForgotPassword()
         {
             return View();
@@ -254,8 +313,12 @@ namespace CameraStore.Controllers
             var customer = _dbContext.Customers.FirstOrDefault(c => c.email == email);
             if (customer != null)
             {
-                TempData["CustomerId"] = customer.customerID;
-                return RedirectToAction("ForgotPassword2");
+                var otp = GenerateOTP();
+                // Gửi mã OTP qua email
+                SendOTPByEmail(customer.email, otp, customer.fullname);
+                HttpContext.Session.SetString("OTP", otp);
+                HttpContext.Session.SetString("Customer", JsonConvert.SerializeObject(customer));
+                return RedirectToAction("VerifyOTPForgot");
             }
             else
             {
@@ -263,6 +326,8 @@ namespace CameraStore.Controllers
                 return View();
             }
         }
+
+
         public IActionResult ForgotPassword2()
         {
             return View();

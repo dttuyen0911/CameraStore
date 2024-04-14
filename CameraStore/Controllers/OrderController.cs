@@ -7,10 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Stripe;
+using Stripe.Checkout;
 using Stripe.Issuing;
 using System;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace CameraStore.Controllers
 {
@@ -130,7 +133,7 @@ namespace CameraStore.Controllers
             if (cart == null || cart.CartDetails.Count == 0)
             {
                 // Xử lý khi không có sản phẩm trong giỏ hàng
-                return RedirectToAction("Index", "Cart");
+                return RedirectToAction("Cart", "CartDetail");
             }
 
             var deliveryDate = DateTime.Now.AddDays(3); // Ngày giao hàng là ngày đặt + 3 ngày
@@ -144,7 +147,6 @@ namespace CameraStore.Controllers
                 ViewBag.Cart = cart;
                 return View("CreateOrder", order);
             }
-
             // Kiểm tra xem các trường bắt buộc đã được điền đầy đủ chưa
             if (string.IsNullOrEmpty(order.orderAddress) || string.IsNullOrEmpty(order.orderFullname) || string.IsNullOrEmpty(order.orderPhone))
             {
@@ -156,7 +158,6 @@ namespace CameraStore.Controllers
             }
             var selectedProductIdsArray = selectedProductIds.Split(',').Select(int.Parse).ToArray();
             var selectedProducts = cart.CartDetails.Where(cd => selectedProductIdsArray.Contains(cd.proID)).ToList();
-
             if (selectedProducts != null && selectedProducts.Any())
             {
                 // Kiểm tra xem đã tồn tại order nào chứa selectedProducts chưa
@@ -225,6 +226,17 @@ namespace CameraStore.Controllers
                         }
                     }
                     _dbContext.SaveChanges();
+                    var options = new JsonSerializerOptions
+                    {
+                        ReferenceHandler = ReferenceHandler.Preserve
+                    };
+
+                    var jsonOrder = JsonSerializer.Serialize(newOrder, options);
+                    HttpContext.Session.SetString("OrderInfo", jsonOrder);
+                    if (paymentMethod == "creditCard")
+                    {
+                        return RedirectToAction("StripePayment");
+                    }
                     _notyf.Success("Order successfully");
                     return RedirectToAction("viewOrder", "OrderDetail");
                 }
@@ -284,7 +296,17 @@ namespace CameraStore.Controllers
                         }
                     }
                     _dbContext.SaveChanges();
-                    _notyf.Success("Order successfully");
+                    var options = new JsonSerializerOptions
+                    {
+                        ReferenceHandler = ReferenceHandler.Preserve
+                    };
+
+                    var jsonOrder = JsonSerializer.Serialize(newOrder, options);
+                    HttpContext.Session.SetString("OrderInfo", jsonOrder);
+                    if (paymentMethod == "creditCard")
+                    {
+                        return RedirectToAction("StripePayment");
+                    }
                     return RedirectToAction("viewOrder", "OrderDetail");
                 }
 
@@ -389,65 +411,70 @@ namespace CameraStore.Controllers
 
             order.IsDelivered = true;
             _dbContext.SaveChanges();
-            return RedirectToAction("viewOrder", "OrderDetail");
+            return Json(new { success = true, message = "Congratulations on successfully receiving the goods, don't forget to leave me a feedback." });
         }
-        [Route("StripePayment")]
-        public ActionResult StripePayment(PaymentIntentCreateRequest request, string selectedProductIds)
+        public ActionResult StripePayment()
         {
-            int userId = Convert.ToInt32(User.Identity.Name);
+            // Lấy thông tin đơn hàng từ session
+            var jsonOrder = HttpContext.Session.GetString("OrderInfo");
+            var options = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve
+            };
+
+            var orderInfo = JsonSerializer.Deserialize<Order>(jsonOrder, options);
+            var customerId = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (customerId == null)
+            {
+                return RedirectToAction("Login", "Authentication");
+            }
+
+            int userId = Convert.ToInt32(customerId);
+
+            // Lấy thông tin khách hàng từ database
             var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
-            if (customer == null)
+            // Kiểm tra xem đơn hàng có tồn tại không
+            if (orderInfo != null)
             {
-                return RedirectToAction("Index", "Home");
-            }
-
-            var cart = _dbContext.Carts
-                .Include(c => c.CartDetails)
-                .ThenInclude(cd => cd.Product)
-                .FirstOrDefault(c => c.customerID == userId);
-
-            int[] selectedProductIdsArray;
-            try
-            {
-                selectedProductIdsArray = selectedProductIds.Split(',').Select(int.Parse).ToArray();
-            }
-            catch (FormatException)
-            {
-                ViewBag.ErrorMessage = "Invalid product IDs.";
-                return View("Error");
-            }
-
-            var selectedProducts = cart.CartDetails.Where(cd => selectedProductIdsArray.Contains(cd.proID)).ToList();
-
-            // Calculate order amount
-            var amount = CalculateOrderAmount(selectedProducts);
-
-            // Process payment here (omitted for brevity)
-
-            // Display success message
-            ViewBag.SuccessMessage = "Payment successful!";
-
-            return View("createOrder");
-        }
-
-        private int CalculateOrderAmount(List<CartDetails> selectedProducts)
-        {
-            if (selectedProducts == null || selectedProducts.Count == 0)
-            {
-                return 0; // hoặc giá trị mặc định phù hợp
-            }
-
-            int totalAmount = 0;
-            foreach (var product in selectedProducts)
-            {
-                // Kiểm tra xem sản phẩm có tồn tại và có giá không
-                if (product != null && product.Product != null && product.Product.proPrice > 0)
+                var domain = "https://localhost:7256/";
+                var option = new SessionCreateOptions
                 {
-                    totalAmount += product.quantity * (int)Math.Round(product.Product.proPrice);
-                }
-            }
+                    SuccessUrl = domain + $"OrderDetail/viewOrder", // Truyền paymentMethod qua URL
+                    CancelUrl = domain + $"Order/CreateOrder",
+                    LineItems = new List<SessionLineItemOptions>(),
+                    Mode = "payment",
+                    CustomerEmail = customer.email
+                };
 
-            return totalAmount;
+                foreach (var orderDetail in orderInfo.orderdetails)
+                {
+                    var sessionListItem = new SessionLineItemOptions
+                    {
+                        PriceData = new SessionLineItemPriceDataOptions
+                        {
+                            UnitAmount = (long)(orderDetail.quantity * orderDetail.Product.proPrice * 100), // Đổi giá sang đơn vị cents (VD: $10.00 -> 1000 cents)
+                            Currency = "USD",
+                            ProductData = new SessionLineItemPriceDataProductDataOptions
+                            {
+                                Name = orderDetail.Product.proName.ToString(),
+                            }
+                        },
+                        Quantity = orderDetail.quantity
+                    };
+                    option.LineItems.Add(sessionListItem);
+                }
+
+                var service = new SessionService();
+                Session session = service.Create(option);
+                Response.Headers.Add("Location", session.Url);
+                _notyf.Success("Order has been successfully processed!");
+                return new StatusCodeResult(303);
+            }
+            else
+            {
+                // Xử lý khi không tìm thấy thông tin đơn hàng trong session
+                return RedirectToAction("Cart", "CartDetail");
+            }
         }
     }
 }

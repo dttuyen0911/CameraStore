@@ -30,7 +30,7 @@
                     <div class="tab-content">
                         <div class="tab-pane active" id="tabs-1" role="tabpanel">
                             <div class="product__details__pic__item">
-                                <img src="~/Image/@Model.Item1.proUrlImage" alt="" style="height:500px;width:700px">
+                                <img src="~/Image/@Model.Item1.proUrlImage" alt="" style="height:563px;width:700px">
                             </div>
                         </div>
                     </div>
@@ -41,11 +41,11 @@
                         <h3>@Model.Item1.proName.ToUpper()</h3>
                         @if (Model.Item1.proSale == Model.Item1.proPrice)
                         {
-                            <h4 style="color:#ff0000">Price: $@Model.Item1.proSale</h4>
+                            <h3 style="color:#ff0000">Price: $@Model.Item1.proSale</h3>
                         }
                         else
                         {
-                            <h4 style="color:#ff0000">Price: @Model.Item1.proSale <span>$@Model.Item1.proPrice</span></h4>
+                            <h3 style="color:#ff0000">Price: @Model.Item1.proSale <span>$@Model.Item1.proPrice</span></h3>
                         }                        
                         <h4>Status: @Model.Item1.proStatus</h4>
                         <h4>Quantity: @Model.Item1.proQuantity</h4>
@@ -227,6 +227,9 @@
                                                 </div>
                                             </div>
                                         }
+                                        <div class="col-12" id="no-feedback" style="border: outset; border-radius: 15px;display: none;">
+                                            No feedback
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -319,8 +322,6 @@
                     url: $(this).attr('action'),
                     data: formData,
                     success: function (response) {
-                        // Hiển thị thông báo khi thêm vào giỏ hàng thành công
-                        $('#notification').fadeIn().delay(1000).fadeOut(); // Hiển thị div và sau đó ẩn nó sau 2 giây
                     },
                     error: function (xhr, status, error) {
                         // Xử lý lỗi nếu có

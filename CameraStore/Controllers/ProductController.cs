@@ -58,6 +58,8 @@ namespace CameraStore.Controllers
 
             _dbContext.Products.Add(obj);
             _dbContext.SaveChanges();
+            _notyf.Success("Add product sucessfully");
+
             return RedirectToAction("Index");
             //}
             ViewData["supID"] = new SelectList(_dbContext.Suppliers.ToList(), "supID", "supName");
@@ -110,6 +112,8 @@ namespace CameraStore.Controllers
                 obj.proID = id;
                 obj.proUrlImage = img;
                 _dbContext.Products.Update(obj);
+                _notyf.Success("Edit product sucessfully");
+
                 _dbContext.SaveChanges();
             }
             else
@@ -118,6 +122,7 @@ namespace CameraStore.Controllers
                 string uniqueFileName = proUploadImage(obj);
                 obj.proUrlImage = uniqueFileName;
                 _dbContext.Products.Update(obj);
+                _notyf.Success("Edit product sucessfully");
                 _dbContext.SaveChanges();
                 img = Path.Combine("wwwroot", "image", img);
                 FileInfo infor = new FileInfo(img);
@@ -145,6 +150,7 @@ namespace CameraStore.Controllers
             {
                 _dbContext.Products.Remove(obj);
                 _dbContext.SaveChanges();
+                _notyf.Success("Delete product sucessfully");
                 return RedirectToAction("Index");
             }
 

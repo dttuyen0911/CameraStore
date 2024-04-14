@@ -116,15 +116,6 @@
                                     <span class="checkmark"></span>
                                 </label>                                
                             </div>
-                            <form id="payment-form" >
-                                <div id="card-element" style="display:none">
-                                    <!-- A Stripe Element will be inserted here. -->
-                                </div>
-
-                                <!-- Used to display form errors. -->
-                                <div id="card-errors" role="alert"></div>
-                                <button type="submit" id="submit" style="display:none">Submit Payment</button>
-                            </form>
                         </div>
                     </div>
                  </div>
@@ -137,81 +128,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     function handlePaymentSelection(paymentMethod) {
-        var cardElement = document.getElementById('card-element');
-        if (paymentMethod === 'creditCard') {
-            cardElement.style.display = 'block';
-            submit.style.display='block'// Hiển thị card-element nếu paymentMethod là 'creditCard'
-        } else {
-            cardElement.style.display = 'none'; 
-            submit.style.display = 'none';
-        }
         document.getElementById('paymentMethod').value = paymentMethod;
     }
 </script>
-<script>
-    document.getElementById('submit').addEventListener('click', function () {
-        var selectedProductIds = ''; // Chuỗi chứa các id của sản phẩm được chọn, bạn có thể cập nhật logic để lấy id từ form hoặc nơi khác
-
-        // Gửi yêu cầu POST đến action StripePayment bên OrderController
-        fetch('/StripePayment', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                selectedProductIds: selectedProductIds // Truyền danh sách id sản phẩm được chọn
-            })
-        })
-            .then(response => {
-                // Kiểm tra kết quả phản hồi và xử lý nếu cần
-                if (response.ok) {
-                    return response.json(); // Trả về dữ liệu JSON nếu kết quả là OK
-                } else {
-                    throw new Error('Network response was not ok.');
-                }
-            })
-            .then(data => {
-                // Xử lý dữ liệu trả về nếu cần
-            })
-            .catch(error => {
-                console.error('There was an error!', error);
-            });
-    });
-</script>
-@section Scripts {
-    <script src="https://js.stripe.com/v3/"></script>
-    <script>
-        var stripe = Stripe("pk_test_51P3fJLF7FOWXnm57uko7u0rgJwB7FxhDTsJB31RSYcf2BspkDR06WJzHB6ZlzVAA5DxHwOEj8rTJTBDuIvsUMNOT00SSsAP3aq");
-        var elements = stripe.elements();
-
-        var style = {
-            base: {
-                color: '#32325d',
-                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-                fontSmoothing: 'antialiased',
-                fontSize: '16px',
-                '::placeholder': {
-                    color: '#aab7c4'
-                }
-            },
-            invalid: {
-                color: '#fa755a',
-                iconColor: '#fa755a'
-            }
-        };
-
-        var card = elements.create('card', { style: style });
-        card.mount('#card-element');
-
-        card.on('change', function (event) {
-            var displayError = document.getElementById('card-errors');
-            if (event.error) {
-                displayError.textContent = event.error.message;
-            } else {
-                displayError.textContent = '';
-            }
-        });
-
-        var form = document.getElementById('payment-form');
-    </script>
-}

@@ -126,7 +126,7 @@
                                             {
                                                 if (@item.Order.IsDelivered == false)
                                                 {
-                                                    <button id="receivedButton" class="btn btn-success" style="margin-left: 82%; width: 200px;" data-order-id="@item.Order.orderID">
+                                                    <button class="receivedButton btn btn-success" style="margin-left: 82%; width: 200px;" data-order-id="@item.Order.orderID">
                                                         Received
                                                     </button>
                                                 }
@@ -242,18 +242,24 @@
 
                                             <tr>
                                                 <td colspan="7">
-
-                                                    @if (@item.Order.orderStatus == true && @item.Order.IsShipped == true && @item.Order.IsDelivered == true)
+                                                    @if(item.Order.paymentMethod == "creditCard")
                                                     {
                                                         <div class="d-flex justify-content-between pt-2">
-                                                            <p class="fw-bold mb-0">Payment success</p>
+                                                            <p class="fw-bold mb-0">Order has been paid successfully</p>
                                                         </div>
-                                                    }
-                                                    else
-                                                    {
-                                                        <div class="d-flex justify-content-between pt-2">
-                                                            <p class="fw-bold mb-0">Please pay @item.Order.totalAmount when receiving goods</p>
-                                                        </div>
+                                                    }else{
+                                                        @if (@item.Order.orderStatus == true && @item.Order.IsShipped == true && @item.Order.IsDelivered == true)
+                                                        {
+                                                            <div class="d-flex justify-content-between pt-2">
+                                                                <p class="fw-bold mb-0">Order has been paid successfully</p>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="d-flex justify-content-between pt-2">
+                                                                <p class="fw-bold mb-0">Please pay @item.Order.totalAmount when receiving goods</p>
+                                                            </div>
+                                                        }
                                                     }
 
                                                 </td>
@@ -275,20 +281,21 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
-        $("#receivedButton").on("click", function () {
+        $(".receivedButton").on("click", function () {
             var orderId = $(this).data("order-id");
 
             // Thực hiện yêu cầu AJAX
             $.ajax({
                 url: '/Order/Received',
-                type: 'POST',
+                type: 'GET',
                 data: { orderId: orderId }
             }).done(function (response) {
                 // Xử lý kết quả thành công
                 if (response.success) {
                     // Hiển thị thông báo Notyf
-                    _notyf.success(""Congratulations on successfully receiving the goods, don't forget to leave me a feedback."");
+                    toastr.success(response.message, 'Notification', { timeOut: 300 });
                 }
+            });
         });
     });
 </script>
@@ -346,7 +353,7 @@
             // Xử lý kết quả thành công
             if (response.success) {
                 // Hiển thị thông báo Notyf
-                _notyf.success("Thanks for feedback");
+                toastr.success(response.message, 'Notification', { timeOut: 300 });
             }
         }).fail(function (xhr, status, error) {
             // Xử lý lỗi

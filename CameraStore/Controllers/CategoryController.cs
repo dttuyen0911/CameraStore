@@ -1,4 +1,5 @@
-﻿using CameraStore.Data;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using CameraStore.Data;
 using CameraStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,12 @@ namespace CameraStore.Controllers
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _dbContext;
-        public CategoryController(ApplicationDbContext dbContext)
+        private readonly INotyfService _notyf;
+
+        public CategoryController(ApplicationDbContext dbContext, INotyfService notyf)
         {
             _dbContext = dbContext;
+            _notyf = notyf;
         }
         public IActionResult Index()
         {
@@ -34,6 +38,7 @@ namespace CameraStore.Controllers
 
                 _dbContext.Categories.Add(cate);
                 _dbContext.SaveChanges();
+                _notyf.Success("Add category sucessfully");
                 return RedirectToAction("Index");
             }
             return View(cate);
@@ -73,6 +78,7 @@ namespace CameraStore.Controllers
                     cate.cateUrlImage = img;
                     _dbContext.Categories.Update(cate);
                     _dbContext.SaveChanges();
+                    _notyf.Success("Edit category sucessfully");
                 }
                 else
                 {
@@ -81,6 +87,7 @@ namespace CameraStore.Controllers
                     cate.cateUrlImage = uniqueFileName;
                     _dbContext.Categories.Update(cate);
                     _dbContext.SaveChanges();
+                    _notyf.Success("Edit category sucessfully");
                     img = Path.Combine("wwwroot", "image", img);
                     FileInfo infor = new FileInfo(img);
                     if (infor != null)
@@ -106,6 +113,7 @@ namespace CameraStore.Controllers
                 {
                     _dbContext.Categories.Remove(obj);
                     _dbContext.SaveChanges();
+                    _notyf.Success("Delete category sucessfully");
                     return RedirectToAction("Index");
                 }
                 else

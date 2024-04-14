@@ -55,60 +55,6 @@
         transform: translateY(-50%);
         cursor: pointer;
     }
-
-    .popup-container {
-        color: #f2f2f2;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 500px;
-        height: auto;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        opacity: 0;
-        pointer-events: none;
-    }
-
-        .popup-container.active {
-            opacity: 1;
-            pointer-events: auto;
-            transition: .4s ease;
-        }
-
-        .popup-container .popup-box {
-            background: #a29c9c;
-            border-radius: 6px;
-            box-shadow: 0 0 10px rgba(0,0,0,.1);
-            padding: 30px;
-            transform: scale(0);
-        }
-
-        .popup-container.active .popup-box {
-            transform: scale(1);
-            transition: .4s ease;
-            transition-delay: .25s;
-        }
-
-    .popup-box h1 {
-        color: #333;
-        line-height: 1;
-    }
-
-    .popup-box .close-btn {
-        width: 100%;
-        height: 45px;
-        background: #6e78ff;
-        border-radius: 6px;
-        border: none;
-        outline: none;
-        box-shadow: 0 0 10px rgba(0,0,0,.1);
-        cursor: pointer;
-        font-size: 18px;
-        color: #f2f2f2;
-        font-weight: 500;
-    }
 </style>
 <!-- Sign up form -->
 <section class="signup">
