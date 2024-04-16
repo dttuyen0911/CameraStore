@@ -243,11 +243,11 @@ namespace CameraStore.Controllers
 
                     // Set authentication cookie với các claims bao gồm vai trò của người dùng
                     var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, customer.customerID.ToString()), // You can use any unique identifier for the user
-                new Claim(ClaimTypes.Email, customer.email), // If needed, you can include additional claims
-                new Claim(ClaimTypes.Role, role.name) // Add role claim
-            };
+                    {
+                        new Claim(ClaimTypes.Name, customer.customerID.ToString()), // You can use any unique identifier for the user
+                        new Claim(ClaimTypes.Email, customer.email), // If needed, you can include additional claims
+                        new Claim(ClaimTypes.Role, role.name) // Add role claim
+                    };
 
                     var identity = new ClaimsIdentity(claims, "ApplicationCookie");
                     var principal = new ClaimsPrincipal(identity);

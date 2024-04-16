@@ -15,7 +15,6 @@
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
           rel="stylesheet">
-
     <!-- Css Styles -->
     <link rel="stylesheet" href="~/cameraStoreLayout/css/bootstrap.min.css" type="text/css">
     <link rel="stylesheet" href="~/cameraStoreLayout/css/font-awesome.min.css" type="text/css">
@@ -145,98 +144,14 @@
                       chat-title="CameraStore"
                       agent-id="ffdf5442-0f05-451c-90f5-39016670592a"
                       language-code="en"
-                      chat-icon="https://icon-library.com/icon/icon-for-chat-21.html">
+                      chat-icon="https://raw.githubusercontent.com/atisawd/boxicons/master/svg/regular/bx-message-square.svg">
         </df-messenger>
     </div>
-
-
-
-    @* @if (User.Identity.IsAuthenticated)
-    {
-        @if (User.IsInRole("Customer"))
-        {
-            <div class="chat_icon" id="chatIcon">
-                <i class="fa fa-comments" aria-hidden="true"></i>
-            </div>
-            <div class="chatbot-container" id="chatBox">
-                <div id="header">
-                    <h4 b-hsukbasm6h="" style="text-align: center;">
-                        Chat with us
-                    </h4>
-                </div>
-                <div id="chatbot">
-                    <div id="conversation">
-                        <div class="chatbot-message">
-                            <p class="chatbot-text">👋 Hi, let us know if you have any questions. We're happy to help!</p>
-                            <span class="message-time"></span>
-                        </div>
-                    </div>
-                    <form id="input-form">
-                        <message-container>
-                            <input id="input-field" type="text" placeholder="Type your message here">
-                            <button id="submit-button" type="submit">
-                                <i class="fas fa-paper-plane"></i> <!-- Icon "send" từ Font Awesome -->
-                            </button>
-                        </message-container>
-                    </form>
-                </div>
-            </div>
-        }
-        else
-        {
-            <div class="chat_icon" id="chatIcon" display="none">
-                <i class="fa fa-comments" aria-hidden="true"></i>
-            </div>
-        }
-
-    }
-    else
-    {
-        <div class="chat_icon" id="chatIcon">
-            <i class="fa fa-comments" aria-hidden="true"></i>
-        </div>
-        <div class="chatbot-container" id="chatBox">
-            <div id="header">
-                <h4 b-hsukbasm6h="" style="text-align: center;">
-                    Chat with us
-                </h4>
-            </div>
-            <div id="chatbot">
-                <div id="conversation">
-                    <!-- Hiển thị form nhập thông tin người dùng nếu chưa đăng nhập -->
-                    <div id="userInputForm" style="text-align: center;">
-                        <!-- Form nhập user name và telephone -->
-                        <input id="input-name" type="text" placeholder="Enter your full name" style="display: block; margin: 0 auto 10px;">
-                        <input id="input-phone" type="text" placeholder="Enter your phone number" style="display: block; margin: 0 auto 10px;">
-                        <button id="submit-user-info" style="display: block; margin: 0 auto;">Submit</button>
-                    </div>
-                    <!-- Chat-bot message sẽ không được hiển thị -->
-                    <div class="chatbot-message" style="display: none;">
-                        <p class="chatbot-text">👋 Hi, let us know if you have any questions. We're happy to help!</p>
-                        <span class="message-time"></span>
-                    </div>
-                </div>
-                <div id="message-container" style="display: none;">
-                    <!-- Form chat -->
-                    <form id="input-form">
-                        <message-container>
-                            <input id="input-field" type="text" placeholder="Type your message here">
-                            <button id="submit-button" type="submit">
-                                <i class="fas fa-paper-plane"></i> <!-- Icon "send" từ Font Awesome -->
-                            </button>
-                        </message-container>
-                    </form>
-                </div>
-            </div>
-        </div>
-    } *@
-
-
     <!-- Footer Section Begin -->
     <footer class="footer">
         <div class="container">
             <div class="row">
-                <div class="col-lg-4 col-md-5 col-sm-5">
+                <div class="col-lg-5 col-md-5 col-sm-5">
                     <div class="footer__widget">
                         <h6>CAMERA STORE</h6>
                         <p>Camera Store is a place specializing in providing quality cameras and accessories from used to new products. Our products have been carefully inspected before being delivered to your hands. Our store's motto is "Customer satisfaction is our success".</p>
@@ -248,40 +163,31 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-lg-2 offset-lg-1 col-md-3 col-sm-6">
+                <div class="col-lg-3 offset-lg-1 col-md-3 col-sm-6">
                     <div class="footer__widget">
-                        <h6>Shopping</h6>
+                        <h6>Brand</h6>
                         <ul>
-                            <li><a href="#">Clothing Store</a></li>
-                            <li><a href="#">Trending Shoes</a></li>
-                            <li><a href="#">Accessories</a></li>
-                            <li><a href="#">Sale</a></li>
+                            <li><a href="#">Nikon</a></li>
+                            <li><a href="#">Canon</a></li>
+                            <li><a href="#">Sony</a></li>
+                            <li><a href="#">Fujifilm</a></li>
+                            <li><a href="#">RICOH</a></li>
+                            <li><a href="#">OLYMPUS</a></li>
                         </ul>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-2 col-sm-6">
+                <div class="col-lg-3 col-md-2 col-sm-6">
                     <div class="footer__widget">
-                        <h6>Shopping</h6>
+                        <h6>Service</h6>
                         <ul>
-                            <li><a href="#">Contact Us</a></li>
-                            <li><a href="#">Payment Methods</a></li>
-                            <li><a href="#">Delivary</a></li>
-                            <li><a href="#">Return & Exchanges</a></li>
+                            <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                            <li><a asp-area="" asp-controller="Home" asp-action="Store">Store</a></li>
+                            <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                            <li><a asp-area="" asp-controller="Home" asp-action="AboutUs">About us</a></li>
                         </ul>
                     </div>
                 </div>
-                <div class="col-lg-2 offset-lg-1 col-md-6 col-sm-6">
-                    <div class="footer__widget">
-                        <h6>NewLetter</h6>
-                        <div class="footer__newslatter">
-                            <p>Be the first to know about new arrivals, look books, sales & promos!</p>
-                            <form action="#">
-                                <input type="text" placeholder="Your email">
-                                <button type="submit"><span class="icon_mail_alt"></span></button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+                
             </div>
         </div>
     </footer>
@@ -300,6 +206,19 @@
     <script src="~/cameraStoreLayout/js/main.js"></script>
     <script type="text/javascript" scr=""></script>
     <script src="chatbot.js"></script>
+    <script>
+        $(document).ready(function () {
+            window.addEventListener('dfMessengerLoaded', function (event) {
+                $r1 = document.querySelector("df-messenger");
+                $r2 = $r1.shadowRoot.querySelector("df-messenger-chat");
+                $r3 = $r2.shadowRoot.querySelector("df-messenger-user-input"); //for other mods
+                var sheet = new CSSStyleSheet;
+                // manage box height from here
+                sheet.replaceSync(`div.chat-wrapper[opened="true"] { height: 400px }`);
+                $r2.shadowRoot.adoptedStyleSheets = [sheet];
+            });
+        });
+    </script>
     @await Component.InvokeAsync("Notyf")
     @RenderSection("Scripts", required: false)
   

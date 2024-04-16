@@ -291,7 +291,6 @@ namespace CameraStore.Controllers
             var totalCount = products.Count();
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
             var paginatedProducts = products.Skip((page - 1) * pageSize).Take(pageSize);
-            ViewBag.MaxPrice = products.Max(p => p.proPrice);
             ViewBag.TotalPages = totalPages;
             ViewBag.CurrentPage = page;
 

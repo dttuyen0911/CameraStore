@@ -11,9 +11,13 @@ using Stripe.Checkout;
 using Stripe.Issuing;
 using System;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Web.Helpers;
 
 namespace CameraStore.Controllers
 {
@@ -233,6 +237,7 @@ namespace CameraStore.Controllers
 
                     var jsonOrder = JsonSerializer.Serialize(newOrder, options);
                     HttpContext.Session.SetString("OrderInfo", jsonOrder);
+                    SendEmailOrderConfirmation(customer);
                     if (paymentMethod == "creditCard")
                     {
                         return RedirectToAction("StripePayment");
@@ -303,16 +308,183 @@ namespace CameraStore.Controllers
 
                     var jsonOrder = JsonSerializer.Serialize(newOrder, options);
                     HttpContext.Session.SetString("OrderInfo", jsonOrder);
+                    SendEmailOrderConfirmation(customer);
                     if (paymentMethod == "creditCard")
                     {
                         return RedirectToAction("StripePayment");
                     }
+                    _notyf.Success("Order successfully");
                     return RedirectToAction("viewOrder", "OrderDetail");
                 }
 
             }
             return RedirectToAction("viewOrder", "OrderDetail");
 
+        }
+        [HttpPost]
+        public IActionResult CancelOrder(int? orderId, int? proID)
+        {
+            var customerId = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (customerId == null)
+            {
+                // Xử lý khi người dùng chưa đăng nhập
+                return RedirectToAction("Login", "Authentication");
+            }
+
+            int userId = Convert.ToInt32(customerId);
+
+            // Lấy thông tin đơn hàng từ database
+            var order = _dbContext.Orders
+                .Include(o => o.orderdetails)
+                .FirstOrDefault(o => o.orderID == orderId && o.customerID == userId);
+
+            if (order == null)
+            {
+                // Xử lý khi không tìm thấy đơn hàng
+                return RedirectToAction("Index", "Home");
+            }
+                
+            // Tăng số lượng sản phẩm của đơn hàng vào kho
+            foreach (var orderDetail in order.orderdetails)
+            {
+                var product = _dbContext.Products.FirstOrDefault(p => p.proID == orderDetail.proID);
+                if (product != null)
+                {
+                    product.proQuantity += orderDetail.quantity;
+                    product.proQuantitySold -= orderDetail.quantity;
+                }
+            }
+
+            // Xóa sản phẩm cụ thể trong đơn hàng
+            var productDetailToRemove = order.orderdetails.FirstOrDefault(od => od.proID == proID);
+            if (productDetailToRemove != null)
+            {
+                HttpContext.Session.SetString("DeletedProduct", productDetailToRemove.proID.ToString());
+                _dbContext.OrderDetails.Remove(productDetailToRemove);
+            }
+            
+            _dbContext.SaveChanges();
+            var remainingOrderDetails = _dbContext.OrderDetails.Where(od => od.orderID == orderId).ToList();
+            if (remainingOrderDetails.Count == 0)
+            {
+                // Nếu không còn sản phẩm nào trong giỏ hàng, xóa giỏ hàng
+                _dbContext.Orders.Remove(order);
+                _dbContext.SaveChanges();
+            }
+            SendEmailOrderCancellation(order.customerID);
+            return Json(new { success = true });
+        }
+        [HttpPost]
+        private void SendEmailOrderCancellation(int customerId)
+        {
+            try
+            {
+                // Lấy thông tin sản phẩm đã được xóa từ session
+                var deletedProduct = HttpContext.Session.GetString("DeletedProduct");
+                // Kiểm tra xem session có tồn tại không và đã được lưu dưới dạng chuỗi không rỗng
+                if (!string.IsNullOrEmpty(deletedProduct))
+                {
+                    // Chuyển đổi thông tin sản phẩm đã xóa thành kiểu int
+                    int proID = int.Parse(deletedProduct);
+
+                    // Lấy thông tin khách hàng từ database
+                    var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == customerId);
+
+                    if (customer == null)
+                    {
+                        // Xử lý khi không tìm thấy thông tin khách hàng
+                        return;
+                    }
+
+                    // Lấy thông tin sản phẩm đã xóa từ đơn hàng
+
+                    var product = _dbContext.Products.FirstOrDefault(p => p.proID == proID);
+
+                    if (product == null)
+                    {
+                        // Xử lý khi không tìm thấy thông tin sản phẩm
+                        return;
+                    }
+                    MailMessage mail = new MailMessage();
+                    mail.From = new MailAddress("tuyendtgcc200226@fpt.edu.vn");  // Địa chỉ email của bạn
+                    mail.To.Add(customer.email); // Địa chỉ email của người nhận
+                    mail.Subject = "Order Cancellation Confirmation"; // Tiêu đề email
+
+                    // Nội dung email
+                    StringBuilder body = new StringBuilder();
+                    body.AppendLine($"Dear {customer.fullname},");
+                    body.AppendLine("We have received your order cancellation request.");
+                    body.AppendLine($"The product '{product.proName}' has been removed from your order.");
+                    body.AppendLine("If you have any questions or concerns, please feel free to contact us.");
+                    body.AppendLine("Thank you.");
+
+                    mail.Body = body.ToString();
+                    SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587); // Thay thế bằng thông tin SMTP của bạn
+                    smtp.EnableSsl = true;
+                    smtp.UseDefaultCredentials = false;
+                    smtp.Credentials = new NetworkCredential("tuyendtgcc200226@fpt.edu.vn", "sscjzesgdqvbwjaf"); // Thay thế bằng email và mật khẩu của bạn
+
+                    // Gửi email
+                    smtp.Send(mail);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi khi gửi email
+                Console.WriteLine("Failed to send email. Error: " + ex.Message);
+            }
+        }
+
+        private void SendEmailOrderConfirmation(Models.Customer customer)
+        {
+            try
+            {
+                var jsonOrder = HttpContext.Session.GetString("OrderInfo");
+                var options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve
+                };
+                var orderInfo = JsonSerializer.Deserialize<Order>(jsonOrder, options);
+                MailMessage mail = new MailMessage();
+                mail.From = new MailAddress("tuyendtgcc200226@fpt.edu.vn");  // Địa chỉ email của bạn
+                mail.To.Add(customer.email); // Địa chỉ email của người nhận
+                mail.Subject = "Confirm successful order of Camera Digital Store products"; // Tiêu đề email
+
+                // Nội dung email
+                StringBuilder body = new StringBuilder();
+                body.AppendLine($"Dear {customer.fullname},");
+                body.AppendLine("Thank you for using Camera Digital Store's services.");
+                body.AppendLine($"Camera Digital Store confirms that you have successfully ordered our product at {orderInfo.orderDate}.");
+                body.AppendLine("Here are your order details:");
+                // Thêm thông tin về đơn hàng vào nội dung email
+                body.AppendLine($"Order ID: {orderInfo.orderID}");
+                body.AppendLine($"Order Date: {orderInfo.orderDate}");
+                body.AppendLine($"Estimated delivery date: {orderInfo.orderDelivery.ToString("dd/MM/yyyy")}");
+                body.AppendLine($"Total Amount: {orderInfo.totalAmount}");
+                body.AppendLine($"Delivery Address: {orderInfo.orderAddress}");
+                body.AppendLine($"Payment Method: {orderInfo.paymentMethod}");
+                // Thêm các sản phẩm trong đơn hàng vào nội dung email
+                body.AppendLine("Ordered Products:");
+                foreach (var detail in orderInfo.orderdetails)
+                {
+                    body.AppendLine($"- {detail.Product.proName}: {detail.quantity} x {detail.unitPrice}");
+                }
+                body.AppendLine("Thank you for shopping with us!");
+
+                mail.Body = body.ToString();
+                SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587); // SMTP server và cổng của Gmail
+                smtp.EnableSsl = true;
+                smtp.UseDefaultCredentials = false;
+                smtp.Credentials = new NetworkCredential("tuyendtgcc200226@fpt.edu.vn", "sscjzesgdqvbwjaf"); // Thay thế bằng email và mật khẩu của bạn
+
+                // Gửi email
+                smtp.Send(mail);
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi khi gửi email
+                Console.WriteLine("Failed to send email. Error: " + ex.Message);
+            }
         }
         public IActionResult Confirm(int ?orderId)
         {

@@ -127,7 +127,7 @@
                             <div class="tab-pane" id="tabs-6" role="tabpanel">
                                 <div class="product__details__tab__content">
                                     <div class="row" style="border-radius: 20px;border: outset;margin-bottom: 10px;">
-                                        <div class="col-lg-2 col-md-2" data-pro-id="@Model.Item1.proID" style="text-align: center; border-radius: 20px; border: outset; background-color: transparent; cursor: pointer;">
+                                        <div class="col-lg-2 col-md-2 product-item-star" data-pro-id="@Model.Item1.proID" style="text-align: center; border-radius: 20px; border: outset; background-color: transparent; cursor: pointer;">
                                             <span id="feedbackValue" style="display: ruby-text"></span>
                                             <i class="fa fa-star" style="color: orange; font-size: 20px;display:none"></i>
                                             <i class="fa fa-star" style="color: orange; font-size: 20px;display:none"></i>
@@ -401,9 +401,9 @@
 <script>
     $(document).ready(function () {
         // Đảm bảo bạn lặp qua từng phần tử rating để thực hiện AJAX cho mỗi sản phẩm
-        $('.col-lg-2.col-md-2').each(function () {
-            var ratingContainer = $(this);
-            var productId = $(this).data('pro-id');
+        $('.product-item-star').each(function () {
+            var productItem = $(this);
+            var productId = productItem.data('pro-id');
 
             $.ajax({
                 type: 'GET',
@@ -421,8 +421,8 @@
                     }
 
                     // Thêm HTML của các sao vào trong phần tử rating
-                    $('#feedbackValue', ratingContainer).html(averageRating + ' out of 5');
-                    ratingContainer.append(starsHTML);
+                    $('#feedbackValue', productItem).html(averageRating + ' out of 5');
+                    productItem.append(starsHTML);
                 },
                 error: function (xhr, status, error) {
                     console.error(error);

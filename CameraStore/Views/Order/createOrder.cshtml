@@ -40,19 +40,19 @@
                             <p>Full Name<span>*</span></p>
                             <span asp-validation-for="orderFullname"></span>
                             <label asp-for="orderFullname" for="orderFullname"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                            <input type="text" asp-for="orderFullname" name="orderFullname" id="orderFullname" placeholder="Full name" value="@ViewBag.FullName" />
+                            <input type="text" asp-for="orderFullname" name="orderFullname" id="orderFullname" placeholder="Full name" value="@ViewBag.FullName" required />
                         </div>
                         <div class="checkout__input">
                             <p>Telephone<span>*</span></p>
                             <span asp-validation-for="orderPhone"></span>
                             <label asp-for="orderPhone" for="orderPhone"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                            <input type="number" asp-for="orderPhone" name="orderPhone" id="orderPhone" placeholder="Telephone" value="@ViewBag.Telephone" />
+                            <input type="text" asp-for="orderPhone" name="orderPhone" id="orderPhone" placeholder="Telephone" value="@ViewBag.Telephone" required />
                         </div>
                         <div class="checkout__input">
                             <p>Address<span>*</span></p>
                             <span asp-validation-for="orderAddress"></span>
                             <label asp-for="orderAddress" for="orderAddress"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                            <input type="text" asp-for="orderAddress" name="orderAddress" id="orderAddress" placeholder="orderAddress" />
+                            <input type="text" asp-for="orderAddress" name="orderAddress" id="orderAddress" placeholder="orderAddress" required />
                         </div>
                     </div>
 
@@ -103,16 +103,16 @@
 
                             <p>Payment Method</p>
                             <div class="checkout__input__checkbox">
-                                <label for="cash" onclick="handlePaymentSelection('cash')">
-                                    Cash
-                                    <input type="radio" name="paymentMethod" id="cash" value="cash" checked>
+                                <label for="Cod" onclick="handlePaymentSelection('Cod')">
+                                    Cod
+                                    <input type="radio" name="paymentMethod" id="Cod" value="Cod" checked>
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
                             <div class="checkout__input__checkbox">
-                                <label for="creditCard" onclick="handlePaymentSelection('creditCard')">
+                                <label for="Card" onclick="handlePaymentSelection('Card')">
                                     Credit Card
-                                    <input type="radio" name="paymentMethod" id="creditCard" value="creditCard">
+                                    <input type="radio" name="paymentMethod" id="Card" value="Card">
                                     <span class="checkmark"></span>
                                 </label>                                
                             </div>

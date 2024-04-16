@@ -126,6 +126,9 @@
                                             {
                                                 if (@item.Order.IsDelivered == false)
                                                 {
+                                                    <button class="cancelButton btn btn-success" style="margin-left: 82%; width: 200px; display:none" data-order-id="@item.Order.orderID">
+                                                        Cancel order
+                                                    </button>
                                                     <button class="receivedButton btn btn-success" style="margin-left: 82%; width: 200px;" data-order-id="@item.Order.orderID">
                                                         Received
                                                     </button>
@@ -173,11 +176,27 @@
                                                     </div>
                                                 }
                                             }
-                                            else
+                                            else if (@item.Order.orderStatus == true && @item.Order.IsShipped == true)
                                             {
+                                                <div class ="row">
+                                                <button class="cancelButton btn btn-success" style="margin-left: 82%; width: 200px; display:none" data-order-id="@item.Order.orderID">
+                                                    Cancel order
+                                                </button>
                                                 <button class="btn btn-success" disabled style="margin-left: 82%; width: 200px;">
                                                     Received
                                                 </button>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="row" style="margin-left: 750px;">
+                                                <button class="cancelButton btn btn-danger" style="width:150px" data-order-id="@item.Order.orderID" data-pro-id="@item.proID">
+                                                    Cancel order
+                                                </button>
+                                                    <button class="btn btn-success" disabled style="width:150px">
+                                                    Received
+                                                </button>
+                                                </div>
                                             }
                                         </div>
                                     </div>
@@ -299,6 +318,38 @@
         });
     });
 </script>
+<script>
+    $(document).ready(function () {
+        $(".cancelButton").on("click", function () {
+            var orderId = $(this).data("order-id");
+            var proId = $(this).data("pro-id"); // Lấy proId từ data-pro-id
+            // Thực hiện yêu cầu AJAX
+            $.ajax({
+                url: '/Order/CancelOrder',
+                type: 'POST',
+                data: {
+                    orderId: orderId,
+                    proId: proId
+                },
+                success: function (response) {
+                    // Xử lý kết quả trả về từ server
+                    if (response.success) {
+                        // Chuyển hướng sau khi hủy đơn hàng thành công
+                        window.location.href = '/OrderDetail/viewOrder';
+                    } else {
+                        // Xử lý khi có lỗi từ server
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    // Xử lý khi có lỗi trong quá trình gửi yêu cầu AJAX
+                    alert('An error occurred while processing your request.');
+                }
+            });
+        });
+    });
+</script>
+
 <script>
     function chooseFile(fileInput) {
         if (fileInput.files && fileInput.files[0]) {

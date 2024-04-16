@@ -111,6 +111,21 @@ namespace CameraStore.Controllers
             {
                 obj.proID = id;
                 obj.proUrlImage = img;
+                if (obj.proQuantity == 0)
+                {
+                    obj.proStatus = "Sold out";
+                }
+                else
+                {
+                    if (obj.proPercent != null && obj.proPercent > 0)
+                    {
+                        obj.proStatus = "Sale";
+                    }
+                    else
+                    {
+                        obj.proStatus = "New";
+                    }
+                }
                 _dbContext.Products.Update(obj);
                 _notyf.Success("Edit product sucessfully");
 
@@ -121,6 +136,21 @@ namespace CameraStore.Controllers
                 obj.proID = id;
                 string uniqueFileName = proUploadImage(obj);
                 obj.proUrlImage = uniqueFileName;
+                if (obj.proQuantity == 0)
+                {
+                    obj.proStatus = "Sold out";
+                }
+                else
+                {
+                    if (obj.proPercent != null && obj.proPercent > 0)
+                    {
+                        obj.proStatus = "Sale";
+                    }
+                    else
+                    {
+                        obj.proStatus = "New";
+                    }
+                }
                 _dbContext.Products.Update(obj);
                 _notyf.Success("Edit product sucessfully");
                 _dbContext.SaveChanges();
