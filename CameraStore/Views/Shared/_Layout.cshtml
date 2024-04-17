@@ -85,46 +85,43 @@
                                 @if (User.Identity.IsAuthenticated)
                                 {
                                     <li>
-                                        <i class="fa fa-cog" aria-hidden="true"></i><a asp-controller="Home" asp-action="settingAccount">My account</a>
+                                        <i class="fa fa-cog" aria-hidden="true"></i><a asp-controller="Home" asp-action="settingAccount"> My account</a>
                                     </li>
                                     @if (User.IsInRole("Admin"))
                                     {
                                         <li>
                                             <i class="fa fa-university" aria-hidden="true"></i>
-                                            <a asp-area="" asp-controller="Manage" asp-action="DashboardAdmin">Home</a>
+                                            <a asp-area="" asp-controller="Manage" asp-action="DashboardAdmin"> Home</a>
                                         </li>
                                     }
                                     else if (User.IsInRole("Owner"))
                                     {
                                         <li>
                                             <i class="fa fa-university" aria-hidden="true"></i>
-                                            <a asp-area="" asp-controller="Manage" asp-action="DashboardOwner">Home</a>
+                                            <a asp-area="" asp-controller="Manage" asp-action="DashboardOwner"> Home</a>
                                         </li>
                                     }
                                     else if (User.IsInRole("Employee"))
                                     {
                                         <li>
                                             <i class="fa fa-university" aria-hidden="true"></i>
-                                            <a asp-area="" asp-controller="Manage" asp-action="DashboardEmployee">Home</a>
+                                            <a asp-area="" asp-controller="Manage" asp-action="DashboardEmployee"> Home</a>
                                         </li>
                                     }
                                     <li>
-                                        <i class="fa fa-book" aria-hidden="true"></i><a asp-area="" asp-controller="OrderDetail" asp-action="viewOrder">Order</a>
+                                        <i class="fa fa-book" aria-hidden="true"></i><a asp-area="" asp-controller="OrderDetail" asp-action="viewOrder"> Order</a>
                                     </li>
                                     <li>
-                                        <i class="fa fa-comment" aria-hidden="true"></i><a asp-area="" asp-controller="Message" asp-action="Index">Message</a>
-                                    </li>
-                                    <li>
-                                        <i class="fa fa-sign-out" aria-hidden="true"></i><a asp-area="" asp-controller="Authentication" asp-action="Logout">Logout</a>
+                                        <i class="fa fa-sign-out" aria-hidden="true"></i><a asp-area="" asp-controller="Authentication" asp-action="Logout"> Logout</a>
                                     </li>
                                 }
                                 else
                                 {
                                     <li>
-                                        <i class="fa fa-sign-in" aria-hidden="true"></i><a asp-area="" asp-controller="Authentication" asp-action="Login">Login</a>
+                                        <i class="fa fa-sign-in" aria-hidden="true"></i><a asp-area="" asp-controller="Authentication" asp-action="Login"> Login</a>
                                     </li>
                                     <li>
-                                        <i class="fa fa-registered" aria-hidden="true"></i><a asp-area="" asp-controller="Authentication" asp-action="Register">Register</a>
+                                        <i class="fa fa-registered" aria-hidden="true"></i><a asp-area="" asp-controller="Authentication" asp-action="Register"> Register</a>
                                     </li>
                                 }
                             </ul>

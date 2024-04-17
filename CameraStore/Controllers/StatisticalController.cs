@@ -50,7 +50,7 @@ namespace CameraStore.Controllers
         }
         public IActionResult GetOrderCountsCurrentMonth()
         {
-            var today = DateTime.Today;
+            var today = DateTime.Now;
             var firstDayOfMonth = new DateTime(today.Year, today.Month, 1);
             var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
 
@@ -63,7 +63,7 @@ namespace CameraStore.Controllers
                 {
                     Date = date,
                     Count = _dbContext.Orders
-                        .Count(o => o.orderDate.Date == date && o.orderStatus == true)
+                        .Count(o => o.orderDate.Date == date.Date && o.orderStatus == true)
                 }).ToList();
 
             return Json(orderCounts);
@@ -88,27 +88,7 @@ namespace CameraStore.Controllers
 
             return Json(revenueByMonth);
         }
-        public IActionResult GetAccountCountsByMonth()
-        {
-            int currentYear = DateTime.Now.Year;
-
-            var accountCountsByMonth = new List<object>();
-
-            for (int month = 1; month <= 12; month++)
-            {
-                var firstDayOfMonth = new DateTime(currentYear, month, 1);
-                var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
-
-                var accountCount = _dbContext.Customers
-                    .Where(a => a.createAt >= firstDayOfMonth && a.createAt <= lastDayOfMonth)
-                    .Count();
-
-                accountCountsByMonth.Add(new { Month = CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(month), AccountCount = accountCount });
-            }
-
-            return Json(accountCountsByMonth);
-        }
-
+     
 
     }
 }

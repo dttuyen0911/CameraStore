@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Net.Mail;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -388,5 +390,6 @@ namespace CameraStore.Controllers
             var products = productsQuery.ToList();
             return PartialView("_ProductList", products);
         }
+
     }
 }

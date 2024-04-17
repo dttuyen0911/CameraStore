@@ -222,9 +222,17 @@
                                                     }
                                                 </div>
                                                 <p>@feedback.feedDescription</p>
-                                                <div class="product__item__pic set-bg">
-                                                    <img src="~/Image/@feedback.feedUrlImage" style="height: 200px;width: 200px;">
-                                                </div>
+                                                @if(feedback.feedUrlImage == null)
+                                                {
+                                                    <div>
+                                                        <img src="" style="display:none">
+                                                    </div>
+                                                } else
+                                                {
+                                                    <div class="product__item__pic set-bg">
+                                                        <img src="~/Image/@feedback.feedUrlImage" style="height: 200px;width: 200px;">
+                                                    </div>
+                                                }
                                             </div>
                                         }
                                         <div class="col-12" id="no-feedback" style="border: outset; border-radius: 15px;display: none;">

@@ -47,7 +47,7 @@ namespace CameraStore.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public IActionResult Create([FromForm] Feedback feedback, IFormFile feedImage, [FromForm] int StarRating, int orderId)
+        public IActionResult Create([FromForm] Feedback feedback, IFormFile? feedImage, [FromForm] int StarRating, int orderId)
         {
             if (ModelState.IsValid)
             {
@@ -76,13 +76,16 @@ namespace CameraStore.Controllers
                     }
                     feedback.feedUrlImage = uniqueFileName;
                 }
-
+                else
+                {
+                    feedback.feedUrlImage = null; // Không có ảnh được tải lên, đặt feedUrlImage thành null
+                }
                 feedback.StarRating = StarRating;
 
                 _dbContext.Feedbacks.Add(feedback);
                 _dbContext.SaveChanges();
-                return Json(new { success = true, message = "Thanks for feedback!" });
-
+                _notyf.Success("Feedback successfully");
+                return RedirectToAction("orderDetail", "OrderDetail", new { id = orderId });
             }
 
             return View(feedback);

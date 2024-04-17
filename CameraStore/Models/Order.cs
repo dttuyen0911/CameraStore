@@ -13,6 +13,7 @@ namespace CameraStore.Models
         [Display(Name = "Order Status")]
         public bool orderStatus { get; set; }
         public bool IsShipped { get; set; }
+        public bool IsPayment { get; set; }
         public bool IsDelivered { get; set; }
         [NotMapped]
         public string OrderStatusString

@@ -160,8 +160,17 @@ namespace CameraStore.Controllers
                 ViewBag.Cart = cart;
                 return View("CreateOrder", order);
             }
+            if (paymentMethod == "Cod")
+            {
+                order.IsPayment = true;
+            }
+            else
+            {
+                order.IsPayment = false;
+            }
             var selectedProductIdsArray = selectedProductIds.Split(',').Select(int.Parse).ToArray();
             var selectedProducts = cart.CartDetails.Where(cd => selectedProductIdsArray.Contains(cd.proID)).ToList();
+
             if (selectedProducts != null && selectedProducts.Any())
             {
                 // Kiểm tra xem đã tồn tại order nào chứa selectedProducts chưa
@@ -182,10 +191,12 @@ namespace CameraStore.Controllers
                         IsShipped = false,
                         IsDelivered = false,
                         customerID = userId,
+                        IsPayment = order.IsPayment,
                         orderFullname = order.orderFullname,
                         orderPhone = order.orderPhone,
                         orderAddress = order.orderAddress,
                         paymentMethod = paymentMethod
+                      
                     };
 
                     // Thêm order mới vào DbContext
@@ -238,7 +249,7 @@ namespace CameraStore.Controllers
                     var jsonOrder = JsonSerializer.Serialize(newOrder, options);
                     HttpContext.Session.SetString("OrderInfo", jsonOrder);
                     SendEmailOrderConfirmation(customer);
-                    if (paymentMethod == "creditCard")
+                    if (paymentMethod == "Card")
                     {
                         return RedirectToAction("StripePayment");
                     }
@@ -255,6 +266,7 @@ namespace CameraStore.Controllers
                         orderStatus = false,// Chưa xác nhận đơn hàng
                         IsShipped = false,
                         IsDelivered = false,
+                        IsPayment = order.IsPayment,
                         customerID = userId,
                         orderAddress = order.orderAddress,
                         orderFullname = order.orderFullname,
@@ -309,7 +321,7 @@ namespace CameraStore.Controllers
                     var jsonOrder = JsonSerializer.Serialize(newOrder, options);
                     HttpContext.Session.SetString("OrderInfo", jsonOrder);
                     SendEmailOrderConfirmation(customer);
-                    if (paymentMethod == "creditCard")
+                    if (paymentMethod == "Card")
                     {
                         return RedirectToAction("StripePayment");
                     }
@@ -516,6 +528,7 @@ namespace CameraStore.Controllers
 
             // Lưu thay đổi vào DbContext
             _dbContext.SaveChanges();
+            _notyf.Success("Confirm order successfully");
 
             // Chuyển hướng người dùng đến trang Index của đơn hàng sau khi xác nhận
             return RedirectToAction("Index", "Order");
@@ -550,6 +563,7 @@ namespace CameraStore.Controllers
 
             // Lưu thay đổi vào DbContext
             _dbContext.SaveChanges();
+            _notyf.Success("Confirm the order has been successfully delivered to the shipping unit.");
 
             // Chuyển hướng người dùng đến trang Index của đơn hàng sau khi xác nhận
             return RedirectToAction("Index", "Order");
@@ -583,7 +597,8 @@ namespace CameraStore.Controllers
 
             order.IsDelivered = true;
             _dbContext.SaveChanges();
-            return Json(new { success = true, message = "Congratulations on successfully receiving the goods, don't forget to leave me a feedback." });
+            _notyf.Success("Congratulations on successfully receiving the goods, don't forget to leave me a feedback.");
+            return RedirectToAction("orderDetail", "OrderDetail", new { id = orderId });
         }
         public ActionResult StripePayment()
         {
@@ -612,7 +627,7 @@ namespace CameraStore.Controllers
                 var option = new SessionCreateOptions
                 {
                     SuccessUrl = domain + $"OrderDetail/viewOrder", // Truyền paymentMethod qua URL
-                    CancelUrl = domain + $"Order/CreateOrder",
+                    CancelUrl = domain + $"OrderDetail/viewOrder",
                     LineItems = new List<SessionLineItemOptions>(),
                     Mode = "payment",
                     CustomerEmail = customer.email
@@ -640,6 +655,8 @@ namespace CameraStore.Controllers
                 Session session = service.Create(option);
                 Response.Headers.Add("Location", session.Url);
                 _notyf.Success("Order has been successfully processed!");
+                orderInfo.IsPayment = true;
+                _dbContext.SaveChanges();
                 return new StatusCodeResult(303);
             }
             else
@@ -647,6 +664,68 @@ namespace CameraStore.Controllers
                 // Xử lý khi không tìm thấy thông tin đơn hàng trong session
                 return RedirectToAction("Cart", "CartDetail");
             }
+        }
+        public ActionResult StripePayment1(int orderid)
+        {
+            var orderInfo = _dbContext.Orders
+             .Include(o => o.orderdetails) // Load các chi tiết đơn hàng
+             .ThenInclude(od => od.Product) // Load thông tin sản phẩm
+             .FirstOrDefault(o => o.orderID == orderid);
+            if (orderInfo == null)
+            {
+                // Xử lý khi không tìm thấy thông tin đơn hàng trong cơ sở dữ liệu
+                return RedirectToAction("Cart", "CartDetail");
+            }
+
+            var customerId = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (customerId == null)
+            {
+                return RedirectToAction("Login", "Authentication");
+            }
+
+            int userId = Convert.ToInt32(customerId);
+
+            // Lấy thông tin khách hàng từ database
+            var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
+
+            var domain = "https://localhost:7256/";
+            var option = new SessionCreateOptions
+            {
+                SuccessUrl = domain + $"OrderDetail/viewOrder", // Truyền paymentMethod qua URL
+                CancelUrl = domain + $"OrderDetail/viewOrder",
+                LineItems = new List<SessionLineItemOptions>(),
+                Mode = "payment",
+                CustomerEmail = customer.email
+            };
+
+            foreach (var orderDetail in orderInfo.orderdetails)
+            {
+                if (orderDetail != null && orderDetail.Product != null && orderDetail.Product.proName != null)
+                {
+                    var sessionListItem = new SessionLineItemOptions
+                    {
+                        PriceData = new SessionLineItemPriceDataOptions
+                        {
+                            UnitAmount = (long)(orderDetail.quantity * orderDetail.Product.proPrice * 100), // Đổi giá sang đơn vị cents (VD: $10.00 -> 1000 cents)
+                            Currency = "USD",
+                            ProductData = new SessionLineItemPriceDataProductDataOptions
+                            {
+                                Name = orderDetail.Product.proName.ToString(),
+                            }
+                        },
+                        Quantity = orderDetail.quantity
+                    };
+                    option.LineItems.Add(sessionListItem);
+                }
+            }
+
+            var service = new SessionService();
+            Session session = service.Create(option);
+            Response.Headers.Add("Location", session.Url);
+            _notyf.Success("Payment successfully");
+            orderInfo.IsPayment = true;
+            _dbContext.SaveChanges();
+            return new StatusCodeResult(303);
         }
     }
 }

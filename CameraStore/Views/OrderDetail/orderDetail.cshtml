@@ -165,7 +165,7 @@
                                                                 <!-- Thêm input để chọn file hình ảnh -->
                                                                 <input type="file" onchange="chooseFile(this)" style="width: 100%;margin-top:10px" id="feedImage" name="feedImage" accept="image/gif, image/jpeg, image/png" class="form-control" />
                                                                 <div>
-                                                                    <img id="image" src="" style="margin-top: 10px;width: 200px;height: 200px;" alt="Feedback Image">
+                                                                    <img id="image" src="~/image/noImage.jpg" style="margin-top: 10px;width: 200px;height: 200px;" alt="Feedback Image">
                                                                 </div>
                                                                 <span class="text-danger"></span>
                                                             </div>
@@ -261,12 +261,21 @@
 
                                             <tr>
                                                 <td colspan="7">
-                                                    @if(item.Order.paymentMethod == "creditCard")
+                                                    @if(item.Order.paymentMethod == "Card" && item.Order.IsPayment == true)
                                                     {
                                                         <div class="d-flex justify-content-between pt-2">
                                                             <p class="fw-bold mb-0">Order has been paid successfully</p>
                                                         </div>
-                                                    }else{
+                                                    }else if(item.Order.IsPayment == false && item.Order.paymentMethod == "Card")
+                                                    {
+                                                        <div class="d-flex justify-content-between pt-2">
+                                                            <p class="fw-bold mb-0">
+                                                                Please pay @item.Order.totalAmount within 24 hours otherwise your order will change to payment status COD.
+                                                                <a asp-controller="Order" asp-action="StripePayment1" asp-route-orderid="@item.Order.orderID">Continue Payment</a>
+                                                            </p>
+                                                        </div>
+                                                    }
+                                                    else{
                                                         @if (@item.Order.orderStatus == true && @item.Order.IsShipped == true && @item.Order.IsDelivered == true)
                                                         {
                                                             <div class="d-flex justify-content-between pt-2">
@@ -280,10 +289,8 @@
                                                             </div>
                                                         }
                                                     }
-
                                                 </td>
                                             </tr>
-
                                         </tbody>
                                     </table>
                                 </div>
@@ -295,6 +302,13 @@
         </div>
     </div>
 </section>
+<div id="notification" style="display: none; position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 1000;" class="alert alert-success" role="alert">
+    Feedback product successfully
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -403,8 +417,8 @@
         }).done(function (response) {
             // Xử lý kết quả thành công
             if (response.success) {
-                // Hiển thị thông báo Notyf
-                toastr.success(response.message, 'Notification', { timeOut: 300 });
+                $('#notification1').fadeIn().delay(1000).fadeOut();
+                return;
             }
         }).fail(function (xhr, status, error) {
             // Xử lý lỗi

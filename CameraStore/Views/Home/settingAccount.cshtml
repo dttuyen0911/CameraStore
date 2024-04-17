@@ -53,14 +53,14 @@
                         <div class="card-body">
                             <form id="changeInfoForm" asp-action="ChangeInfo" asp-controller="Home" method="post">
                                 <div class="form-group">
+                                    <span asp-validation-for="email"></span>
+                                    <label asp-for="email" for="email">Email</label>
+                                    <input type="email" class="form-control" asp-for="email" id="email" placeholder="Email" value="@Model.email" readonly>
+                                </div>
+                                <div class="form-group">
                                     <span asp-validation-for="fullname"></span>
                                     <label asp-for="fullname" for="fullname">Full name</label>
                                     <input type="text" class="form-control" asp-for="fullname" id="fullname" placeholder="Full name" value="@Model.fullname">
-                                </div>
-                                <div class="form-group">
-                                    <span asp-validation-for="email"></span>
-                                    <label asp-for="email" for="email">Email</label>
-                                    <input type="email" class="form-control" asp-for="email" id="email" placeholder="Email" value="@Model.email">
                                 </div>
                                 <div class="form-group">
                                     <span asp-validation-for="telephone"></span>

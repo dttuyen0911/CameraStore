@@ -15,6 +15,8 @@ namespace CameraStore.Models
         [Required(ErrorMessage = "Email of account is not null")]
         public string? email {  get; set; }
         [Required(ErrorMessage = "Password of account is not null")]
+        [MinLength(8, ErrorMessage = "Password must be at least 8 characters long")]
+        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$", ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.")]
         public string? password { get; set; }
         [Required(ErrorMessage = "Telephone of account is required")]
         [RegularExpression(@"^\d{10,11}$", ErrorMessage = "Telephone must be 10 or 11 digits")]
