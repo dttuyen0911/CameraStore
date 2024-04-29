@@ -21,18 +21,18 @@
                                class="form-control"
                                id="uploadProName"
                                aria-required="true"
-                               placeholder="Enter name of product" />
+                               placeholder="Enter name of product" required />
                     </div>
                     <div class="mb-3">
                             <label asp-for="proImage" class="control-label">Image</label>
-                            <input asp-for="proImage" type="file" onchange="chooseFile(this)" accept="image/gif, image/jpeg, image/png" style="width: 100%" class="form-control" />
+                            <input asp-for="proImage" type="file" onchange="chooseFile(this)" accept="image/gif, image/jpeg, image/png" style="width: 100%" class="form-control" required />
                             <div> <img style="height:200px;width:250px" id="image" /></div>
                             <span asp-validation-for="proImage" class="text-danger"></span>
                     </div>
                     <div>
                         <span asp-validation-for="proDescription"></span>
                         <label asp-for="proDescription"for="exampleFormControlTextarea1" class="form-label">Enter description of product</label>
-                        <textarea class="form-control" asp-for ="proDescription" id="uploadProDes" rows="3"></textarea>
+                        <textarea class="form-control" asp-for ="proDescription" id="uploadProDes" rows="3" required></textarea>
                     </div>
                     <div class="mb-3">
                         <span asp-validation-for="proStatus"></span>
@@ -42,7 +42,7 @@
                                class="form-control"
                                id="uploadProSta"
                                aria-required="true"
-                               placeholder="Enter status of product" />
+                               placeholder="Enter status of product" required />
                     </div>
                     <div class="mb-3">
                         <span asp-validation-for="proPrice"></span>
@@ -51,7 +51,7 @@
                                asp-for="proPrice"
                                class="form-control"
                                id="uploadProPrice"
-                               placeholder="Enter price of product" />
+                               placeholder="Enter price of product" required/>
                     </div>
                     
                     <div class="mb-3">
@@ -74,7 +74,7 @@
                                class="form-control"
                                id="uploadProQuantity"
                                min="1"
-                               placeholder="Enter quantity of product" />
+                               placeholder="Enter quantity of product" required/>
                     </div>
                     <div class="mb-3">
                         <label asp-for="Category" class="form-label">Category</label>

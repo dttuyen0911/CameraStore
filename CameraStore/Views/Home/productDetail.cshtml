@@ -62,18 +62,18 @@
                         <a href="#tabs-5">Read More</a>
                         <div class="product__details__cart__option">
                             <div style="margin-bottom: 10px;">
-                                <input type="number" value="1" min="0" max="@Model.Item1.proQuantity">
+                                <input type="number" id="quantityInput" value="1" min="0" max="@Model.Item1.proQuantity" onchange="updateHiddenQuantity()">
                             </div>
                             <div class="quantity">
-                                <form class="add-to-cart-form" method="post" action="@Url.Action("AddToCart", "Cart")">
+                                <form id="addToCartForm" class="add-to-cart-form" method="post" action="@Url.Action("AddToCart", "Cart")">
                                     <input type="hidden" name="customerId" value="@User.Identity.Name" />
                                     <input type="hidden" name="productId" value="@Model.Item1.proID" />
-                                    <input type="hidden" name="quantity" value="1" />
+                                    <input type="hidden" name="quantity" id="hiddenQuantity" value="1" />
                                     <input type="hidden" name="status" value="@Model.Item1.proStatus" />
                                     <input type="hidden" name="price" value="@Model.Item1.proPrice" />
-                                    <button type="submit" class="primary-btn">Add To Cart</button>
+                                    <button type="button" class="primary-btn" onclick="addToCart()">Add To Cart</button>
                                 </form>
-                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -303,6 +303,17 @@
 
 <!-- Related Section End -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function updateHiddenQuantity() {
+        var quantity = document.getElementById("quantityInput").value;
+        document.getElementById("hiddenQuantity").value = quantity;
+    }
+
+    function addToCart() {
+        updateHiddenQuantity();
+        document.getElementById("addToCartForm").submit();
+    }
+</script>
 <script>
     $(document).ready(function () {
         $('form.add-to-cart-form').submit(function (event) {

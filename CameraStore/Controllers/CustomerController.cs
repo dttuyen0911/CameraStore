@@ -1,4 +1,5 @@
-﻿using CameraStore.Data;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using CameraStore.Data;
 using CameraStore.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +14,11 @@ namespace CameraStore.Controllers
 
     public class CustomerController : Controller
     {
+        private readonly INotyfService _notyf;
         private readonly ApplicationDbContext _dbContext;
-        public CustomerController(ApplicationDbContext dbContext)
+        public CustomerController(ApplicationDbContext dbContext, INotyfService notyf)
         {
+            _notyf = notyf;
             _dbContext = dbContext;
         }
         public IActionResult Index()
@@ -48,6 +51,7 @@ namespace CameraStore.Controllers
 
                         _dbContext.Customers.Add(obj);
                         _dbContext.SaveChanges();
+                        _notyf.Success("Creat account successfully.");
                         return RedirectToAction("Index");
                     }
                     else

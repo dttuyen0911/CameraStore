@@ -63,7 +63,7 @@
                                     <div class="dropdown-menu">
                                         <a class="dropdown-item" asp-controller="Product" asp-action="detailPro" asp-route-id="@product.proID"><i class="bx bx-book-alt me-1"></i> View Detail</a>
                                         <a class="dropdown-item" asp-controller="Product" asp-action="Edit" asp-route-id="@product.proID" asp-route-img="@product.proImage"><i class="bx bx-edit-alt me-1"></i> Update</a>
-                                            <a class="dropdown-item" asp-action="Delete" asp-route-id="@product.proID" asp-route-img="@product.proImage" onclick="return confirm('Are you sure?');">
+                                            <a class="dropdown-item" asp-action="Delete" asp-route-id="@product.proID" asp-route-img="@product.proImage" onclick="return confirm('Are you sure to delete this product?');">
                                                 <i class="bx bx-trash me-1"></i> Delete
                                             </a>
                                         </div>

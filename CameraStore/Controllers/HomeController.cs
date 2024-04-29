@@ -31,9 +31,6 @@ namespace CameraStore.Controllers
                 .Include(c => c.Category)
                 .Include(s => s.Supplier)
                 .ToList();
-            var allCategories = _dbContext.Categories
-                    .ToList();
-            ViewBag.AllCategories = allCategories;
             int userId = Convert.ToInt32(User.Identity.Name);
 
             var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);

@@ -127,6 +127,8 @@ namespace CameraStore.Controllers
                     }
                     _dbContext.Categories.Remove(obj);
                     _dbContext.SaveChanges();
+                    _notyf.Success("Delete category sucessfully");
+
                     return RedirectToAction("Index");
                 }
             }

@@ -15,29 +15,6 @@
 </section>
 <!-- Hero Section End -->
 <section class="section">
-    <!-- container -->
-    <div class="container">
-        <!-- row -->
-        <div class="row" style="border: inset;">
-            <!-- Hiển thị tất cả category -->
-            @foreach (var category in ViewBag.AllCategories)
-            {
-                <div class="col-md-4 col-xs-6">
-                    <div class="shop">
-                        <div class="shop-img" style="max-width:500px; height:200px;">
-                            <img src="~/Image/@category.cateUrlImage" alt="">
-                        </div>
-                        <div class="shop-body">
-                            <h3>@category.cateName<br>Collection</h3>
-                            <a asp-controller="Home" asp-action="Store" class="cta-btn shop-now-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-        <!-- /row -->
-    </div>
-    <!-- /container -->
     <section class="product spad">
         <div class="container">
             <div class="row">
@@ -73,7 +50,7 @@
                                     <i class="fa fa-star" style="display: none;"></i>
                                 </div>
                                 <div id="addToCartForm">
-                                    <a href="#" class="menu-link add-cart" data-controller="Cart" data-action="AddToCart" data-customer-id="@User.Identity.Name" data-product-id="@product.proID" data-quantity="1" data-price="@product.proPrice">
+                                    <a href="#" class="menu-link add-cart" data-controller="Cart" data-action="AddToCart1" data-customer-id="@User.Identity.Name" data-product-id="@product.proID" data-quantity="1" data-price="@product.proPrice">
                                         + Add To Cart
                                     </a>
                                 </div>
@@ -170,7 +147,7 @@
             </div>
             <div class="row product__filter">
                 @{
-                    var topSoldProducts = Model.OrderByDescending(p => p.proQuantitySold).Take(6);
+                    var topSoldProducts = Model.Where(p => p.proQuantitySold > 1).OrderByDescending(p => p.proQuantitySold).Take(6);
                 }
 
                 @foreach (var product in topSoldProducts)

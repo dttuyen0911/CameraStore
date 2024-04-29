@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Stripe;
 using Customer = CameraStore.Models.Customer;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 namespace CameraStore.Controllers
 {
@@ -333,33 +334,44 @@ namespace CameraStore.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult ForgotPassword2(string newPassword, string confirmPassword, int customerId)
+        public IActionResult ForgotPassword2(string newPassword, string confirmPassword)
         {
-            var existingCustomer = _dbContext.Customers.FirstOrDefault(c => c.customerID == customerId);
+            if (HttpContext.Session.Keys.Contains("Customer"))
+            {
+                var customerJson = HttpContext.Session.GetString("Customer");
+                var customer = JsonConvert.DeserializeObject<Customer>(customerJson);
 
-            if (existingCustomer == null)
-            {
-                return NotFound(); // Trả về kết quả không thành công nếu không tìm thấy khách hàng
-            }
-
-            if (string.IsNullOrEmpty(newPassword) || string.IsNullOrEmpty(confirmPassword))
-            {
-                _notyf.Error("Please provide both new and current passwords.");
-                return View(); // Giữ người dùng ở trang hiện tại khi có lỗi
-            }
-
-            if (newPassword != confirmPassword)
-            {
-                _notyf.Error("New password and confirm password do not match.");
-                return View(); // Giữ người dùng ở trang hiện tại khi có lỗi
-            }
-            else
-            {
-                existingCustomer.password = GetMD5(newPassword);
-                _dbContext.SaveChanges();
-                _notyf.Success("Password changed successfully.");
-            }
-            return RedirectToAction("Login");
+                if (string.IsNullOrEmpty(newPassword) || string.IsNullOrEmpty(confirmPassword))
+                {
+                    _notyf.Error("Please provide both new and current passwords.");
+                    return View(); // Giữ người dùng ở trang hiện tại khi có lỗi
+                }
+                if (!IsStrongPassword(newPassword))
+                {
+                    _notyf.Error("New password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one digit, and one special character.");
+                    return View();
+                }
+                if (newPassword != confirmPassword)
+                {
+                    _notyf.Error("New password and confirm password do not match.");
+                    return View(); // Giữ người dùng ở trang hiện tại khi có lỗi
+                }
+                else
+                {
+                    customer.password = GetMD5(newPassword);
+                    _dbContext.SaveChanges();
+                    _notyf.Success("Password changed successfully.");
+                }
+                return RedirectToAction("Login");
+                }
+            _notyf.Error("Customer data not found. Please try again.");
+            return View("ForgotPassword");
+        }
+        private bool IsStrongPassword(string password)
+        {
+            // Độ dài ít nhất 8 ký tự và có ít nhất một chữ cái viết thường, một chữ cái viết hoa, một số, và một ký tự đặc biệt
+            var regex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$");
+            return regex.IsMatch(password);
         }
     }
 }

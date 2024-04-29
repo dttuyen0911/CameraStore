@@ -33,7 +33,7 @@
                                     <div class="dropdown-menu">
                                             <a class="dropdown-item" asp-controller="Role" asp-action="detailRole" asp-route-id="@role.roleID"><i class="bx bx-book-alt me-1"></i> View Detail</a>
                                         <a class="dropdown-item" asp-controller="Role" asp-action="Edit" asp-route-id="@role.roleID"><i class="bx bx-edit-alt me-1"></i> Update</a>
-                                        <a class="dropdown-item" asp-action="Delete" asp-route-id=@role.roleID onclick="return confirm('Are You Sure?');"><i class="bx bx-trash me-1"></i> Delete</a>
+                                        <a class="dropdown-item" asp-action="Delete" asp-route-id=@role.roleID onclick="return confirm('Are You Sure to delete this role?');"><i class="bx bx-trash me-1"></i> Delete</a>
                                     </div>
                                 </div>
                             </td>

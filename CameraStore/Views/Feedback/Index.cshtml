@@ -35,8 +35,14 @@
                             <td>@feedback.proID</td>
                             <td>@feedback.feedDescription</td>
                             <td>@feedback.StarRating</td>
-                            <td><img src="~/Image/@feedback.feedUrlImage" style="width: 250px; height: 200px" /></td>
-                           
+                                @if(@feedback.feedUrlImage == null)
+                                {
+                                    <td><img src="~/image/noImage.jpg" style="width: 250px; height: 200px" /></td>
+                                }else{
+                                    <td><img src="~/Image/@feedback.feedUrlImage" style="width: 250px; height: 200px" /></td>
+
+                                }
+                         
                         </tr>
                         }
                     </tbody>

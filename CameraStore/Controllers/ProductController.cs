@@ -41,6 +41,17 @@ namespace CameraStore.Controllers
         {
             /*if (ModelState.IsValid)
             {*/
+            if (obj.supID == null || obj.cateID == null || !_dbContext.Suppliers.Any(s => s.supID == obj.supID) || !_dbContext.Categories.Any(c => c.cateID == obj.cateID))
+            {
+                // Nếu một trong hai hoặc cả hai giá trị supID và cateID là null
+                // hoặc không tìm thấy tương ứng trong cơ sở dữ liệu, hiển thị thông báo lỗi
+                _notyf.Error("Please select both category and supplier.");
+                // Lấy danh sách category và supplier để hiển thị lại trong view
+                ViewData["supID"] = new SelectList(_dbContext.Suppliers.ToList(), "supID", "supName");
+                ViewData["cateID"] = new SelectList(_dbContext.Categories.ToList(), "cateID", "cateName");
+                return View(obj);
+            }
+
             string fileName = proUploadImage(obj);
             obj.proUrlImage = fileName;
 
@@ -55,7 +66,6 @@ namespace CameraStore.Controllers
                 // Nếu proPercent là null, proSale bằng proPrice
                 obj.proSale = obj.proPrice;
             }
-
             _dbContext.Products.Add(obj);
             _dbContext.SaveChanges();
             _notyf.Success("Add product sucessfully");
@@ -198,6 +208,7 @@ namespace CameraStore.Controllers
 
             _dbContext.Products.Remove(obj);
             _dbContext.SaveChanges();
+            _notyf.Success("Delete product sucessfully");
 
             return RedirectToAction("Index");
         }

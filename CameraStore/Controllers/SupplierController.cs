@@ -53,15 +53,15 @@ namespace CameraStore.Controllers
         [HttpPost]
         public IActionResult Edit(int id, Supplier sup)
         {
-            if (ModelState.IsValid)
-            {
+            /*if (ModelState.IsValid)
+            {*/
                 sup.supID = id;
                 _dbContext.Suppliers.Update(sup);
                 _dbContext.SaveChanges();
                 _notyf.Success("Edit supplier sucessfully");
                 return RedirectToAction("Index");
-            }
-            return View(sup);
+            /*}
+            return View(sup);*/
         }
         public ActionResult Delete(int id)
         {

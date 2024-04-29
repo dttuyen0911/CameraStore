@@ -51,15 +51,13 @@ namespace CameraStore.Controllers
         [HttpPost]
         public IActionResult Edit(int id, Role obj)
         {
-            if (ModelState.IsValid)
-            {
+            
                 obj.roleID = id;
                 _dbContext.Roles.Update(obj);
                 _dbContext.SaveChanges();
                 _notyf.Success("Edit role successfully");
                 return RedirectToAction("Index");
-            }
-            return View(obj);
+           
         }
 
         public ActionResult Delete(int id)
