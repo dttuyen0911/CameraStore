@@ -103,9 +103,9 @@ namespace CameraStore.Controllers
             {
                 int customerID = orderDetail.Order.customerID;
                 int proID = orderDetail.proID;
-
                 // Truy vấn feedback dựa trên proId và customerId
-                Feedback feedback = _dbContext.Feedbacks.FirstOrDefault(f => f.proID == proID && f.customerID == customerID);
+                Feedback feedback = _dbContext.Feedbacks
+                    .FirstOrDefault(f => f.proID == proID && f.customerID == customerID);
                 if (feedback != null)
                 {
                     // Kiểm tra nếu có ảnh feedback

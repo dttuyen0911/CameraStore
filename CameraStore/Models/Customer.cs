@@ -13,7 +13,7 @@ namespace CameraStore.Models
         [StringLength(150, ErrorMessage = "String length no more than 150 characters")]
         public string? fullname { get; set; }
         [Required(ErrorMessage = "Email of account is not null")]
-        public string? email {  get; set; }
+        public string? email { get; set; }
         [Required(ErrorMessage = "Password of account is not null")]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$", ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.")]
         public string? password { get; set; }

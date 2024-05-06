@@ -43,8 +43,6 @@ namespace CameraStore.Controllers
             {*/
             if (obj.supID == null || obj.cateID == null || !_dbContext.Suppliers.Any(s => s.supID == obj.supID) || !_dbContext.Categories.Any(c => c.cateID == obj.cateID))
             {
-                // Nếu một trong hai hoặc cả hai giá trị supID và cateID là null
-                // hoặc không tìm thấy tương ứng trong cơ sở dữ liệu, hiển thị thông báo lỗi
                 _notyf.Error("Please select both category and supplier.");
                 // Lấy danh sách category và supplier để hiển thị lại trong view
                 ViewData["supID"] = new SelectList(_dbContext.Suppliers.ToList(), "supID", "supName");

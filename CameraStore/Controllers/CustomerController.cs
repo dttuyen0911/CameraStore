@@ -35,39 +35,50 @@ namespace CameraStore.Controllers
         [HttpPost]
         public IActionResult Create(Customer obj)
         {
-            if (ModelState.IsValid)
+            if (obj.roleID == null || !_dbContext.Roles.Any(s => s.roleID == obj.roleID))
             {
-                if (IsEmailUnique(obj.email))
+                _notyf.Error("Please select Role of account");
+                ViewData["roleID"] = new SelectList(_dbContext.Roles.ToList(), "roleID", "name");
+                return View(obj);
+            }
+            else
+            {
+                if (ModelState.IsValid)
                 {
-                    obj.password = GetMD5(obj.password);
-
-                    // get role member from database
-                    var memberRole = _dbContext.Roles.FirstOrDefault(r => r.name == "Member");
-
-                    if (memberRole != null)
+                    if (IsEmailUnique(obj.email))
                     {
-                        // set role is member
-                        obj.roleID = memberRole.roleID; 
+                        obj.password = GetMD5(obj.password);
 
-                        _dbContext.Customers.Add(obj);
-                        _dbContext.SaveChanges();
-                        _notyf.Success("Creat account successfully.");
-                        return RedirectToAction("Index");
+                        // get role member from database
+                        var memberRole = _dbContext.Roles.FirstOrDefault(r => r.name == "Member");
+
+                        if (memberRole != null)
+                        {
+                         
+                                // set role is member
+                                obj.roleID = memberRole.roleID;
+                                _dbContext.Customers.Add(obj);
+                                _dbContext.SaveChanges();
+                                _notyf.Success("Creat account successfully.");
+                                return RedirectToAction("Index");
+                      
+                        }
+                        else
+                        {
+                            // if not find role member is error
+                            ModelState.AddModelError("", "Default role 'Member' not found.");
+                        }
                     }
                     else
                     {
-                        // if not find role member is error
-                        ModelState.AddModelError("", "Default role 'Member' not found.");
+                        ModelState.AddModelError("Email", "Email already exists.");
                     }
                 }
-                else
-                {
-                    ModelState.AddModelError("Email", "Email already exists.");
-                }
-            }
 
-            ViewData["roleID"] = new SelectList(_dbContext.Roles.ToList(), "roleID", "name");
-            return View(obj);
+                ViewData["roleID"] = new SelectList(_dbContext.Roles.ToList(), "roleID", "name");
+                return View(obj);
+            }
+            
         }
 
         private bool IsEmailUnique(string email, int? customerId = null)

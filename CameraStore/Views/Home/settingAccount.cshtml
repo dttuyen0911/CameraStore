@@ -100,13 +100,6 @@
         </div>
     </div>
 </div>
-<div id="notification5" style="display: none; position: fixed;
-	                top: 50%;
-	                left: 50%;
-	                transform: translate(-50%, -50%);
-	                z-index: 1000;" class="alert alert-danger" role="alert">
-    Fields cannot be null.
-</div>
 <div id="notification" style="display: none; position: fixed;
 	                top: 50%;
 	                left: 50%;
@@ -135,13 +128,6 @@
 	                z-index: 1000;" class="alert alert-success" role="alert">
     Password changed successfully.
 </div>
-<div id="notification4" style="display: none; position: fixed;
-	                top: 50%;
-	                left: 50%;
-	                transform: translate(-50%, -50%);
-	                z-index: 1000;" class="alert alert-danger" role="alert">
-    Incorrect current password or an error occurred.
-</div>
 <div id="notification6" style="display: none; position: fixed;
 	                top: 50%;
 	                left: 50%;
@@ -160,11 +146,6 @@
             var email = $('#email').val();
             var telephone = $('#telephone').val();
             var customerID = $('#customerID').val();
-            if (!fullname || !email || !telephone) {
-                $('#notification5').fadeIn().delay(1000).fadeOut();
-                return;
-            }
-            // Gửi yêu cầu AJAX để cập nhật thông tin
             $.ajax({
                 type: 'POST',
                 url: '/Home/ChangeInfo', // Đường dẫn đến action trong controller của bạn
@@ -222,8 +203,6 @@
                 success: function (response) {
                     if (response.success) {
                         $('#notification3').fadeIn().delay(1000).fadeOut();
-                    } else {
-                        $('#notification4').fadeIn().delay(1000).fadeOut();
                     }
                 },
                 error: function (xhr, status, error) {

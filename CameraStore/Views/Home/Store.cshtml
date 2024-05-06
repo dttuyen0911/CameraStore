@@ -123,7 +123,14 @@
                                                 + Add To Cart
                                             </a>
                                         </div>
-                                        <h5>$@product.proPrice</h5>
+                                        @if (@product.proSale != null)
+                                        {
+                                            <h5>$@product.proSale</h5>
+                                        }
+                                        else
+                                        {
+                                            <h5>$@product.proPrice</h5>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -138,23 +145,27 @@
                             </div>
                         }
                     </div>
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="product__pagination">
-                            @for (int i = 1; i <= ViewBag.TotalPages; i++)
-                            {
-                                if (i == ViewBag.CurrentPage)
+                    @{
+                        int totalPages = ViewBag.TotalPages;
+                        int currentPage = ViewBag.CurrentPage;
+                    }
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="product__pagination">
+                                @for (int i = 1; i <= totalPages; i++)
                                 {
-                                    <span>@i</span>
+                                    if (i == currentPage)
+                                    {
+                                        <span>@i</span>
+                                    }
+                                    else
+                                    {
+                                        <a asp-controller="Home" asp-action="Store" asp-route-page="@i" asp-route-priceRange="@ViewBag.PriceRange">@i</a>
+                                    }
                                 }
-                                else
-                                {
-                                    <a asp-controller="HomeController" asp-action="Store" asp-route-page="@i" asp-route-priceRange="@ViewBag.PriceRange">@i</a>
-                                }
-                            }
+                            </div>
                         </div>
                     </div>
-                </div>
             </div>
         </div>
         <div id="notification" style="display: none; position: fixed;

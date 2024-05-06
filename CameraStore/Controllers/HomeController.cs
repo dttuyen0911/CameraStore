@@ -10,6 +10,7 @@ using System.Net.Mail;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace CameraStore.Controllers
 {
@@ -132,7 +133,7 @@ namespace CameraStore.Controllers
             if (updatedCustomer.email == null || updatedCustomer.fullname == null || updatedCustomer.telephone == null)
             {
                 _notyf.Error("Please fill in all required fields in the Account.");
-                return Ok();
+                return NoContent();
             }
             // Cập nhật thông tin của khách hàng trong cơ sở dữ liệu
             existingCustomer.email = updatedCustomer.email;
@@ -142,9 +143,8 @@ namespace CameraStore.Controllers
             // Lưu thay đổi vào cơ sở dữ liệu
             _dbContext.SaveChanges();
             _notyf.Success("Information updated successfully.");
-            return Ok();
+            return NoContent();
         }
-
 
         private bool IsEmailUnique(string email, int? customerId = null)
         {
@@ -184,15 +184,24 @@ namespace CameraStore.Controllers
             if (existingCustomer.password != GetMD5(currentPassword))
             {
                 _notyf.Error("Incorrect current password or an error occurred.");
-                return Ok();// Trả về thông báo lỗi nếu mật khẩu hiện tại không đúng
+                return NoContent();// Trả về thông báo lỗi nếu mật khẩu hiện tại không đúng
             }
-
+            if (!IsStrongPassword(newPassword))
+            {
+                _notyf.Error("New password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, one digit, and one special character.");
+                return NoContent();
+            }
             existingCustomer.password = GetMD5(newPassword);
             _dbContext.SaveChanges();
             _notyf.Success("Password changed successfully.");
-            return Ok();
+            return NoContent();
         }
-
+        private bool IsStrongPassword(string password)
+        {
+            // Độ dài ít nhất 8 ký tự và có ít nhất một chữ cái viết thường, một chữ cái viết hoa, một số, và một ký tự đặc biệt
+            var regex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$");
+            return regex.IsMatch(password);
+        }
 
         public static string GetMD5(String str)
         {
@@ -256,7 +265,7 @@ namespace CameraStore.Controllers
 
             return View(model);
         }
-        public IActionResult Store(  int page = 1, int pageSize = 10)
+        public IActionResult Store(int page = 1, string priceRange = null)
         {
             var categoriesDict = new Dictionary<string, int>();
             var status = new Dictionary<string, int>();
@@ -287,6 +296,7 @@ namespace CameraStore.Controllers
 
             var products = productsQuery.ToList();
 
+            int pageSize = 9;
             var totalCount = products.Count();
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
             var paginatedProducts = products.Skip((page - 1) * pageSize).Take(pageSize);
