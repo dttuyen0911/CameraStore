@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CameraStore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240506191443_cameraStoreV73")]
-    partial class cameraStoreV73
+    [Migration("20240507163846_cameraStoreV75")]
+    partial class cameraStoreV75
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -164,12 +164,22 @@ namespace CameraStore.Migrations
                     b.Property<string>("feedUrlImage")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("orderID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("orderID1")
+                        .HasColumnType("int");
+
                     b.Property<int>("proID")
                         .HasColumnType("int");
 
                     b.HasKey("feedID");
 
                     b.HasIndex("customerID");
+
+                    b.HasIndex("orderID");
+
+                    b.HasIndex("orderID1");
 
                     b.HasIndex("proID");
 
@@ -417,6 +427,17 @@ namespace CameraStore.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CameraStore.Models.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("orderID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Feedbacks_Orders_orderID");
+
+                    b.HasOne("CameraStore.Models.Order", null)
+                        .WithMany("Feedbacks")
+                        .HasForeignKey("orderID1");
+
                     b.HasOne("CameraStore.Models.Product", "Product")
                         .WithMany("Feedbacks")
                         .HasForeignKey("proID")
@@ -424,6 +445,8 @@ namespace CameraStore.Migrations
                         .IsRequired();
 
                     b.Navigation("Customer");
+
+                    b.Navigation("Order");
 
                     b.Navigation("Product");
                 });
@@ -498,6 +521,8 @@ namespace CameraStore.Migrations
 
             modelBuilder.Entity("CameraStore.Models.Order", b =>
                 {
+                    b.Navigation("Feedbacks");
+
                     b.Navigation("orderdetails");
                 });
 

@@ -38,5 +38,7 @@ namespace CameraStore.Models
         public int customerID { get; set; }
         public Customer? Customer { get; set; }
         public virtual ICollection<OrderDetail>? orderdetails { get; set; }
+        public virtual ICollection<Feedback>? Feedbacks { get; set; }
+
     }
 }

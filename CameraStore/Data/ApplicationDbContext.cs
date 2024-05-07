@@ -8,7 +8,7 @@ namespace CameraStore.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext (DbContextOptions<ApplicationDbContext> options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
@@ -58,6 +58,12 @@ namespace CameraStore.Data
                 .WithMany(p => p.orderdetails)
                 .HasForeignKey(od => od.proID)
                 .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Feedback>()
+                 .HasOne(f => f.Order)
+                 .WithMany()
+                 .HasForeignKey(f => f.orderID)
+                 .HasConstraintName("FK_Feedbacks_Orders_orderID") 
+                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

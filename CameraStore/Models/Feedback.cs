@@ -13,6 +13,9 @@ namespace CameraStore.Models
         [ForeignKey("Product")]
         public int proID { get; set; }
         public virtual Product? Product { get; set; }
+        [ForeignKey("Order")]
+        public int orderID { get; set; } 
+        public virtual Order? Order { get; set; } 
         public string feedDescription { get; set; }
         public DateTime createDate { get; set; } = DateTime.Now;
         public int StarRating { get; set; }

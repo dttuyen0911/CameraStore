@@ -129,9 +129,10 @@
                                                     <button class="cancelButton btn btn-success" style="margin-left: 82%; width: 200px; display:none" data-order-id="@item.Order.orderID">
                                                         Cancel order
                                                     </button>
-                                                    <button class="receivedButton btn btn-success" style="margin-left: 82%; width: 200px;" data-order-id="@item.Order.orderID">
-                                                        Received
-                                                    </button>
+                                                    <form id="ReceivedOrderForm" action="@Url.Action("Received", "Order")">
+                                                        <input type="hidden" name="orderId" value="@item.Order.orderID">
+                                                        <button type="submit" class="btn btn-success" style="margin-left: 82%; width: 200px;">Received</button>
+                                                    </form>
                                                 }
                                                 else
                                                 {
@@ -169,7 +170,7 @@
                                                                 </div>
                                                                 <span class="text-danger"></span>
                                                             </div>
-                                                            
+
                                                             <button type="submit" class="btn btn-primary">Submit</button>
                                                             <button type="button" class="btn cancel" onclick="closeForm()">Cancel</button>
                                                         </form>
@@ -190,12 +191,15 @@
                                             else
                                             {
                                                 <div class="row" style="margin-left: 750px;">
-                                                <button class="cancelButton btn btn-danger" style="width:150px" data-order-id="@item.Order.orderID" data-pro-id="@item.proID">
-                                                    Cancel order
-                                                </button>
+                                                    <form id="cancelOrderForm" action="@Url.Action("CancelOrder", "Order")" method="post">
+                                                        <input type="hidden" name="orderId" value="@item.Order.orderID">
+                                                        <input type="hidden" name="proID" value="@item.proID">
+                                                        <button type="submit" class="btn btn-success" style="width: 150px">Cancel order</button>
+                                                    </form>
+
                                                     <button class="btn btn-success" disabled style="width:150px">
                                                     Received
-                                                </button>
+                                                    </button>
                                                 </div>
                                             }
                                         </div>
@@ -313,58 +317,6 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-    $(document).ready(function () {
-        $(".receivedButton").on("click", function () {
-            var orderId = $(this).data("order-id");
-
-            // Thực hiện yêu cầu AJAX
-            $.ajax({
-                url: '/Order/Received',
-                type: 'GET',
-                data: { orderId: orderId }
-            }).done(function (response) {
-                // Xử lý kết quả thành công
-                if (response.success) {
-                    // Hiển thị thông báo Notyf
-                    toastr.success(response.message, 'Notification', { timeOut: 300 });
-                }
-            });
-        });
-    });
-</script>
-<script>
-    $(document).ready(function () {
-        $(".cancelButton").on("click", function () {
-            var orderId = $(this).data("order-id");
-            var proId = $(this).data("pro-id"); // Lấy proId từ data-pro-id
-            // Thực hiện yêu cầu AJAX
-            $.ajax({
-                url: '/Order/CancelOrder',
-                type: 'POST',
-                data: {
-                    orderId: orderId,
-                    proId: proId
-                },
-                success: function (response) {
-                    // Xử lý kết quả trả về từ server
-                    if (response.success) {
-                        // Chuyển hướng sau khi hủy đơn hàng thành công
-                        window.location.href = '/OrderDetail/viewOrder';
-                    } else {
-                        // Xử lý khi có lỗi từ server
-                        alert(response.message);
-                    }
-                },
-                error: function () {
-                    // Xử lý khi có lỗi trong quá trình gửi yêu cầu AJAX
-                    alert('An error occurred while processing your request.');
-                }
-            });
-        });
-    });
-</script>
-
-<script>
     function chooseFile(fileInput) {
         if (fileInput.files && fileInput.files[0]) {
             var render = new FileReader();
@@ -435,7 +387,6 @@
         });
     }
     function checkSubmit(orderId) {
-        // Gửi yêu cầu AJAX để kiểm tra xem feedback đã được submit chưa
         $.ajax({
             type: 'GET',
             url: '/Feedback/CheckSubmit',
@@ -456,13 +407,11 @@
                     document.getElementById('submitButton').style.display = 'none'; // Ẩn nút submit
                     document.getElementById('submitForm').style.display = 'block'; // Hiển thị lại form submit
                 } else {
-                    // Chỉ gọi hàm submitFeedback() khi không có phản hồi thành công
                     submitFeedback();
                 }
             },
             error: function () {
-                // Trường hợp có lỗi hoặc không có phản hồi, gọi lại hàm create
-                submitFeedback(); // Gọi lại hàm create
+                submitFeedback();
             }
         });
     }

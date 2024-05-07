@@ -90,7 +90,6 @@ namespace CameraStore.Controllers
 
             return View(feedback);
         }
-
         [HttpGet]
         [Authorize]
         public IActionResult CheckSubmit(int orderId)
@@ -103,32 +102,30 @@ namespace CameraStore.Controllers
             {
                 int customerID = orderDetail.Order.customerID;
                 int proID = orderDetail.proID;
-                // Truy vấn feedback dựa trên proId và customerId
                 Feedback feedback = _dbContext.Feedbacks
-                    .FirstOrDefault(f => f.proID == proID && f.customerID == customerID);
+                    .FirstOrDefault(f => f.proID == proID && f.customerID == customerID && f.orderID == orderId);
                 if (feedback != null)
                 {
-                    // Kiểm tra nếu có ảnh feedback
                     string imageUrl = null;
                     if (!string.IsNullOrEmpty(feedback.feedUrlImage))
                     {
-                        imageUrl = Url.Content("~/Image/" + feedback.feedUrlImage); // Sử dụng Url.Content để tạo URL tương đối
+                        imageUrl = Url.Content("~/Image/" + feedback.feedUrlImage);
                     }
 
-                    // Nếu có feedback, trả về thông tin feedback
-                    return Ok(new { success = true, feedback = feedback, feedImageUrl = imageUrl });
+                    return Json(new { success = true, feedback = feedback, feedImageUrl = imageUrl });
                 }
                 else
                 {
-                    // Nếu chưa có feedback, trả về thông báo
                     return Json(new { success = false });
                 }
             }
             else
             {
-                return NotFound(); // Trả về lỗi 404 nếu không tìm thấy chi tiết đơn hàng
+                return NotFound();
             }
         }
+
+
         [HttpGet]
         public IActionResult CalculateAverageRating(int proId)
         {

@@ -108,7 +108,6 @@ namespace CameraStore.Controllers
         [HttpPost]
         public IActionResult SubmitOrder(Order order, string paymentMethod, string selectedProductIds)
         {
-            // Kiểm tra User.Identity có null không trước khi truy cập Name
             var customerId = User.FindFirst(ClaimTypes.Name)?.Value;
             if (customerId == null)
             {
@@ -117,32 +116,25 @@ namespace CameraStore.Controllers
 
             int userId = Convert.ToInt32(customerId);
 
-            // Lấy thông tin khách hàng từ database
             var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
 
-            // Kiểm tra customer có null không trước khi truy cập thuộc tính của nó
             if (customer == null)
             {
-                // Xử lý khi không tìm thấy thông tin khách hàng
                 return RedirectToAction("Index", "Home");
             }
 
-            // Lấy giỏ hàng của khách hàng từ database
             var cart = _dbContext.Carts
                 .Include(c => c.CartDetails)
                 .ThenInclude(cd => cd.Product)
                 .FirstOrDefault(c => c.customerID == userId);
 
-            // Kiểm tra cart có null không trước khi truy cập thuộc tính của nó
             if (cart == null || cart.CartDetails.Count == 0)
             {
-                // Xử lý khi không có sản phẩm trong giỏ hàng
                 return RedirectToAction("Cart", "CartDetail");
             }
 
-            var deliveryDate = DateTime.Now.AddDays(3); // Ngày giao hàng là ngày đặt + 3 ngày
+            var deliveryDate = DateTime.Now.AddDays(3); 
 
-            // Kiểm tra xem đã chọn phương thức thanh toán chưa
             if (string.IsNullOrEmpty(paymentMethod))
             {
                 ViewBag.Error = "Please select a payment method.";
@@ -151,7 +143,6 @@ namespace CameraStore.Controllers
                 ViewBag.Cart = cart;
                 return View("CreateOrder", order);
             }
-            // Kiểm tra xem các trường bắt buộc đã được điền đầy đủ chưa
             if (string.IsNullOrEmpty(order.orderAddress) || string.IsNullOrEmpty(order.orderFullname) || string.IsNullOrEmpty(order.orderPhone))
             {
                 ViewBag.Error = "Please fill in all required fields.";
@@ -173,7 +164,6 @@ namespace CameraStore.Controllers
 
             if (selectedProducts != null && selectedProducts.Any())
             {
-                // Kiểm tra xem đã tồn tại order nào chứa selectedProducts chưa
                 var existingOrder = _dbContext.Orders
                     .Include(o => o.orderdetails)
                     .FirstOrDefault(o => o.customerID == userId &&
@@ -181,7 +171,6 @@ namespace CameraStore.Controllers
 
                 if (existingOrder != null)
                 {
-                    // Tạo đơn hàng mới với thông tin mới
                     var newOrder = new Order
                     {
                         totalAmount = selectedProducts.Sum(item => item.quantity * item.Product.proPrice),
@@ -199,39 +188,32 @@ namespace CameraStore.Controllers
                       
                     };
 
-                    // Thêm order mới vào DbContext
                     _dbContext.Orders.Add(newOrder);
                     _dbContext.SaveChanges();
 
-                    // Tạo danh sách mới các order detail cho order mới
-                    // Tạo danh sách mới các order detail cho order mới
                     var newOrderDetails = new List<OrderDetail>();
                     foreach (var item in selectedProducts)
                     {
                         var orderDetail = new OrderDetail
                         {
-                            orderID = newOrder.orderID, // Gắn orderID của đơn hàng mới
+                            orderID = newOrder.orderID, 
                             proID = item.proID,
                             quantity = item.quantity,
                             unitPrice = item.Product.proPrice
                         };
 
-                        // Tìm các OrderDetail đã tồn tại trong DbContext với cùng một khóa chính
                         var existingOrderDetail = _dbContext.OrderDetails
                             .FirstOrDefault(od => od.orderID == orderDetail.orderID && od.proID == orderDetail.proID);
 
-                        // Nếu không tìm thấy OrderDetail nào trùng khóa chính, thêm vào danh sách mới
                         if (existingOrderDetail == null)
                         {
                             newOrderDetails.Add(orderDetail);
                         }
                     }
 
-                    // Thêm các order detail mới vào DbContext và lưu thay đổi
                     _dbContext.OrderDetails.AddRange(newOrderDetails);
                     _dbContext.SaveChanges();
 
-                    // Xóa các sản phẩm đã chọn từ giỏ hàng
                     foreach (var selectedProduct in selectedProducts)
                     {
                         var cartDetailToRemove = cart.CartDetails.FirstOrDefault(cd => cd.proID == selectedProduct.proID);
@@ -263,7 +245,7 @@ namespace CameraStore.Controllers
                         totalAmount = selectedProducts.Sum(item => item.quantity * item.Product.proPrice),
                         orderDate = DateTime.Now,
                         orderDelivery = deliveryDate,
-                        orderStatus = false,// Chưa xác nhận đơn hàng
+                        orderStatus = false,
                         IsShipped = false,
                         IsDelivered = false,
                         IsPayment = order.IsPayment,
@@ -274,34 +256,29 @@ namespace CameraStore.Controllers
                         paymentMethod = paymentMethod
                     };
 
-                    // Thêm đơn hàng mới vào DbContext
                     _dbContext.Orders.Add(newOrder);
                     _dbContext.SaveChanges();
 
-                    // Tạo danh sách mới các order detail cho order mới
                     var newOrderDetails = new List<OrderDetail>();
                     foreach (var item in selectedProducts)
                     {
                         var orderDetail = new OrderDetail
                         {
-                            orderID = newOrder.orderID, // Gắn orderID của đơn hàng mới
+                            orderID = newOrder.orderID, 
                             proID = item.proID,
                             quantity = item.quantity,
                             unitPrice = item.Product.proPrice
                         };
 
-                        // Tìm các OrderDetail đã tồn tại trong DbContext với cùng một khóa chính
                         var existingOrderDetail = _dbContext.OrderDetails
                             .FirstOrDefault(od => od.orderID == orderDetail.orderID && od.proID == orderDetail.proID);
 
-                        // Nếu không tìm thấy OrderDetail nào trùng khóa chính, thêm vào danh sách mới
                         if (existingOrderDetail == null)
                         {
                             newOrderDetails.Add(orderDetail);
                         }
                     }
 
-                    // Thêm các order detail mới vào DbContext và lưu thay đổi
                     _dbContext.OrderDetails.AddRange(newOrderDetails);
                     _dbContext.SaveChanges();
                     foreach (var selectedProduct in selectedProducts)
@@ -334,29 +311,25 @@ namespace CameraStore.Controllers
 
         }
         [HttpPost]
-        public IActionResult CancelOrder(int? orderId, int? proID)
+        public IActionResult CancelOrder(int orderId, int proID)
         {
             var customerId = User.FindFirst(ClaimTypes.Name)?.Value;
             if (customerId == null)
             {
-                // Xử lý khi người dùng chưa đăng nhập
                 return RedirectToAction("Login", "Authentication");
             }
 
             int userId = Convert.ToInt32(customerId);
 
-            // Lấy thông tin đơn hàng từ database
             var order = _dbContext.Orders
                 .Include(o => o.orderdetails)
                 .FirstOrDefault(o => o.orderID == orderId && o.customerID == userId);
 
             if (order == null)
             {
-                // Xử lý khi không tìm thấy đơn hàng
                 return RedirectToAction("Index", "Home");
             }
-                
-            // Tăng số lượng sản phẩm của đơn hàng vào kho
+
             foreach (var orderDetail in order.orderdetails)
             {
                 var product = _dbContext.Products.FirstOrDefault(p => p.proID == orderDetail.proID);
@@ -367,39 +340,35 @@ namespace CameraStore.Controllers
                 }
             }
 
-            // Xóa sản phẩm cụ thể trong đơn hàng
             var productDetailToRemove = order.orderdetails.FirstOrDefault(od => od.proID == proID);
             if (productDetailToRemove != null)
             {
                 HttpContext.Session.SetString("DeletedProduct", productDetailToRemove.proID.ToString());
                 _dbContext.OrderDetails.Remove(productDetailToRemove);
             }
-            
+
             _dbContext.SaveChanges();
             var remainingOrderDetails = _dbContext.OrderDetails.Where(od => od.orderID == orderId).ToList();
             if (remainingOrderDetails.Count == 0)
             {
-                // Nếu không còn sản phẩm nào trong giỏ hàng, xóa giỏ hàng
                 _dbContext.Orders.Remove(order);
                 _dbContext.SaveChanges();
             }
             SendEmailOrderCancellation(order.customerID);
-            return Json(new { success = true });
+            _notyf.Success("Cancel order successfully");
+            return RedirectToAction("viewOrder", "OrderDetail");
         }
+
         [HttpPost]
         private void SendEmailOrderCancellation(int customerId)
         {
             try
             {
-                // Lấy thông tin sản phẩm đã được xóa từ session
                 var deletedProduct = HttpContext.Session.GetString("DeletedProduct");
-                // Kiểm tra xem session có tồn tại không và đã được lưu dưới dạng chuỗi không rỗng
                 if (!string.IsNullOrEmpty(deletedProduct))
                 {
-                    // Chuyển đổi thông tin sản phẩm đã xóa thành kiểu int
                     int proID = int.Parse(deletedProduct);
 
-                    // Lấy thông tin khách hàng từ database
                     var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == customerId);
 
                     if (customer == null)
@@ -408,21 +377,18 @@ namespace CameraStore.Controllers
                         return;
                     }
 
-                    // Lấy thông tin sản phẩm đã xóa từ đơn hàng
 
                     var product = _dbContext.Products.FirstOrDefault(p => p.proID == proID);
 
                     if (product == null)
                     {
-                        // Xử lý khi không tìm thấy thông tin sản phẩm
                         return;
                     }
                     MailMessage mail = new MailMessage();
-                    mail.From = new MailAddress("tuyendtgcc200226@fpt.edu.vn");  // Địa chỉ email của bạn
-                    mail.To.Add(customer.email); // Địa chỉ email của người nhận
-                    mail.Subject = "Order Cancellation Confirmation"; // Tiêu đề email
+                    mail.From = new MailAddress("tuyendtgcc200226@fpt.edu.vn"); 
+                    mail.To.Add(customer.email);
+                    mail.Subject = "Order Cancellation Confirmation"; 
 
-                    // Nội dung email
                     StringBuilder body = new StringBuilder();
                     body.AppendLine($"Dear {customer.fullname},");
                     body.AppendLine("We have received your order cancellation request.");
@@ -431,12 +397,11 @@ namespace CameraStore.Controllers
                     body.AppendLine("Thank you.");
 
                     mail.Body = body.ToString();
-                    SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587); // Thay thế bằng thông tin SMTP của bạn
+                    SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587); 
                     smtp.EnableSsl = true;
                     smtp.UseDefaultCredentials = false;
-                    smtp.Credentials = new NetworkCredential("tuyendtgcc200226@fpt.edu.vn", "sscjzesgdqvbwjaf"); // Thay thế bằng email và mật khẩu của bạn
+                    smtp.Credentials = new NetworkCredential("tuyendtgcc200226@fpt.edu.vn", "sscjzesgdqvbwjaf"); 
 
-                    // Gửi email
                     smtp.Send(mail);
                 }
             }
@@ -458,24 +423,23 @@ namespace CameraStore.Controllers
                 };
                 var orderInfo = JsonSerializer.Deserialize<Order>(jsonOrder, options);
                 MailMessage mail = new MailMessage();
-                mail.From = new MailAddress("tuyendtgcc200226@fpt.edu.vn");  // Địa chỉ email của bạn
-                mail.To.Add(customer.email); // Địa chỉ email của người nhận
-                mail.Subject = "Confirm successful order of Camera Digital Store products"; // Tiêu đề email
+                mail.From = new MailAddress("tuyendtgcc200226@fpt.edu.vn"); 
+                mail.To.Add(customer.email); 
+                mail.Subject = "Confirm successful order of Camera Digital Store products";
 
-                // Nội dung email
                 StringBuilder body = new StringBuilder();
                 body.AppendLine($"Dear {customer.fullname},");
                 body.AppendLine("Thank you for using Camera Digital Store's services.");
                 body.AppendLine($"Camera Digital Store confirms that you have successfully ordered our product at {orderInfo.orderDate}.");
                 body.AppendLine("Here are your order details:");
-                // Thêm thông tin về đơn hàng vào nội dung email
+
                 body.AppendLine($"Order ID: {orderInfo.orderID}");
                 body.AppendLine($"Order Date: {orderInfo.orderDate}");
                 body.AppendLine($"Estimated delivery date: {orderInfo.orderDelivery.ToString("dd/MM/yyyy")}");
                 body.AppendLine($"Total Amount: {orderInfo.totalAmount}");
                 body.AppendLine($"Delivery Address: {orderInfo.orderAddress}");
                 body.AppendLine($"Payment Method: {orderInfo.paymentMethod}");
-                // Thêm các sản phẩm trong đơn hàng vào nội dung email
+
                 body.AppendLine("Ordered Products:");
                 foreach (var detail in orderInfo.orderdetails)
                 {
@@ -484,17 +448,15 @@ namespace CameraStore.Controllers
                 body.AppendLine("Thank you for shopping with us!");
 
                 mail.Body = body.ToString();
-                SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587); // SMTP server và cổng của Gmail
+                SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587); 
                 smtp.EnableSsl = true;
                 smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("tuyendtgcc200226@fpt.edu.vn", "sscjzesgdqvbwjaf"); // Thay thế bằng email và mật khẩu của bạn
+                smtp.Credentials = new NetworkCredential("tuyendtgcc200226@fpt.edu.vn", "sscjzesgdqvbwjaf"); 
 
-                // Gửi email
                 smtp.Send(mail);
             }
             catch (Exception ex)
             {
-                // Xử lý lỗi khi gửi email
                 Console.WriteLine("Failed to send email. Error: " + ex.Message);
             }
         }
@@ -508,29 +470,23 @@ namespace CameraStore.Controllers
 
             int userId = Convert.ToInt32(customerId);
 
-            // Lấy thông tin khách hàng từ database
             var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
 
-            // Kiểm tra customer có null không trước khi truy cập thuộc tính của nó
             if (customer == null)
             {
-                // Xử lý khi không tìm thấy thông tin khách hàng
                 return RedirectToAction("Index", "Home");
             }
             var order = _dbContext.Orders.FirstOrDefault(o => o.orderID == orderId);
             if (order == null)
             {
-                // Xử lý khi không tìm thấy đơn hàng
                 return RedirectToAction("Index", "Order");
             }
 
             order.orderStatus = true;
 
-            // Lưu thay đổi vào DbContext
             _dbContext.SaveChanges();
             _notyf.Success("Confirm order successfully");
 
-            // Chuyển hướng người dùng đến trang Index của đơn hàng sau khi xác nhận
             return RedirectToAction("Index", "Order");
         }
         public IActionResult EnRoute(int? orderId)
@@ -543,29 +499,22 @@ namespace CameraStore.Controllers
 
             int userId = Convert.ToInt32(customerId);
 
-            // Lấy thông tin khách hàng từ database
             var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
 
-            // Kiểm tra customer có null không trước khi truy cập thuộc tính của nó
             if (customer == null)
             {
-                // Xử lý khi không tìm thấy thông tin khách hàng
                 return RedirectToAction("Index", "Home");
             }
             var order = _dbContext.Orders.FirstOrDefault(o => o.orderID == orderId);
             if (order == null)
             {
-                // Xử lý khi không tìm thấy đơn hàng
                 return RedirectToAction("Index", "Order");
             }
 
             order.IsShipped = true;
 
-            // Lưu thay đổi vào DbContext
             _dbContext.SaveChanges();
             _notyf.Success("Confirm the order has been successfully delivered to the shipping unit.");
-
-            // Chuyển hướng người dùng đến trang Index của đơn hàng sau khi xác nhận
             return RedirectToAction("Index", "Order");
         }
         public IActionResult Received(int? orderId)
@@ -578,26 +527,20 @@ namespace CameraStore.Controllers
 
             int userId = Convert.ToInt32(customerId);
 
-            // Lấy thông tin khách hàng từ database
             var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
 
-            // Kiểm tra customer có null không trước khi truy cập thuộc tính của nó
             if (customer == null)
             {
-                // Xử lý khi không tìm thấy thông tin khách hàng
                 return RedirectToAction("Index", "Home");
             }
 
             var order = _dbContext.Orders.FirstOrDefault(o => o.orderID == orderId);
             if (order == null)
             {
-                // Xử lý khi không tìm thấy đơn hàng
                 return RedirectToAction("Index", "Order");
             }
-
             order.IsDelivered = true;
             _dbContext.SaveChanges();
-            _notyf.Success("Congratulations on successfully receiving the goods, don't forget to leave me a feedback.");
             return RedirectToAction("orderDetail", "OrderDetail", new { id = orderId });
         }
         public ActionResult StripePayment()

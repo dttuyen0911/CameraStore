@@ -22,8 +22,9 @@
                             <th style="width: 10%;">#</th>
                             <th style="width: 20%;">Account</th>
                             <th style="width: 20%;">Product</th>
+                            <th style="width: 20%;">Product</th>
                             <th style="width: 30%;">Comment</th>
-                            <th style="width: 30%;">Star</th>
+                            <th style="width: 10%;">Star</th>
                             <th style="width: 30%;">Image</th>
                         </tr>
                     </thead>
@@ -33,6 +34,7 @@
                             <th scope="row">@feedback.feedID</th>
                             <td>@feedback.customerID</td>
                             <td>@feedback.proID</td>
+                            <td>@feedback.orderID</td>
                             <td>@feedback.feedDescription</td>
                             <td>@feedback.StarRating</td>
                                 @if(@feedback.feedUrlImage == null)

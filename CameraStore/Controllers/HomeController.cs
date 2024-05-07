@@ -324,27 +324,25 @@ namespace CameraStore.Controllers
 
             // Tìm các sản phẩm được mua nhiều nhất bởi các người dùng tương tự
             var mostPurchasedProducts = _dbContext.Orders
-                .Where(o => similarUsers.Contains(o.customerID))
-                .SelectMany(o => o.orderdetails)
-                .GroupBy(od => od.proID)
-                .OrderByDescending(g => g.Count())
-                .Take(9) // Điều chỉnh số lượng sản phẩm gợi ý tùy ý
-                .Select(g => g.Key)
-                .ToList();
+               .SelectMany(o => o.orderdetails)
+               .GroupBy(od => od.proID)
+               .OrderByDescending(g => g.Count())
+               .Select(g => g.Key)
+               .ToList();
 
             // Tìm sản phẩm được phản hồi tốt nhất
             var topRatedProducts = _dbContext.Products
-                 .Where(p => p.Feedbacks.Any()) // Chỉ lấy sản phẩm có phản hồi
-                 .OrderByDescending(p => p.Feedbacks.Average(f => f.StarRating)) // Sắp xếp theo đánh giá trung bình
-                 .Take(5) // Lấy 5 sản phẩm phản hồi tốt nhất
-                 .ToList();
+                .Where(p => p.Feedbacks.Any())
+                .OrderByDescending(p => p.Feedbacks.Average(f => f.StarRating))
+                .Take(5)
+                .ToList();
 
             var topRatedProductIds = topRatedProducts.Select(p => p.proID).ToList();
 
             // Kết hợp danh sách các sản phẩm được đề xuất từ lịch sử mua hàng và sản phẩm được phản hồi tốt nhất
             var recommendedProducts = _dbContext.Products
-                .Where(p => mostPurchasedProducts.Contains(p.proID) || topRatedProductIds.Contains(p.proID) && p.proID != productId) // Sử dụng Contains() để so sánh danh sách proID
-                .Take(6 - topRatedProducts.Count) // Bổ sung thêm các sản phẩm được phản hồi tốt nhất để đảm bảo tổng số sản phẩm là 6
+                .Where(p => mostPurchasedProducts.Contains(p.proID) || topRatedProductIds.Contains(p.proID) && p.proID != productId)
+                .Take(6 - topRatedProducts.Count)
                 .ToList();
 
             return recommendedProducts;
