@@ -114,17 +114,11 @@ namespace CameraStore.Controllers
 
                     return Json(new { success = true, feedback = feedback, feedImageUrl = imageUrl });
                 }
-                else
-                {
-                    return Json(new { success = false });
-                }
             }
-            else
-            {
-                return NotFound();
-            }
-        }
 
+            // Nếu không tìm thấy feedback, trả về false
+            return Json(new { success = false });
+        }
 
         [HttpGet]
         public IActionResult CalculateAverageRating(int proId)
@@ -135,12 +129,13 @@ namespace CameraStore.Controllers
             {
                 int totalRatings = allFeedbacks.Sum(f => f.StarRating);
                 double averageRating = (double)totalRatings / allFeedbacks.Count;
-                int feedbackAccountCount = allFeedbacks.Select(f => f.customerID).Distinct().Count();
-
+                var feedbackCount = _dbContext.Feedbacks
+                                .Where(f => f.proID == proId)
+                                .Count();
                 var result = new
                 {
                     AverageRating = averageRating,
-                    FeedbackAccountCount = feedbackAccountCount
+                    FeedbackAccountCount = feedbackCount
                 };
 
                 return Json(result);
@@ -160,9 +155,11 @@ namespace CameraStore.Controllers
                 int totalRatings = allFeedbacks.Sum(f => f.StarRating);
                 double averageRating = (double)totalRatings / allFeedbacks.Count;
 
+                double roundedAverageRating = Math.Round(averageRating, 1);
+
                 var result = new
                 {
-                    AverageRating = averageRating,
+                    AverageRating = roundedAverageRating,
                 };
 
                 return Json(result);
@@ -172,27 +169,20 @@ namespace CameraStore.Controllers
                 return Json(new { AverageRating = 0 });
             }
         }
+
         [HttpGet]
-        public IActionResult CustomerFeedback(int proId)
+        public IActionResult countFeedback(int proId)
         {
-            var allFeedbacks = _dbContext.Feedbacks.Where(f => f.proID == proId).ToList();
+            var feedbackCount = _dbContext.Feedbacks
+                .Where(f => f.proID == proId)
+                .Count();
 
-            if (allFeedbacks.Count > 0)
+            var result = new
             {
-                int feedbackAccountCount = allFeedbacks.Select(f => f.customerID).Distinct().Count();
+                FeedbackCount = feedbackCount
+            };
 
-                var result = new
-                {
-                    FeedbackAccountCount = feedbackAccountCount
-                };
-
-                return Json(result);
-            }
-            else
-            {
-                return Json(new {FeedbackAccountCount = 0 });
-            }
+            return Json(result);
         }
-       
     }
 }

@@ -265,25 +265,37 @@
 
                                             <tr>
                                                 <td colspan="7">
-                                                    @if(item.Order.paymentMethod == "Card" && item.Order.IsPayment == true)
+                                                    @if(item.Order.paymentMethod == "Card")
                                                     {
-                                                        <div class="d-flex justify-content-between pt-2">
-                                                            <p class="fw-bold mb-0">Order has been paid successfully</p>
-                                                        </div>
-                                                    }else if(item.Order.IsPayment == false && item.Order.paymentMethod == "Card")
-                                                    {
-                                                        <div class="d-flex justify-content-between pt-2">
-                                                            <p class="fw-bold mb-0">
-                                                                Please pay @item.Order.totalAmount within 24 hours otherwise your order will change to payment status COD.
-                                                                <a asp-controller="Order" asp-action="StripePayment1" asp-route-orderid="@item.Order.orderID">Continue Payment</a>
-                                                            </p>
-                                                        </div>
+                                                        if(item.Order.IsPayment == true)
+                                                        {
+                                                            <div class="d-flex justify-content-between pt-2">
+                                                                <p class="fw-bold mb-0">Order has been paid successfully</p>
+                                                            </div>
+                                                            if (@item.Order.orderStatus == true && @item.Order.IsShipped == true && @item.Order.IsDelivered == true)
+                                                            {
+                                                                <div class="d-flex justify-content-between pt-2">
+                                                                    <p class="fw-bold mb-0">Order has been delivered successfully.</p>
+                                                                </div>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="d-flex justify-content-between pt-2">
+                                                                <p class="fw-bold mb-0">
+                                                                    Please pay @item.Order.totalAmount within 24 hours otherwise your order will change to payment status COD.
+                                                                    <a asp-controller="Order" asp-action="StripePayment1" asp-route-orderid="@item.Order.orderID">Continue Payment</a>
+                                                                </p>
+                                                            </div>
+                                                        }
+
                                                     }
+                                                   
                                                     else{
                                                         @if (@item.Order.orderStatus == true && @item.Order.IsShipped == true && @item.Order.IsDelivered == true)
                                                         {
                                                             <div class="d-flex justify-content-between pt-2">
-                                                                <p class="fw-bold mb-0">Order has been paid successfully</p>
+                                                                <p class="fw-bold mb-0">Order has been delivered successfully.</p>
                                                             </div>
                                                         }
                                                         else

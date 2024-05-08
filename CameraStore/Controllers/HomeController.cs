@@ -339,7 +339,6 @@ namespace CameraStore.Controllers
 
             var topRatedProductIds = topRatedProducts.Select(p => p.proID).ToList();
 
-            // Kết hợp danh sách các sản phẩm được đề xuất từ lịch sử mua hàng và sản phẩm được phản hồi tốt nhất
             var recommendedProducts = _dbContext.Products
                 .Where(p => mostPurchasedProducts.Contains(p.proID) || topRatedProductIds.Contains(p.proID) && p.proID != productId)
                 .Take(6 - topRatedProducts.Count)

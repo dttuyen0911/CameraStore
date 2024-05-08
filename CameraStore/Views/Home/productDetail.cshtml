@@ -109,7 +109,7 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#tabs-6" role="tab">
-                                    Feedback<span id="customerFeedback"></span>
+                                    Feedback<span id="countFeedback"></span>
                                 </a>
                             </li>
                         </ul>
@@ -201,7 +201,7 @@
                                         </button>
                                         
                                     </div>
-                                    <div id="feedback-container">
+                                    <div id="feedback-container" style="border: outset;">
                                         @foreach (var feedback in Model.Item1.Feedbacks)
                                         {
                                             <div class="col-12 feedback-item" data-rating="@feedback.StarRating" style="border: outset; border-radius: 15px; display: none;">
@@ -400,10 +400,10 @@
         // Gửi yêu cầu AJAX để lấy giá trị trung bình của đánh giá
         $.ajax({
             type: 'GET',
-            url: '/Feedback/CustomerFeedback',
+            url: '/Feedback/countFeedback',
             data: { proId: proID }, // Điều chỉnh tên tham số thành 'proId' thay vì 'proID'
             success: function (result) {
-                var feedbackAccountCount = result.feedbackAccountCount;
+                var feedbackAccountCount = result.feedbackCount;
                 displayReviewCount(feedbackAccountCount); // Hiển thị số lượng người dùng đã feedback
             },
             error: function () {
@@ -412,7 +412,7 @@
         });
 
         function displayReviewCount(count) {
-            $('#customerFeedback').text('(' + count + ')');
+            $('#countFeedback').text('(' + count + ')');
         }
     });
 

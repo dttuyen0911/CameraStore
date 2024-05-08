@@ -25,7 +25,14 @@
                             + Add To Cart
                         </a>
                     </div>
-                    <h5>$@product.proPrice</h5>
+                    @if (@product.proSale != null)
+                    {
+                        <h5>$@product.proSale</h5>
+                    }
+                    else
+                    {
+                        <h5>$@product.proPrice</h5>
+                    }
                 </div>
             </div>
         </div>
