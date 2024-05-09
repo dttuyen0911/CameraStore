@@ -235,13 +235,10 @@
                                                 <td class="cart__price" style="text-align: center; width: 10%; ">
                                                     @item.unitPrice
                                                 </td>
-                                                <td class="cart__close" style="
-                                                   text-align: center;
-                                                   width: 10%;
-                                                                   ">
+                                                <td class="cart__close" style="text-align: center;width: 10%;">
                                                     @item.Order.orderDate
                                                 </td>
-                                                <td class="cart__close" style="text-align: center;width: 17%"> @item.Order.orderDelivery.ToString("dd/MM/yyyy")</td>
+                                                <td class="cart__close" style="text-align: center;width: 17%">                                    @item.Order.orderDelivery.ToString("dd/MM/yyyy")</td>
                                                 <td class="cart__close" style=" width: 5%; text-align: center;">
                                                     @if (@item.Order.orderStatus == false)
                                                     {
@@ -283,7 +280,7 @@
                                                         {
                                                             <div class="d-flex justify-content-between pt-2">
                                                                 <p class="fw-bold mb-0">
-                                                                    Please pay @item.Order.totalAmount within 24 hours otherwise your order will change to payment status COD.
+                                                                    Please pay @(item.unitPrice * item.quantity) within 24 hours otherwise your order will change to payment status COD.
                                                                     <a asp-controller="Order" asp-action="StripePayment1" asp-route-orderid="@item.Order.orderID">Continue Payment</a>
                                                                 </p>
                                                             </div>
@@ -301,7 +298,7 @@
                                                         else
                                                         {
                                                             <div class="d-flex justify-content-between pt-2">
-                                                                <p class="fw-bold mb-0">Please pay @item.Order.totalAmount when receiving goods</p>
+                                                                <p class="fw-bold mb-0">Please pay @(item.unitPrice * item.quantity) when receiving goods</p>
                                                             </div>
                                                         }
                                                     }

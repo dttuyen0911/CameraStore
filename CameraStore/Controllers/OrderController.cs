@@ -597,9 +597,10 @@ namespace CameraStore.Controllers
                 var service = new SessionService();
                 Session session = service.Create(option);
                 Response.Headers.Add("Location", session.Url);
-                _notyf.Success("Order has been successfully processed!");
+                _notyf.Success("Order successfully");
                 orderInfo.IsPayment = true;
                 _dbContext.SaveChanges();
+
                 return new StatusCodeResult(303);
             }
             else
@@ -665,7 +666,7 @@ namespace CameraStore.Controllers
             var service = new SessionService();
             Session session = service.Create(option);
             Response.Headers.Add("Location", session.Url);
-            _notyf.Success("Payment successfully");
+            _notyf.Success("Order has been paid successfully!");
             orderInfo.IsPayment = true;
             _dbContext.SaveChanges();
             return new StatusCodeResult(303);

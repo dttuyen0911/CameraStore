@@ -94,15 +94,14 @@
                                             <td colspan="7">
                                                 <div class="d-flex justify-content-between pt-2">
                                                     <p class="fw-bold mb-0">Order Details</p>
-                                                    <span class="fw-bold me-4" style="
-                                                        color: #111111;
-                                                        font-size: 18px;
-                                                        font-weight: 700;
-                                                        ">Total @item.Order.totalAmount</span>
+                                                    <span class="fw-bold me-4" style="color: #111111; font-size: 18px; font-weight: 700;">
+                                                        Total @(item.unitPrice * item.quantity)
+                                                    </span>
                                                 </div>
                                                 <hr style="border-top: 1px solid #e0e0e0;">
                                             </td>
                                         </tr>
+
                                     }
                                 </tbody>
                             </table>
@@ -112,8 +111,9 @@
                          style="background-color: #a8729a; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
                         @{
                             decimal total = 0;
-                            foreach(var item in Model){
-                                total += @item.Order.totalAmount;
+                            foreach (var item in Model)
+                            {
+                                total += item.unitPrice * item.quantity;
                             }
                         }
                         <h5 class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0">

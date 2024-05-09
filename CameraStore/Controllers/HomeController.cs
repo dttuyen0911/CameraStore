@@ -307,42 +307,42 @@ namespace CameraStore.Controllers
         }
         private List<Product> GetRecommendedProducts(int productId)
         {
-            int userId = 0; // Sử dụng giá trị mặc định cho userId nếu người dùng không đăng nhập
+            int userId = 0;
 
-            // Tiếp tục lấy lịch sử mua hàng của người dùng nếu có
             var userPurchases = _dbContext.Orders
-                .Where(o => o.customerID == userId)
-                .SelectMany(o => o.orderdetails.Select(od => od.proID))
-                .ToList();
+                 .Where(o => o.customerID == userId)
+                 .SelectMany(o => o.orderdetails.Select(od => od.proID))
+                 .Where(pId => pId != productId)
+                 .ToList();
 
-            // Tìm các người dùng khác đã mua các sản phẩm tương tự
-            var similarUsers = _dbContext.Orders
-                .Where(o => o.customerID != userId && o.orderdetails.Any(od => userPurchases.Contains(od.proID)))
-                .Select(o => o.customerID)
-                .Distinct()
-                .ToList();
-
-            // Tìm các sản phẩm được mua nhiều nhất bởi các người dùng tương tự
             var mostPurchasedProducts = _dbContext.Orders
-               .SelectMany(o => o.orderdetails)
-               .GroupBy(od => od.proID)
-               .OrderByDescending(g => g.Count())
-               .Select(g => g.Key)
-               .ToList();
+                 .SelectMany(o => o.orderdetails)
+                 .GroupBy(od => od.proID)
+                 .OrderByDescending(g => g.Count())
+                 .Select(g => g.Key)
+                 .Where(pId => pId != productId) // Loại bỏ sản phẩm hiện đang xem
+                 .ToList();
 
-            // Tìm sản phẩm được phản hồi tốt nhất
+
+            mostPurchasedProducts.AddRange(userPurchases);
+
+            mostPurchasedProducts = mostPurchasedProducts.Distinct().ToList();
+
             var topRatedProducts = _dbContext.Products
                 .Where(p => p.Feedbacks.Any())
                 .OrderByDescending(p => p.Feedbacks.Average(f => f.StarRating))
                 .Take(5)
+                .Where(p => p.proID != productId) 
                 .ToList();
 
             var topRatedProductIds = topRatedProducts.Select(p => p.proID).ToList();
 
-            var recommendedProducts = _dbContext.Products
+            var allRecommendedProducts = _dbContext.Products
                 .Where(p => mostPurchasedProducts.Contains(p.proID) || topRatedProductIds.Contains(p.proID) && p.proID != productId)
-                .Take(6 - topRatedProducts.Count)
                 .ToList();
+
+            var random = new Random();
+            var recommendedProducts = allRecommendedProducts.OrderBy(x => random.Next()).Take(6).ToList();
 
             return recommendedProducts;
         }
@@ -379,13 +379,14 @@ namespace CameraStore.Controllers
         {
             IQueryable<Product> productsQuery = _dbContext.Products
                 .Include(c => c.Category);
+
             switch (sortByPrice)
             {
                 case "LowToHigh":
-                    productsQuery = productsQuery.OrderBy(p => p.proPrice);
+                    productsQuery = productsQuery.OrderBy(p => p.proSale != null ? p.proSale : p.proPrice);
                     break;
                 case "HighToLow":
-                    productsQuery = productsQuery.OrderByDescending(p => p.proPrice);
+                    productsQuery = productsQuery.OrderByDescending(p => p.proSale != null ? p.proSale : p.proPrice);
                     break;
                 default:
                     break;

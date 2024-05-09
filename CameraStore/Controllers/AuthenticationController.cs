@@ -99,7 +99,7 @@ namespace CameraStore.Controllers
                 SendOTPByEmail(email, otp, customer.fullname);
 
                 _notyf.Success("OTP sent again successfully.");
-
+                HttpContext.Session.SetString("OTP", otp);
                 return Json(new { success = true, message = "OTP sent again successfully." });
             }
             else
