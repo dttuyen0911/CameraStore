@@ -517,7 +517,7 @@ namespace CameraStore.Controllers
             _notyf.Success("Confirm the order has been successfully delivered to the shipping unit.");
             return RedirectToAction("Index", "Order");
         }
-        public IActionResult Received(int? orderId)
+        public IActionResult Received(int? orderId, int? proId)
         {
             var customerId = User.FindFirst(ClaimTypes.Name)?.Value;
             if (customerId == null)
@@ -534,14 +534,14 @@ namespace CameraStore.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            var order = _dbContext.Orders.FirstOrDefault(o => o.orderID == orderId);
+            var order = _dbContext.Orders.FirstOrDefault(o => o.orderID == orderId );
             if (order == null)
             {
                 return RedirectToAction("Index", "Order");
             }
             order.IsDelivered = true;
             _dbContext.SaveChanges();
-            return RedirectToAction("orderDetail", "OrderDetail", new { id = orderId });
+            return RedirectToAction("orderDetail", "OrderDetail", new { orderid = orderId, proid = proId });
         }
         public ActionResult StripePayment()
         {

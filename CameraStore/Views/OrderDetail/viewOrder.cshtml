@@ -87,7 +87,10 @@
 
                                             </td>
                                             <td class="cart__close">
-                                                <a asp-controller="OrderDetail" asp-action="orderDetail" asp-route-id="@item.Order.orderID" class="btn btn-primary">View Detail</a>
+                                                <form method="post" asp-controller="OrderDetail" asp-action="orderDetail" asp-route-orderid="@item.Order.orderID">
+                                                    <input type="hidden" name="proid" value="@item.proID" />
+                                                    <button type="submit" class="btn btn-primary">View Detail</button>
+                                                </form>
                                             </td>
                                         </tr>
                                         <tr>

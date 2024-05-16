@@ -94,7 +94,7 @@
                                     {
                                         foreach (var item in ViewBag.Cart)
                                         {
-                                            subtotal += item.quantity * item.Product.proPrice;
+                                            subtotal += item.quantity * (item.Product.proSale != null ? item.Product.proSale : item.Product.proPrice);
                                         }
                                     }
                                 }

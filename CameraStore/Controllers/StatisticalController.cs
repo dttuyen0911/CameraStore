@@ -61,13 +61,14 @@ namespace CameraStore.Controllers
             var orderCounts = dates.Select(date =>
                 new
                 {
-                    Date = date,
+                    Date = date.ToString("yyyy-MM-dd"),  
                     Count = _dbContext.Orders
                         .Count(o => o.orderDate.Date == date.Date && o.orderStatus == true)
                 }).ToList();
 
             return Json(orderCounts);
         }
+
         public IActionResult GetRevenueByMonth()
         {
             int currentYear = DateTime.Now.Year;
@@ -83,12 +84,19 @@ namespace CameraStore.Controllers
                     .Where(o => o.orderDate >= firstDayOfMonth && o.orderDate <= lastDayOfMonth && o.orderStatus == true)
                     .Sum(o => o.totalAmount);
 
-                revenueByMonth.Add(new { Month = CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(month), TotalRevenue = totalPrice });
+                var orderCount = _dbContext.Orders
+                    .Count(o => o.orderDate >= firstDayOfMonth && o.orderDate <= lastDayOfMonth && o.orderStatus == true);
+
+                revenueByMonth.Add(new
+                {
+                    Month = CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(month),
+                    TotalRevenue = totalPrice,
+                    OrderCount = orderCount
+                });
             }
 
             return Json(revenueByMonth);
         }
-     
 
     }
 }

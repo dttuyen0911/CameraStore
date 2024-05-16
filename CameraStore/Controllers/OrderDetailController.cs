@@ -66,13 +66,14 @@ namespace CameraStore.Controllers
 
             return View(orderDetails);
         }
-        public IActionResult orderDetail(int ?id)
+        public IActionResult orderDetail(int? orderid, int? proid)
         {
             var customerId = User.FindFirst(ClaimTypes.Name)?.Value;
             if (customerId == null)
             {
                 return RedirectToAction("Login", "Authentication");
             }
+
             int userId = Convert.ToInt32(User.Identity.Name);
 
             var customer = _dbContext.Customers.FirstOrDefault(c => c.customerID == userId);
@@ -84,22 +85,25 @@ namespace CameraStore.Controllers
             {
                 ViewBag.FullName = "Unknown";
             }
-            if (id == null)
+
+            if (orderid == null || proid == null)
             {
-                return NotFound(); // Trả về trang 404 nếu không có id được cung cấp
+                return NotFound(); // Trả về trang 404 nếu không có đủ thông tin cần thiết
             }
 
             var orderDetail = _dbContext.OrderDetails
                 .Include(od => od.Order)
                 .ThenInclude(o => o.Customer)
                 .Include(od => od.Product)
-                .FirstOrDefault(od => od.Order.orderID == id);
+                .FirstOrDefault(od => od.Order.orderID == orderid && od.proID == proid);
 
             if (orderDetail == null)
             {
                 return NotFound(); // Trả về trang 404 nếu không tìm thấy thông tin đơn hàng
             }
+
             return View("orderDetail", new List<OrderDetail> { orderDetail });
         }
+
     }
 }

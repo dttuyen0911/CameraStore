@@ -62,7 +62,7 @@ namespace CameraStore.Data
                  .HasOne(f => f.Order)
                  .WithMany()
                  .HasForeignKey(f => f.orderID)
-                 .HasConstraintName("FK_Feedbacks_Orders_orderID") 
+                 .HasConstraintName("FK_Feedbacks_Orders_orderID")
                  .OnDelete(DeleteBehavior.Restrict);
         }
     }

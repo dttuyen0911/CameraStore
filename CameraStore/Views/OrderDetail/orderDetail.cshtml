@@ -131,17 +131,19 @@
                                                     </button>
                                                     <form id="ReceivedOrderForm" action="@Url.Action("Received", "Order")">
                                                         <input type="hidden" name="orderId" value="@item.Order.orderID">
+                                                        <input type="hidden" name="proId" value="@item.proID">
                                                         <button type="submit" class="btn btn-success" style="margin-left: 82%; width: 200px;">Received</button>
                                                     </form>
                                                 }
                                                 else
                                                 {
-                                                    <button class="btn btn-success" onclick="openForm(@item.Order.orderID);checkSubmit(@item.Order.orderID)" style="margin-left: 82%; width: 200px;">
+                                                    <button class="btn btn-success" onclick="openForm(@item.Order.orderID);checkSubmit(@item.Order.orderID,@item.proID)" style="margin-left: 82%; width: 200px;">
                                                         Feedback
                                                     </button>
                                                     <div class="form-popup" id="myForm">
                                                         <form id="feedbackForm" asp-action="Create" asp-controller="Feedback" method="post" class="form-container" enctype="multipart/form-data">
                                                             <input type="hidden" id="orderId" name="orderId" value="" />
+                                                            <input type="hidden" id="proId" name="proId" value="@item.proID" />
                                                             <h1>Feedback</h1>
                                                             <label for="fullname"><b>Full Name</b></label>
                                                             <input type="text" id="fullname" name="Fullname" value="@item.Order.orderFullname" readonly class="form-control" data-fullname="@item.Order.orderFullname" />
@@ -163,7 +165,6 @@
                                                             </div>
 
                                                             <div class="mb-3">
-                                                                <!-- Thêm input để chọn file hình ảnh -->
                                                                 <input type="file" onchange="chooseFile(this)" style="width: 100%;margin-top:10px" id="feedImage" name="feedImage" accept="image/gif, image/jpeg, image/png" class="form-control" />
                                                                 <div>
                                                                     <img id="image" src="~/image/noImage.jpg" style="margin-top: 10px;width: 200px;height: 200px;" alt="Feedback Image">
@@ -269,13 +270,13 @@
                                                             <div class="d-flex justify-content-between pt-2">
                                                                 <p class="fw-bold mb-0">Order has been paid successfully</p>
                                                             </div>
-                                                            if (@item.Order.orderStatus == true && @item.Order.IsShipped == true && @item.Order.IsDelivered == true)
+                                                        }
+                                                        else if (@item.Order.orderStatus == true && @item.Order.IsShipped == true && @item.Order.IsDelivered == true)
                                                             {
                                                                 <div class="d-flex justify-content-between pt-2">
                                                                     <p class="fw-bold mb-0">Order has been delivered successfully.</p>
                                                                 </div>
                                                             }
-                                                        }
                                                         else
                                                         {
                                                             <div class="d-flex justify-content-between pt-2">
@@ -395,11 +396,11 @@
             selectElement.appendChild(option);
         });
     }
-    function checkSubmit(orderId) {
+    function checkSubmit(orderId, proId) {
         $.ajax({
             type: 'GET',
             url: '/Feedback/CheckSubmit',
-            data: { orderId: orderId },
+            data: { orderId: orderId, proId: proId },
             success: function (response) {
                 if (response.success) {
                     const feedback = response.feedback;
@@ -407,14 +408,14 @@
                     document.getElementById('fullname').value = fullname;
                     document.getElementById('uploadProDes').value = feedback.feedDescription;
 
-                    if (response.feedImageUrl) { // Sử dụng feedImageUrl từ phản hồi
+                    if (response.feedImageUrl) { 
                         document.getElementById('image').src = response.feedImageUrl;
                         document.getElementById('image').style.display = 'block';
                     }
                     document.getElementById('ddlRate').value = feedback.starRating.toString();
-                    displayStars(feedback.starRating); // Hiển thị số sao tương ứng
-                    document.getElementById('submitButton').style.display = 'none'; // Ẩn nút submit
-                    document.getElementById('submitForm').style.display = 'block'; // Hiển thị lại form submit
+                    displayStars(feedback.starRating); 
+                    document.getElementById('submitButton').style.display = 'none'; 
+                    document.getElementById('submitForm').style.display = 'block'; 
                 } else {
                     submitFeedback();
                 }

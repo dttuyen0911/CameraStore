@@ -47,7 +47,7 @@ namespace CameraStore.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public IActionResult Create([FromForm] Feedback feedback, IFormFile? feedImage, [FromForm] int StarRating, int orderId)
+        public IActionResult Create([FromForm] Feedback feedback, IFormFile? feedImage, [FromForm] int StarRating, int orderId, int proId)
         {
             if (ModelState.IsValid)
             {
@@ -58,13 +58,14 @@ namespace CameraStore.Controllers
                 if (orderDetail != null && orderDetail.Order != null)
                 {
                     feedback.customerID = orderDetail.Order.customerID;
-                    feedback.proID = orderDetail.proID;
+                    feedback.proID = proId;
                 }
                 else
                 {
                     return NotFound();
                 }
 
+                // Xử lý tải lên ảnh
                 if (feedImage != null)
                 {
                     string uploadsFolder = Path.Combine("wwwroot", "image");
@@ -85,14 +86,14 @@ namespace CameraStore.Controllers
                 _dbContext.Feedbacks.Add(feedback);
                 _dbContext.SaveChanges();
                 _notyf.Success("Feedback successfully");
-                return RedirectToAction("orderDetail", "OrderDetail", new { id = orderId });
+                return RedirectToAction("orderDetail", "OrderDetail", new { orderid = orderId, proid = proId });
             }
 
             return View(feedback);
         }
         [HttpGet]
         [Authorize]
-        public IActionResult CheckSubmit(int orderId)
+        public IActionResult CheckSubmit(int orderId, int proId) // Thêm tham số proId vào phương thức
         {
             OrderDetail orderDetail = _dbContext.OrderDetails
                 .Include(od => od.Order)
@@ -101,9 +102,9 @@ namespace CameraStore.Controllers
             if (orderDetail != null && orderDetail.Order != null)
             {
                 int customerID = orderDetail.Order.customerID;
-                int proID = orderDetail.proID;
+                // Không cần truy xuất proID từ orderDetail, sử dụng proId được truyền vào từ phía client
                 Feedback feedback = _dbContext.Feedbacks
-                    .FirstOrDefault(f => f.proID == proID && f.customerID == customerID && f.orderID == orderId);
+                    .FirstOrDefault(f => f.proID == proId && f.customerID == customerID && f.orderID == orderId);
                 if (feedback != null)
                 {
                     string imageUrl = null;
@@ -119,6 +120,7 @@ namespace CameraStore.Controllers
             // Nếu không tìm thấy feedback, trả về false
             return Json(new { success = false });
         }
+
 
         [HttpGet]
         public IActionResult CalculateAverageRating(int proId)

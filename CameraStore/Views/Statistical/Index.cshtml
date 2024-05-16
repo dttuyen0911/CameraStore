@@ -182,9 +182,7 @@
                     var counts = [];
 
                     data.forEach(function (item) {
-                        // Chuyển đổi ngày tháng thành đối tượng Date
-                        var date = new Date(item.date);
-                        dates.push(date.toISOString().slice(0, 10)); // Lấy ngày dưới dạng chuỗi YYYY-MM-DD
+                        dates.push(item.date); // Sử dụng trực tiếp chuỗi ngày định dạng ISO 8601
                         counts.push(item.count);
                     });
 
@@ -232,12 +230,16 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function (data) {
+                    console.log(data); // In ra dữ liệu để kiểm tra
+
                     var months = [];
                     var revenues = [];
+                    var orderCounts = [];
 
                     data.forEach(function (item) {
                         months.push(item.month);
                         revenues.push(item.totalRevenue);
+                        orderCounts.push(item.orderCount);
                     });
 
                     const chartConfig = {
@@ -246,10 +248,18 @@
                             labels: months,
                             datasets: [{
                                 label: 'Total Revenue',
-                                data: revenues,
+                                data: revenues.map(revenue => parseFloat(revenue.toFixed(2))),
                                 fill: false,
                                 borderColor: 'rgb(75, 192, 192)',
-                                tension: 0.1
+                                tension: 0.1,
+                                yAxisID: 'y-revenue'
+                            }, {
+                                label: 'Order Count',
+                                data: orderCounts,
+                                fill: false,
+                                borderColor: 'rgb(255, 99, 132)',
+                                tension: 0.1,
+                                yAxisID: 'y-order'
                             }]
                         },
                         options: {
@@ -258,17 +268,36 @@
                             plugins: {
                                 title: {
                                     display: true,
-                                    text: 'Total Revenue by Month'
+                                    text: 'Total Revenue and Order Count by Month'
                                 },
                                 legend: {
-                                    display: false
+                                    display: true
                                 }
-                            }, scales: {
-                                y: {
-                                    suggestedMin: 0,
-                                    stepSize: 100, // Điều chỉnh bước giữa các giá trị trên trục Y tùy thuộc vào tỷ lệ của dữ liệu
+                            },
+                            scales: {
+                                'y-revenue': {
+                                    type: 'linear',
+                                    position: 'left',
                                     title: {
                                         display: true,
+                                        text: 'Revenue (in dollars)'
+                                    },
+                                    ticks: {
+                                        callback: function (value, index, values) {
+                                            return value.toFixed(2); // Display values with 2 decimal places
+                                        }
+                                    }
+                                },
+                                'y-order': {
+                                    type: 'linear',
+                                    position: 'right',
+                                    title: {
+                                        display: true,
+                                        text: 'Order Count'
+                                    },
+                                    ticks: {
+                                        stepSize: 1,
+                                        precision: 0 // Display integer values
                                     }
                                 },
                                 x: {
@@ -283,6 +312,9 @@
 
                     var ctx = document.getElementById('account-chart').getContext('2d');
                     var revenueChart = new Chart(ctx, chartConfig);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching data:', status, error);
                 }
             });
         });
