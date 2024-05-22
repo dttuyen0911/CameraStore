@@ -207,8 +207,13 @@ namespace CameraStore.Controllers
                 _notyf.Error("Quantity must be a positive number.");
                 return NoContent();
             }
+
             var product = _dbContext.Products.FirstOrDefault(p => p.proID == proId);
-            
+            if (product == null)
+            {
+                return NotFound();
+            }
+
             var cartDetail = _dbContext.CartDetails.FirstOrDefault(cd => cd.cartID == cartId && cd.proID == proId);
             if (cartDetail == null)
             {
@@ -218,58 +223,66 @@ namespace CameraStore.Controllers
             var cart = _dbContext.Carts.Find(cartDetail.cartID);
             if (cart == null)
             {
-                return NotFound(); 
+                return NotFound();
             }
-            if (product != null)
+
+            int quantityDifference = quantity - cartDetail.quantity;
+
+            // Check if the product stock can accommodate the new quantity
+            if (quantityDifference > product.proQuantity)
             {
-                product.proQuantitySold += (quantity - cartDetail.quantity);
-                product.proQuantity = product.proQuantity - (quantity - cartDetail.quantity);
-                if (product.proQuantity == 0)
+                _notyf.Error("Insufficient product quantity in stock.");
+                return NoContent();
+            }
+
+            // Update product's sold quantity and stock
+            product.proQuantitySold += quantityDifference;
+            product.proQuantity -= quantityDifference;
+
+            if (product.proQuantity == 0)
+            {
+                product.proStatus = "Sold out";
+            }
+            else
+            {
+                if (product.proPercent != null && product.proPercent > 0)
                 {
-                    product.proStatus = "Sold out";
+                    product.proStatus = "Sale";
                 }
                 else
                 {
-                    if (product.proPercent != null && product.proPercent > 0)
-                    {
-                        product.proStatus = "Sale";
-                    }
-                    else
-                    {
-                        product.proStatus = "New";
-                    }
+                    product.proStatus = "New";
                 }
-                _dbContext.SaveChanges();
             }
-            else
-            {
-                return NotFound(); 
-            }
-            cart.cartQuantityTotal -= cartDetail.quantity;
 
+            // Update the cart details
+            cart.cartQuantityTotal = cart.cartQuantityTotal - cartDetail.quantity + quantity;
             cartDetail.quantity = quantity;
-
-            cart.cartQuantityTotal += quantity;
 
             if (product.proSale != null && product.proSale > 0)
             {
-                cartDetail.price = product.proSale; 
+                cartDetail.price = product.proSale;
             }
             else
             {
-                cartDetail.price = product.proPrice; 
+                cartDetail.price = product.proPrice;
             }
 
-            cart.cartPriceTotal += (cartDetail.price * cartDetail.quantity);
+            // Calculate the new cart price total
+            cart.cartPriceTotal = _dbContext.CartDetails
+                .Where(cd => cd.cartID == cartId)
+                .Sum(cd => cd.quantity * (cd.Product.proSale != null ? cd.Product.proSale : cd.Product.proPrice));
 
             _dbContext.SaveChanges();
 
+            // Calculate the subtotal for the current cart
             var subtotal = _dbContext.CartDetails
                 .Where(cd => cd.cartID == cartId)
-            .Sum(cd => cd.Product.proSale != null ? cd.quantity * cd.Product.proSale : cd.quantity * cd.Product.proPrice);
+                .Sum(cd => cd.quantity * (cd.Product.proSale != null ? cd.Product.proSale : cd.Product.proPrice));
 
             return Json(new { subtotal = subtotal });
         }
+
         [HttpPost]
         [Authorize]
         public IActionResult RemoveCart(int cartId, int proId)
