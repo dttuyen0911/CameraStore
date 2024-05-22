@@ -18,7 +18,7 @@ namespace CameraStore.Models
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$", ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character.")]
         public string? password { get; set; }
         [Required(ErrorMessage = "Telephone of account is required")]
-        [RegularExpression(@"^\d{10,11}$", ErrorMessage = "Telephone must be 10 or 11 digits")]
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "Telephone must be 10 digits")]
         public string? telephone { get; set; }
         [Required(ErrorMessage = "Address of account is not null")]
         public DateTime createAt { get; set; }

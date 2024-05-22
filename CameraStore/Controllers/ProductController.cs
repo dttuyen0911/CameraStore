@@ -41,16 +41,32 @@ namespace CameraStore.Controllers
         {
             /*if (ModelState.IsValid)
             {*/
+            if(obj.proPrice <= 0)
+            {
+                _notyf.Error("Price must be a positive number.");
+                return View(obj);
+            }
+            if (obj.proPercent <= 0)
+            {
+                _notyf.Error("Percent must be a positive number.");
+                return View(obj);
+            }
             if (obj.supID == null || obj.cateID == null || !_dbContext.Suppliers.Any(s => s.supID == obj.supID) || !_dbContext.Categories.Any(c => c.cateID == obj.cateID))
             {
                 _notyf.Error("Please select both category and supplier.");
-                // Lấy danh sách category và supplier để hiển thị lại trong view
                 ViewData["supID"] = new SelectList(_dbContext.Suppliers.ToList(), "supID", "supName");
                 ViewData["cateID"] = new SelectList(_dbContext.Categories.ToList(), "cateID", "cateName");
                 return View(obj);
             }
 
             string fileName = proUploadImage(obj);
+            if (fileName == null)
+            {
+                _notyf.Error("Invalid image file.");
+                ViewData["supID"] = new SelectList(_dbContext.Suppliers.ToList(), "supID", "supName");
+                ViewData["cateID"] = new SelectList(_dbContext.Categories.ToList(), "cateID", "cateName");
+                return View(obj);
+            }
             obj.proUrlImage = fileName;
 
             // Kiểm tra proPercent có giá trị hay không
@@ -79,9 +95,23 @@ namespace CameraStore.Controllers
             string uniqueFileName = null;
             if (obj.proImage != null)
             {
-                string uploadsFoder = Path.Combine("wwwroot", "image");
-                uniqueFileName = Guid.NewGuid().ToString() + obj.proID + obj.proImage.FileName;
-                string filePath = Path.Combine(uploadsFoder, uniqueFileName);
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                var fileExtension = Path.GetExtension(obj.proImage.FileName).ToLowerInvariant();
+
+                if (!allowedExtensions.Contains(fileExtension))
+                {
+                    return null; // Invalid file extension
+                }
+
+                var allowedMimeTypes = new[] { "image/jpeg", "image/png", "image/gif" };
+                if (!allowedMimeTypes.Contains(obj.proImage.ContentType))
+                {
+                    return null; // Invalid MIME type
+                }
+
+                string uploadsFolder = Path.Combine("wwwroot", "image");
+                uniqueFileName = Guid.NewGuid().ToString() + obj.proID + fileExtension;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                 {
                     obj.proImage.CopyTo(fileStream);
@@ -105,6 +135,7 @@ namespace CameraStore.Controllers
         {
             /*if (ModelState.IsValid)
             {*/
+
             if (obj.proPercent == null)
             {
                 // Nếu proPercent là null, gán proSale = proPrice
@@ -119,6 +150,33 @@ namespace CameraStore.Controllers
             {
                 obj.proID = id;
                 obj.proUrlImage = img;
+                if (obj.supID == null || obj.cateID == null || !_dbContext.Suppliers.Any(s => s.supID == obj.supID) || !_dbContext.Categories.Any(c => c.cateID == obj.cateID))
+                {
+                    _notyf.Error("Please select both category and supplier.");
+                    ViewData["supID"] = new SelectList(_dbContext.Suppliers.ToList(), "supID", "supName");
+                    ViewData["cateID"] = new SelectList(_dbContext.Categories.ToList(), "cateID", "cateName");
+                    return View(obj);
+                }
+                if (obj.proPrice <= 0)
+                {
+                    _notyf.Error("Price must be a positive number.");
+                    return View(obj);
+                }
+                if (obj.proPercent <= 0)
+                {
+                   _notyf.Error("Percent must be a positive number.");
+                    return View(obj); 
+                }
+                if(obj.proQuantity <= 0)
+                {
+                    _notyf.Error("Quantity must be a positive number.");
+                    return View(obj);
+                }
+                if (obj.proQuantitySold <= 0)
+                {
+                    _notyf.Error("Quantity sold must be a positive number.");
+                    return View(obj);
+                }
                 if (obj.proQuantity == 0)
                 {
                     obj.proStatus = "Sold out";
@@ -142,8 +200,32 @@ namespace CameraStore.Controllers
             else
             {
                 obj.proID = id;
-                string uniqueFileName = proUploadImage(obj);
-                obj.proUrlImage = uniqueFileName;
+                string fileName = proUploadImage(obj);
+                if (fileName == null)
+                {
+                    _notyf.Error("Invalid image file.");
+                    ViewData["supID"] = new SelectList(_dbContext.Suppliers.ToList(), "supID", "supName");
+                    ViewData["cateID"] = new SelectList(_dbContext.Categories.ToList(), "cateID", "cateName");
+                    return View(obj);
+                }
+                obj.proUrlImage = fileName;
+                if (obj.supID == null || obj.cateID == null || !_dbContext.Suppliers.Any(s => s.supID == obj.supID) || !_dbContext.Categories.Any(c => c.cateID == obj.cateID))
+                {
+                    _notyf.Error("Please select both category and supplier.");
+                    ViewData["supID"] = new SelectList(_dbContext.Suppliers.ToList(), "supID", "supName");
+                    ViewData["cateID"] = new SelectList(_dbContext.Categories.ToList(), "cateID", "cateName");
+                    return View(obj);
+                }
+                if (obj.proPrice <= 0)
+                {
+                    _notyf.Error("Price must be a positive number.");
+                    return View(obj);
+                }
+                if (obj.proPercent <= 0)
+                {
+                    _notyf.Error("Percent must be a positive number.");
+                    return View(obj);
+                }
                 if (obj.proQuantity == 0)
                 {
                     obj.proStatus = "Sold out";

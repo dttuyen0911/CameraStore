@@ -236,7 +236,7 @@ namespace CameraStore.Controllers
                 {
                     if (customer.password != GetMD5(password))
                     {
-                        ModelState.AddModelError("password", "Password invalid.");
+                        _notyf.Error("Password invalid");
                         return View();
                     }
 
@@ -270,7 +270,7 @@ namespace CameraStore.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError("email", "Email invalid.");
+                    _notyf.Error("Email invalid");
                     return View();
                 }
             }
