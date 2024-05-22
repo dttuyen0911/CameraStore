@@ -32,7 +32,7 @@ namespace CameraStore.Controllers
             OrderDetail orderDetail = _dbContext.OrderDetails.FirstOrDefault(od => od.orderID == orderID);
             if (orderDetail == null)
             {
-                return NotFound(); // Trả về lỗi 404 nếu không tìm thấy chi tiết đơn hàng
+                return NotFound(); 
             }
 
             Feedback feedback = new Feedback
@@ -65,7 +65,6 @@ namespace CameraStore.Controllers
                     return NotFound();
                 }
 
-                // Xử lý tải lên ảnh
                 if (feedImage != null)
                 {
                     string uploadsFolder = Path.Combine("wwwroot", "image");
@@ -79,7 +78,7 @@ namespace CameraStore.Controllers
                 }
                 else
                 {
-                    feedback.feedUrlImage = null; // Không có ảnh được tải lên, đặt feedUrlImage thành null
+                    feedback.feedUrlImage = null; 
                 }
                 feedback.StarRating = StarRating;
 
@@ -93,7 +92,7 @@ namespace CameraStore.Controllers
         }
         [HttpGet]
         [Authorize]
-        public IActionResult CheckSubmit(int orderId, int proId) // Thêm tham số proId vào phương thức
+        public IActionResult CheckSubmit(int orderId, int proId) 
         {
             OrderDetail orderDetail = _dbContext.OrderDetails
                 .Include(od => od.Order)
@@ -102,7 +101,6 @@ namespace CameraStore.Controllers
             if (orderDetail != null && orderDetail.Order != null)
             {
                 int customerID = orderDetail.Order.customerID;
-                // Không cần truy xuất proID từ orderDetail, sử dụng proId được truyền vào từ phía client
                 Feedback feedback = _dbContext.Feedbacks
                     .FirstOrDefault(f => f.proID == proId && f.customerID == customerID && f.orderID == orderId);
                 if (feedback != null)
@@ -117,7 +115,6 @@ namespace CameraStore.Controllers
                 }
             }
 
-            // Nếu không tìm thấy feedback, trả về false
             return Json(new { success = false });
         }
 

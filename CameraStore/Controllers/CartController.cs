@@ -42,14 +42,18 @@ namespace CameraStore.Controllers
        
         [HttpPost]
         [Authorize]
-        // Sử dụng Authorize attribute để chỉ cho phép người dùng đã đăng nhập truy cập hành động này
         public IActionResult AddToCart(int productId, int quantity, decimal price)
         {
-            var customerId = User.FindFirst(ClaimTypes.Name)?.Value; // Lấy ID của người dùng từ cookie
+            var customerId = User.FindFirst(ClaimTypes.Name)?.Value; 
 
             if (customerId == null)
             {
                 return RedirectToAction("Login", "Authentication");
+            }
+            if (quantity <= 0)
+            {
+                _notyf.Error("Quantity must be a positive number.");
+                return Redirect($"/Home/productDetail/{productId}");
             }
             var product = _dbContext.Products.FirstOrDefault(p => p.proID == productId);
 
@@ -71,7 +75,7 @@ namespace CameraStore.Controllers
                     };
 
                     _dbContext.Carts.Add(cart);
-                    _dbContext.SaveChanges(); // Lưu giỏ hàng mới vào cơ sở dữ liệu để có được cartID
+                    _dbContext.SaveChanges(); 
                 }
 
                 var existingCartItem = _dbContext.CartDetails.FirstOrDefault(cd => cd.cartID == cart.cartID && cd.proID == productId);
@@ -85,7 +89,7 @@ namespace CameraStore.Controllers
                 {
                     var newCartItem = new CartDetails
                     {
-                        cartID = cart.cartID, // Gán cartID đã có từ cart
+                        cartID = cart.cartID, 
                         proID = productId,
                         quantity = quantity,
                         price = price
@@ -99,7 +103,6 @@ namespace CameraStore.Controllers
                 product.proQuantity -= quantity;
                 product.proQuantitySold += quantity;
 
-                // Cập nhật trạng thái sản phẩm
                 if (product.proQuantity == 0)
                 {
                     product.proStatus = "Sold out";
@@ -116,11 +119,9 @@ namespace CameraStore.Controllers
                 _notyf.Success("Add to cart successfully.");
             }
             return Redirect($"/Home/productDetail/{productId}");
-
         }
         [HttpPost]
         [Authorize]
-        // Sử dụng Authorize attribute để chỉ cho phép người dùng đã đăng nhập truy cập hành động này
         public IActionResult AddToCart1(int productId, int quantity, decimal price)
         {
             var customerId = User.FindFirst(ClaimTypes.Name)?.Value; // Lấy ID của người dùng từ cookie
@@ -199,26 +200,29 @@ namespace CameraStore.Controllers
         }
         [HttpPost]
         [Authorize]
-        // Cập nhật số lượng sản phẩm trong giỏ hàng
         public IActionResult UpdateCart(int cartId, int proId, int quantity)
         {
+            if (quantity <= 0)
+            {
+                _notyf.Error("Quantity must be a positive number.");
+                return NoContent();
+            }
             var product = _dbContext.Products.FirstOrDefault(p => p.proID == proId);
             
             var cartDetail = _dbContext.CartDetails.FirstOrDefault(cd => cd.cartID == cartId && cd.proID == proId);
             if (cartDetail == null)
             {
-                return NotFound(); // Không tìm thấy mục giỏ hàng
+                return NotFound();
             }
 
             var cart = _dbContext.Carts.Find(cartDetail.cartID);
             if (cart == null)
             {
-                return NotFound(); // Không tìm thấy giỏ hàng
+                return NotFound(); 
             }
             if (product != null)
             {
                 product.proQuantitySold += (quantity - cartDetail.quantity);
-                // Trừ số lượng mới từ số lượng sản phẩm có sẵn trong kho
                 product.proQuantity = product.proQuantity - (quantity - cartDetail.quantity);
                 if (product.proQuantity == 0)
                 {
@@ -239,7 +243,7 @@ namespace CameraStore.Controllers
             }
             else
             {
-                return NotFound(); // Trả về 404 nếu không tìm thấy sản phẩm
+                return NotFound(); 
             }
             cart.cartQuantityTotal -= cartDetail.quantity;
 
@@ -249,25 +253,21 @@ namespace CameraStore.Controllers
 
             if (product.proSale != null && product.proSale > 0)
             {
-                cartDetail.price = product.proSale; // Sử dụng giá sale
+                cartDetail.price = product.proSale; 
             }
             else
             {
-                cartDetail.price = product.proPrice; // Sử dụng giá thông thường
+                cartDetail.price = product.proPrice; 
             }
 
-            // Tính tổng giá cho giỏ hàng
             cart.cartPriceTotal += (cartDetail.price * cartDetail.quantity);
 
             _dbContext.SaveChanges();
 
-            // Tạo object chứa subtotal và total để trả về
             var subtotal = _dbContext.CartDetails
                 .Where(cd => cd.cartID == cartId)
             .Sum(cd => cd.Product.proSale != null ? cd.quantity * cd.Product.proSale : cd.quantity * cd.Product.proPrice);
-            // Ở đây có thể thêm các chi phí vận chuyển hoặc giảm giá nếu cần
 
-            // Trả về dữ liệu tổng cộng dưới dạng JSON
             return Json(new { subtotal = subtotal });
         }
         [HttpPost]

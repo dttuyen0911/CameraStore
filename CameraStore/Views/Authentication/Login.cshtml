@@ -52,7 +52,6 @@
                     <div class="form-group">
                         <label asp-for="email" for="your_name"></i></label>
                         <input type="text" asp-for="email" name="email" id="email" placeholder="Your Email" />
-                        <span asp-validation-for="email" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="password" for="your_pass"></i></label>
@@ -62,7 +61,6 @@
                                 <i class="fa fa-eye" id="toggleCurrentPassword"></i>
                             </span>
                         </div>
-                        <span asp-validation-for="password" class="text-danger"></span>
                     </div>
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <div>

@@ -223,6 +223,12 @@ namespace CameraStore.Controllers
         [HttpPost]
         public IActionResult Login(string email, string password)
         {
+
+            if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email))
+            {
+                _notyf.Error("Password or email are required.");
+                return View();
+            }
             if (ModelState.IsValid)
             {
                 var customer = _dbContext.Customers.FirstOrDefault(c => c.email == email);
@@ -311,6 +317,11 @@ namespace CameraStore.Controllers
         [HttpPost]
         public IActionResult ForgotPassword(string email)
         {
+            if (string.IsNullOrEmpty(email))
+            {
+                _notyf.Error("Email is required.");
+                return View();
+            }
             var customer = _dbContext.Customers.FirstOrDefault(c => c.email == email);
             if (customer != null)
             {
